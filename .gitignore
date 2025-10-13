@@ -1,0 +1,25 @@
+# NetBeans 17 specific files for Ant projects
+/nbproject/private/
+/build/
+/dist/
+
+# Compiled class files (just in case)
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+
+# Log files
+*.log
+logs/
+
+# Java Virtual Machine crash logs
+hs_err_pid*
+
+# Operating System generated files
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
