@@ -1,0 +1,28 @@
+# NetBeans project files
+/nbproject/
+/build/
+/dist/
+
+# Compiled class files
+*.class
+
+# Package files
+*.jar
+*.war
+*.ear
+
+# Exception for library files
+!/lib/*.jar
+!/lib/CopyLibs/*.jar
+
+
+# Log files
+*.log
+logs/
+
+# Java Virtual Machine crash logs
+hs_err_pid*
+
+# Operating System generated files
+.DS_Store
+Thumbs.db
