@@ -168,11 +168,6 @@
                 <form action="RouteServlet" method="get">
                     <input type="hidden" name="action" value="list">
                     <input type="text" name="search" placeholder="Tìm theo tên..." value="<%= request.getAttribute("search") == null ? "" : request.getAttribute("search") %>">
-                    <select name="type">
-                        <option value="">-- Loại tuyến --</option>
-                        <option value="City" <%= "City".equals(request.getAttribute("type")) ? "selected" : "" %>>City</option>
-                        <option value="Suburban" <%= "Suburban".equals(request.getAttribute("type")) ? "selected" : "" %>>Suburban</option>
-                    </select>
                     <button type="submit" class="btn btn-add">Tìm kiếm</button>
                 </form>
                 <a href="RouteServlet?action=add" class="btn btn-add">+ Thêm tuyến</a>

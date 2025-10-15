@@ -112,17 +112,19 @@
             <h2><%= isEdit ? "Cập nhật tuyến đường" : "Thêm tuyến đường mới" %></h2>
 
             <form action="RouteServlet" method="post">
-                <input type="hidden" name="action" value="<%= isEdit ? "update" : "insert" %>">
+                <input type="hidden" name="action" value="<%= isEdit ? "update" : "add" %>">
                 <% if (isEdit) { %>
-                <input type="hidden" name="id" value="<%= route.getRouteId() %>">
+                <input type="hidden" name="routeId" value="<%= route.getRouteId() %>">
                 <% } %>
 
                 <label for="routeName">Tên tuyến đường:</label>
                 <input type="text" id="routeName" name="routeName" 
                        value="<%= isEdit ? route.getRouteName() : "" %>" required>
                 <label for="type">Loại tuyến:</label>
-                <input type="text" id="type" name="type" 
-                       value="<%= isEdit ? route.getType() : "" %>" required>
+                <select id="type" name="type">
+                    <option value="CIRCULAR" <%= isEdit && "Circular".equalsIgnoreCase(route.getType()) ? "selected" : "" %>>CIRCULAR</option>
+                    <option value="ROUND_TRIP" <%= isEdit && "Round Trip".equalsIgnoreCase(route.getType()) ? "selected" : "" %>>ROUND_TRIP</option>
+                </select>
                 <label for="frequency">Tần suất:</label>
                 <input type="text" id="frequency" name="frequency" 
                        value="<%= isEdit ? route.getFrequency() : "" %>" required>          
