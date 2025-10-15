@@ -179,7 +179,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Biển số</th>
-                        <th>Dung lượng</th>
+                        <th>Số chỗ ngồi</th>
                         <th>Hành động</th>
                     </tr>
                     <c:forEach var="bus" items="${busList}">
