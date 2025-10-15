@@ -80,6 +80,9 @@ public class RouteServlet extends HttpServlet {
                 case "details":
                     showDetails(request, response);
                     break;
+                case "add":   
+                    showAddForm(request, response);
+                    break;
                 case "edit":
                     showEditForm(request, response);
                     break;
@@ -203,7 +206,7 @@ public class RouteServlet extends HttpServlet {
             response.sendRedirect("RouteServlet?action=list");
         } else {
             request.setAttribute("errorMessage", "Tuyến đường đã tồn tại!");
-            request.getRequestDispatcher("/WEB-INF/Route/RouteAdd.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/Route/RouteForm.jsp").forward(request, response);
         }
     }
 
@@ -224,6 +227,11 @@ public class RouteServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         routeServices.deleteRoute(id);
         response.sendRedirect("RouteServlet?action=list");
+    }
+
+    private void showAddForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.getRequestDispatcher("/WEB-INF/Route/RouteForm.jsp").forward(request, response);
     }
 
 }
