@@ -47,12 +47,18 @@ public class BusDAO extends DBContext implements iBusDAO {
 
     @Override
     public boolean updateBus(Bus bus) throws SQLException {
-        String sql = "UPDATE Bus SET plate_number = ?, capacity = ? WHERE bus_id = ?";
+        String sql = "UPDATE Bus SET plate_number=?, capacity=? WHERE bus_id=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, bus.getPlateNumber());
             ps.setInt(2, bus.getCapacity());
             ps.setInt(3, bus.getBusId());
             return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            // Bắt lỗi trùng khóa duy nhất
+            if (e.getMessage().contains("UNIQUE KEY constraint")) {
+                throw new SQLException("Biển số xe đã tồn tại trong hệ thống.");
+            }
+            throw e; // ném lại lỗi khác
         }
     }
 
