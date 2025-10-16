@@ -3,148 +3,168 @@
     Created on : Oct 14, 2025, 7:58:57 AM
     Author     : Admin
 --%>
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
     <head>
         <title>Danh sách Bus</title>
         <style>
-            /* Full màn hình và scroll */
-            html, body {
-                height: 100%;
+            body {
+                font-family: "Segoe UI", Arial, sans-serif;
+                background-color: #f5f7fa;
                 margin: 0;
                 padding: 0;
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f4;
-                overflow-y: auto; /* Cho phép vuốt dọc */
             }
 
             .container {
-                min-height: 100%;
-                padding: 20px 40px;
-                display: flex;
-                flex-direction: column;
+                width: 85%;
+                margin: 40px auto;
+                background: #fff;
+                padding: 25px 40px;
+                border-radius: 12px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.08);
             }
 
             h2 {
                 text-align: center;
                 color: #333;
-                margin-bottom: 20px;
+                margin-bottom: 30px;
             }
 
-            /* Toolbar */
             .toolbar {
                 display: flex;
-                align-items: center;
-                justify-content: space-between;
                 flex-wrap: wrap;
-                gap: 15px;
+                justify-content: space-between;
+                align-items: center;
                 margin-bottom: 20px;
-            }
-
-            .toolbar a.button {
-                background-color: #4CAF50;
-                color: white;
-                padding: 8px 15px;
-                border-radius: 5px;
-                text-decoration: none;
-                text-align: center;
-                font-weight: bold;
+                gap: 10px;
             }
 
             .toolbar form {
                 display: flex;
                 align-items: center;
-                gap: 5px;
+                gap: 10px;
             }
 
-            .toolbar input[type="text"], .toolbar select {
+            .toolbar input[type="text"],
+            .toolbar select {
                 padding: 8px 10px;
-                border-radius: 5px;
                 border: 1px solid #ccc;
-                outline: none;
+                border-radius: 8px;
+                font-size: 14px;
+                text-align: center; /* Căn giữa text trong ô */
             }
 
-            .toolbar button {
-                padding: 8px 15px;
-                border-radius: 5px;
-                border: 1px solid #4CAF50;
-                background-color: #4CAF50;
+            .button, button {
+                background: #3498db;
                 color: white;
+                padding: 8px 14px;
+                border: none;
+                border-radius: 8px;
+                text-decoration: none;
                 cursor: pointer;
-                font-weight: bold;
+                font-size: 14px;
+                transition: 0.2s;
+                text-align: center; /* Căn giữa text trong nút */
             }
 
-            .toolbar .sort-btn {
-                border: 1px solid #2196F3;
-                background-color: #2196F3;
+            .button:hover, button:hover {
+                background: #2176b5;
             }
 
-            /* Table full width */
+            .sort-btn {
+                background-color: #16a085;
+            }
+
+            .sort-btn:hover {
+                background-color: #12876f;
+            }
+
+            .table-wrapper {
+                overflow-x: auto;
+            }
+
             table {
                 width: 100%;
                 border-collapse: collapse;
-                background-color: white;
-            }
-
-            table, th, td {
-                border: 1px solid #ccc;
+                margin-top: 10px;
+                text-align: center; /* Căn giữa text trong bảng */
             }
 
             th, td {
-                padding: 12px;
-                text-align: center;
+                border-bottom: 1px solid #eee;
+                padding: 10px;
+                vertical-align: middle;
             }
 
             th {
-                background-color: #f2f2f2;
-            }
-
-            a.button.action {
-                text-decoration: none;
-                padding: 5px 10px;
-                border-radius: 4px;
+                background: #3498db;
                 color: white;
-                font-weight: bold;
             }
 
-            a.button.edit {
-                background-color: #4CAF50;
-            }
-            a.button.delete {
-                background-color: #f44336;
-            }
-            a.button.assign {
-                background-color: #2196F3;
+            tr:nth-child(even) {
+                background-color: #f9f9f9;
             }
 
-            /* Phân trang */
+            .action {
+                padding: 6px 12px;
+                margin: 0 4px;
+                border-radius: 6px;
+                font-size: 13px;
+                text-align: center; /* Căn giữa text trong nút hành động */
+            }
+
+            .action.edit {
+                background-color: #f39c12;
+            }
+
+            .action.edit:hover {
+                background-color: #d68910;
+            }
+
+            .action.delete {
+                background-color: #e74c3c;
+            }
+
+            .action.delete:hover {
+                background-color: #c0392b;
+            }
+
+            .action.assign {
+                background-color: #2ecc71;
+            }
+
+            .action.assign:hover {
+                background-color: #27ae60;
+            }
+
             .pagination {
-                margin-top: 20px;
                 text-align: center;
+                margin-top: 25px;
             }
 
             .pagination a {
-                margin: 0 5px;
+                display: inline-block;
+                padding: 8px 12px;
+                margin: 3px;
                 text-decoration: none;
-                padding: 5px 10px;
-                border: 1px solid #333;
-                border-radius: 4px;
-                color: #333;
+                color: #3498db;
+                border: 1px solid #3498db;
+                border-radius: 6px;
+                transition: 0.2s;
+                text-align: center; /* Căn giữa số trang */
             }
 
-            .pagination a.current {
-                background-color: #4CAF50;
+            .pagination a:hover {
+                background-color: #3498db;
                 color: white;
             }
 
-            /* Cho bảng vuốt dọc nếu quá dài */
-            .table-wrapper {
-                flex-grow: 1; /* chiếm phần còn lại */
-                overflow-y: auto;
+            .pagination .current {
+                background-color: #3498db;
+                color: white;
+                font-weight: bold;
             }
-
         </style>
     </head>
     <body>
