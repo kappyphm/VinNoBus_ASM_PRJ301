@@ -95,7 +95,7 @@ public class BusServlet extends HttpServlet {
                     break;
             }
         } catch (SQLException e) {
-            throw new ServletException(e);
+            throw new ServletException("Lỗi khi xử lý yêu cầu: " + e.getMessage(), e);
         }
 
     }
@@ -116,7 +116,6 @@ public class BusServlet extends HttpServlet {
         if (action == null) {
             action = "list";
         }
-
         try {
             switch (action) {
                 case "add":
@@ -130,7 +129,7 @@ public class BusServlet extends HttpServlet {
                     break;
             }
         } catch (SQLException e) {
-            throw new ServletException(e);
+            throw new ServletException("Lỗi khi xử lý yêu cầu POST: " + e.getMessage(), e);
         }
     }
 
@@ -172,79 +171,171 @@ public class BusServlet extends HttpServlet {
 
     private void insertBus(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
+
         String plate = request.getParameter("plate_number");
         String capStr = request.getParameter("capacity");
-        int capacity = 0;
-        try {
-            capacity = Integer.parseInt(capStr);
-        } catch (NumberFormatException e) {
-            request.setAttribute("error", "Dung lượng phải là số hợp lệ.");
+
+        if (plate == null || plate.trim().isEmpty()) {
+            request.setAttribute("error", "Biển số xe không được để trống.");
             request.getRequestDispatcher("/WEB-INF/Bus/BusAdd.jsp").forward(request, response);
             return;
         }
 
-        Bus bus = new Bus(0, plate, capacity);
+        int capacity;
+        try {
+            capacity = Integer.parseInt(capStr);
+            if (capacity <= 0) {
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "Sức chứa phải là số nguyên lớn hơn 0.");
+            request.getRequestDispatcher("/WEB-INF/Bus/BusAdd.jsp").forward(request, response);
+            return;
+        }
+        Bus bus = new Bus(0, plate.trim(), capacity);
         boolean success = busServices.addBus(bus);
 
         if (success) {
-            response.sendRedirect("BusServlet?action=list");
+            request.setAttribute("message", "✅ Thêm xe bus thành công: " + plate);
+            listBus(request, response);
         } else {
-            request.setAttribute("error", "Không thể thêm xe bus (có thể trùng biển số).");
+            request.setAttribute("error", "❌ Thêm xe bus thất bại (có thể trùng biển số).");
             request.getRequestDispatcher("/WEB-INF/Bus/BusAdd.jsp").forward(request, response);
         }
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
+
         int id = Integer.parseInt(request.getParameter("id"));
         Bus bus = busServices.getBusById(id);
+
         if (bus == null) {
-            response.sendRedirect("BusServlet?action=list");
+            request.setAttribute("error", "Không tìm thấy xe bus có ID: " + id);
+            listBus(request, response);
             return;
         }
+
         request.setAttribute("bus", bus);
         request.getRequestDispatcher("/WEB-INF/Bus/BusEditForm.jsp").forward(request, response);
     }
 
     private void updateBus(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException, ServletException {
-        int id = Integer.parseInt(request.getParameter("bus_id"));
+            throws IOException, ServletException {
+
+        // Lấy dữ liệu từ form
+        String idStr = request.getParameter("bus_id");
         String plate = request.getParameter("plate_number");
-        int capacity = Integer.parseInt(request.getParameter("capacity"));
+        String capStr = request.getParameter("capacity");
 
-        Bus bus = new Bus(id, plate, capacity);
-        boolean success = busServices.updateBus(bus);
+        // Biến giữ dữ liệu để JSP giữ lại khi lỗi
+        request.setAttribute("bus_id", idStr);
+        request.setAttribute("plate_number", plate);
+        request.setAttribute("capacity", capStr);
 
-        if (success) {
-            response.sendRedirect("BusServlet?action=list");
-        } else {
-            request.setAttribute("error", "Cập nhật thất bại!");
-            request.setAttribute("bus", bus);
+        int id = 0;
+        int capacity = 0;
+        boolean hasError = false;
+
+        // Kiểm tra ID hợp lệ
+        try {
+            id = Integer.parseInt(idStr);
+        } catch (NumberFormatException e) {
+            request.setAttribute("error_general", "ID xe không hợp lệ.");
+            hasError = true;
+        }
+
+        // Kiểm tra biển số
+        if (plate == null || plate.trim().isEmpty()) {
+            request.setAttribute("error_plate", "Biển số xe không được để trống.");
+            hasError = true;
+        }
+
+        // Kiểm tra capacity
+        try {
+            capacity = Integer.parseInt(capStr);
+            if (capacity <= 0) {
+                request.setAttribute("error_capacity", "Sức chứa phải là số nguyên dương.");
+                hasError = true;
+            }
+        } catch (NumberFormatException e) {
+            request.setAttribute("error_capacity", "Sức chứa phải là số hợp lệ.");
+            hasError = true;
+        }
+
+        if (hasError) {
+            request.getRequestDispatcher("/WEB-INF/Bus/BusEditForm.jsp").forward(request, response);
+            return;
+        }
+
+        // Tạo đối tượng Bus
+        Bus bus = new Bus(id, plate.trim(), capacity);
+
+        try {
+            boolean success = busServices.updateBus(bus);
+
+            if (success) {
+                request.setAttribute("message", "✅ Cập nhật xe bus thành công: " + plate);
+                listBus(request, response);
+            } else {
+                request.setAttribute("error_general", "❌ Cập nhật thất bại, vui lòng thử lại.");
+                request.getRequestDispatcher("/WEB-INF/Bus/BusEditForm.jsp").forward(request, response);
+            }
+        } catch (SQLException e) {
+            String msg = e.getMessage().toLowerCase();
+            if (msg.contains("uq__bus") || msg.contains("duplicate")) {
+                request.setAttribute("error_plate", "❌ Biển số xe '" + plate + "' đã tồn tại trong hệ thống.");
+            } else {
+                request.setAttribute("error_general", "⚠️ Lỗi hệ thống: " + msg);
+            }
             request.getRequestDispatcher("/WEB-INF/Bus/BusEditForm.jsp").forward(request, response);
         }
     }
 
     private void deleteBus(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException {
+            throws SQLException, IOException, ServletException {
+
         int id = Integer.parseInt(request.getParameter("id"));
-        busServices.deleteBus(id);
-        response.sendRedirect("BusServlet?action=list");
+        boolean success = busServices.deleteBus(id);
+
+        if (success) {
+            request.setAttribute("message", "🗑️ Xóa xe bus thành công (ID: " + id + ")");
+        } else {
+            request.setAttribute("error", "⚠️ Xóa xe bus thất bại. Xe có thể đang được sử dụng trong chuyến đi.");
+        }
+
+        listBus(request, response);
     }
 
     private void searchBus(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
+
         String keyword = request.getParameter("keyword");
         List<Bus> list = busServices.searchBusByPlate(keyword);
         request.setAttribute("busList", list);
+
+        if (list.isEmpty()) {
+            request.setAttribute("error", "Không tìm thấy xe bus nào phù hợp với từ khóa: " + keyword);
+        } else {
+            request.setAttribute("message", "🔍 Tìm thấy " + list.size() + " xe bus phù hợp.");
+        }
+
         request.getRequestDispatcher("/WEB-INF/Bus/BusList.jsp").forward(request, response);
     }
 
     private void showDetail(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
+
         int id = Integer.parseInt(request.getParameter("id"));
         Bus bus = busServices.getBusById(id);
+
+        if (bus == null) {
+            request.setAttribute("error", "Không tìm thấy xe bus có ID: " + id);
+            listBus(request, response);
+            return;
+        }
+
         request.setAttribute("bus", bus);
         request.getRequestDispatcher("/WEB-INF/Bus/BusDetail.jsp").forward(request, response);
     }
-                                                                                            
 }
