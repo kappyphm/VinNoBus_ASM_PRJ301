@@ -109,14 +109,12 @@
     <div class="logo" onclick="window.location.href = 'index.html';" style="cursor: pointer;">
         🚌 <span>Bus Management System</span>
     </div>
-
     <nav>
         <ul>
             <li><a href="BusServlet?action=list">Xe Bus</a></li>
             <li><a href="RouteServlet?action=list">Tuyến Đường</a></li>
             <li><a href="TripServlet?action=list">Chuyến Xe</a></li>
             <li><a href="DriverServlet?action=list">Tài Xế</a></li>
-            <li><a href="ReportServlet?action=overview">Báo Cáo</a></li>
         </ul>
     </nav>
 </header>
