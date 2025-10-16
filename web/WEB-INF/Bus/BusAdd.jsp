@@ -1,9 +1,3 @@
-<%-- 
-    Document   : BusAdd
-    Created on : Oct 14, 2025, 8:01:23 AM
-    Author     : Admin
---%>
-
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
@@ -12,95 +6,137 @@
         <title>Thêm Xe Bus Mới</title>
         <style>
             body {
-                font-family: Arial, sans-serif;
-                margin: 30px;
-                background-color: #f9f9f9;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                background: linear-gradient(135deg, #74b9ff, #a29bfe);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+
+            .form-container {
+                background-color: #fff;
+                padding: 35px 40px;
+                border-radius: 16px;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+                width: 400px;
+                text-align: center;
+                animation: fadeIn 0.5s ease;
             }
 
             h2 {
-                color: #333;
-            }
-
-            form {
-                background-color: white;
-                padding: 20px;
-                border-radius: 10px;
-                width: 400px;
-                box-shadow: 0 0 8px rgba(0,0,0,0.1);
+                color: #2d3436;
+                margin-bottom: 20px;
             }
 
             label {
                 display: block;
-                margin-top: 10px;
-                font-weight: bold;
+                text-align: left;
+                font-weight: 600;
+                color: #555;
+                margin-top: 15px;
+                margin-bottom: 5px;
             }
 
             input[type="text"],
             input[type="number"] {
-                width: 95%;
-                padding: 8px;
-                margin-top: 5px;
-                border: 1px solid #ccc;
-                border-radius: 5px;
+                width: 100%;
+                padding: 10px 12px;
+                border: 1px solid #dcdde1;
+                border-radius: 8px;
+                outline: none;
+                transition: 0.3s;
+                font-size: 15px;
+            }
+
+            input:focus {
+                border-color: #0984e3;
+                box-shadow: 0 0 5px rgba(9, 132, 227, 0.4);
             }
 
             button {
-                background-color: #4CAF50;
+                width: 100%;
+                background: #0984e3;
                 color: white;
-                padding: 10px 18px;
+                padding: 12px;
                 border: none;
-                border-radius: 5px;
-                margin-top: 15px;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: bold;
+                margin-top: 20px;
                 cursor: pointer;
+                transition: 0.3s;
             }
 
             button:hover {
-                background-color: #45a049;
+                background: #74b9ff;
             }
 
             a {
                 display: inline-block;
-                margin-top: 15px;
+                margin-top: 20px;
                 text-decoration: none;
-                color: #333;
+                color: #636e72;
+                font-size: 14px;
+            }
+
+            a:hover {
+                text-decoration: underline;
+                color: #2d3436;
             }
 
             .message {
-                color: green;
+                color: #27ae60;
+                font-weight: 600;
                 margin-bottom: 15px;
             }
 
             .error {
-                color: red;
+                color: #d63031;
+                font-weight: 600;
                 margin-bottom: 15px;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
         </style>
     </head>
     <body>
 
-        <h2>Thêm Xe Bus Mới</h2>
+        <div class="form-container">
+            <h2>Thêm Xe Bus Mới</h2>
 
-        <!-- Hiển thị thông báo -->
-        <c:if test="${not empty message}">
-            <div class="message">${message}</div>
-        </c:if>
+            <!-- Hiển thị thông báo -->
+            <c:if test="${not empty message}">
+                <div class="message">${message}</div>
+            </c:if>
 
-        <c:if test="${not empty error}">
-            <div class="error">${error}</div>
-        </c:if>
+            <c:if test="${not empty error}">
+                <div class="error">${error}</div>
+            </c:if>
 
-        <form action="BusServlet" method="post">
-            <input type="hidden" name="action" value="add">
+            <form action="BusServlet" method="post">
+                <input type="hidden" name="action" value="add">
 
-            <label>Biển số xe:</label>
-            <input type="text" name="plate_number" placeholder="VD: 29B-123.45" required>
+                <label>Biển số xe:</label>
+                <input type="text" name="plate_number" placeholder="VD: 29B-123.45" >
 
-            <label>Sức chứa:</label>
-            <input type="number" name="capacity" placeholder="VD: 40" min="1" required>
+                <label>Sức chứa:</label>
+                <input type="number" name="capacity" placeholder="VD: 40">
 
-            <button type="submit">Thêm Xe Bus</button>
-            <a href="BusServlet?action=list">← Quay lại danh sách</a>
-        </form>
+                <button type="submit">➕ Thêm Xe Bus</button>
+                <a href="BusServlet?action=list">← Quay lại danh sách</a>
+            </form>
+        </div>
 
     </body>
 </html>

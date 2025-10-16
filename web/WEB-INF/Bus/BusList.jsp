@@ -5,6 +5,8 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<jsp:include page="/header.jsp" />
+
 <html>
     <head>
         <title>Danh sách Bus</title>
@@ -168,9 +170,19 @@
         </style>
     </head>
     <body>
+
         <div class="container">
             <h2>Danh sách Bus</h2>
-
+            <% if (request.getAttribute("message") != null) { %>
+            <div style="background:#d4edda;color:#155724;padding:10px;border-radius:6px;margin-bottom:10px;">
+                <%= request.getAttribute("message") %>
+            </div>
+            <% } %>
+            <% if (request.getAttribute("error") != null) { %>
+            <div style="background:#f8d7da;color:#721c24;padding:10px;border-radius:6px;margin-bottom:10px;">
+                <%= request.getAttribute("error") %>
+            </div>
+            <% } %>
             <div class="toolbar">
                 <a class="button" href="BusServlet?action=add">+ Thêm Xe Bus</a>
 
@@ -187,8 +199,8 @@
                         <option value="bus_id DESC" ${param.sort == 'bus_id DESC' ? 'selected' : ''}>ID giảm dần</option>
                         <option value="plate_number ASC" ${param.sort == 'plate_number ASC' ? 'selected' : ''}>Biển số A-Z</option>
                         <option value="plate_number DESC" ${param.sort == 'plate_number DESC' ? 'selected' : ''}>Biển số Z-A</option>
-                        <option value="capacity ASC" ${param.sort == 'capacity ASC' ? 'selected' : ''}>Dung lượng tăng</option>
-                        <option value="capacity DESC" ${param.sort == 'capacity DESC' ? 'selected' : ''}>Dung lượng giảm</option>
+                        <option value="capacity ASC" ${param.sort == 'capacity ASC' ? 'selected' : ''}>Chỗ ngồi tăng</option>
+                        B               <option value="capacity DESC" ${param.sort == 'capacity DESC' ? 'selected' : ''}>Chỗ ngồi giảm</option>
                     </select>
                     <button type="submit" class="sort-btn">Sắp xếp</button>
                 </form>
@@ -209,8 +221,10 @@
                             <td>${bus.capacity}</td>
                             <td>
                                 <a class="button action edit" href="BusServlet?action=edit&id=${bus.busId}">Edit</a>
-                                <a class="button action delete" href="BusServlet?action=delete&id=${bus.busId}" onclick="return confirm('Bạn có chắc muốn xóa?');">Delete</a>
+                                <a class="button action delete" href="BusServlet?action=delete&id=${bus.busId}" 
+                                   onclick="return confirm('Bạn có chắc muốn xóa?');">Delete</a>
                                 <a class="button action assign" href="BusServlet?action=assign&id=${bus.busId}">Assign</a>
+                                <a class="button action detail" href="BusServlet?action=detail&id=${bus.busId}">Details</a>
                             </td>
                         </tr>
                     </c:forEach>
@@ -231,4 +245,5 @@
             </div>
         </div>
     </body>
+    <jsp:include page="/footer.jsp" />
 </html>

@@ -1,81 +1,81 @@
-<%-- 
-    Document   : BusForm
-    Created on : Oct 14, 2025, 7:59:04 AM
-    Author     : Admin
---%>
-<%-- 
-    Document   : BusEditForm
-    Created on : Oct 14, 2025
-    Author     : Admin
---%>
-
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<html>
+<html lang="vi">
     <head>
-        <title>Chỉnh sửa thông tin Xe Bus</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Chỉnh sửa Xe Bus</title>
         <style>
-            body {
-                font-family: 'Segoe UI', sans-serif;
-                background-color: #f0f2f5;
+            /* ===== Reset & Global ===== */
+            * {
                 margin: 0;
                 padding: 0;
+                box-sizing: border-box;
             }
-
-            .container {
+            body {
+                font-family: 'Segoe UI', sans-serif;
+                background: linear-gradient(135deg, #74b9ff, #a29bfe);
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 min-height: 100vh;
             }
 
+            /* ===== Form box ===== */
             .form-box {
-                background-color: white;
-                width: 420px;
-                padding: 30px 40px;
-                border-radius: 10px;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                background: #fff;
+                padding: 35px 40px;
+                border-radius: 16px;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+                width: 400px;
+                text-align: center;
+                animation: fadeIn 0.5s ease;
             }
 
             h2 {
-                text-align: center;
-                color: #1f3a93;
-                margin-bottom: 25px;
+                color: #2d3436;
+                margin-bottom: 20px;
             }
 
             label {
                 display: block;
-                font-weight: 500;
-                color: #333;
+                font-weight: 600;
+                text-align: left;
                 margin-top: 15px;
+                margin-bottom: 5px;
+                color: #555;
             }
 
-            input[type="text"], input[type="number"] {
+            input[type="text"],
+            input[type="number"] {
                 width: 100%;
                 padding: 10px 12px;
-                margin-top: 6px;
-                border: 1px solid #ccc;
-                border-radius: 6px;
+                border: 1px solid #dcdde1;
+                border-radius: 8px;
                 font-size: 15px;
-                transition: border-color 0.2s;
+                transition: all 0.3s ease-in-out;
             }
 
-            input[type="text"]:focus, input[type="number"]:focus {
-                border-color: #1f3a93;
+            input[type="text"]:focus,
+            input[type="number"]:focus {
+                border-color: #0984e3;
+                box-shadow: 0 0 8px rgba(9,132,227,0.4);
                 outline: none;
             }
 
-            .message {
-                color: green;
-                text-align: center;
-                margin-bottom: 10px;
+            .error {
+                color: #d63031;
+                font-weight: 600;
+                margin-top: 5px;
+                font-size: 14px;
+                text-align: left;
             }
 
-            .error {
-                color: red;
-                text-align: center;
-                margin-bottom: 10px;
+            .message {
+                color: #27ae60;
+                font-weight: 600;
+                margin-bottom: 15px;
             }
 
             .actions {
@@ -85,66 +85,91 @@
             }
 
             button {
-                padding: 10px 18px;
-                background-color: #1f3a93;
+                padding: 12px 18px;
+                background-color: #0984e3;
                 color: white;
                 border: none;
-                border-radius: 6px;
+                border-radius: 8px;
                 cursor: pointer;
-                transition: 0.3s;
-                font-weight: 500;
+                font-weight: 600;
+                transition: all 0.3s ease-in-out;
             }
 
             button:hover {
-                background-color: #0d2b66;
+                background-color: #74b9ff;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             }
 
             a.back-btn {
                 text-decoration: none;
-                padding: 10px 18px;
+                padding: 12px 18px;
+                border-radius: 8px;
                 border: 1px solid #ccc;
-                border-radius: 6px;
                 color: #333;
                 background-color: #f8f9fa;
-                transition: 0.3s;
+                transition: all 0.3s ease-in-out;
             }
 
             a.back-btn:hover {
                 background-color: #e2e6ea;
+                transform: translateY(-1px);
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            @media (max-width: 480px) {
+                .form-box {
+                    width: 90%;
+                    padding: 25px;
+                }
             }
         </style>
     </head>
     <body>
+        <div class="form-box">
+            <h2>Chỉnh sửa Xe Bus</h2>
+            <c:if test="${not empty message}">
+                <div class="message">${message}</div>
+            </c:if>
+            <form action="BusServlet" method="post">
+                <input type="hidden" name="action" value="update">
+                <input type="hidden" name="bus_id" value="${bus_id != null ? bus_id : bus.busId}">
 
-        <div class="container">
-            <div class="form-box">
-                <h2>Chỉnh sửa Xe Bus</h2>
-
-                <c:if test="${not empty message}">
-                    <div class="message">${message}</div>
+                <label>Biển số xe:</label>
+                <input type="text" name="plate_number" 
+                       value="${plate_number != null ? plate_number : bus.plateNumber}" 
+                       placeholder="VD: 29B-123.45" required>
+                <c:if test="${not empty error_plate}">
+                    <div class="error">${error_plate}</div>
                 </c:if>
 
-                <c:if test="${not empty error}">
-                    <div class="error">${error}</div>
+                <label>Sức chứa:</label>
+                <input type="number" name="capacity" 
+                       value="${capacity != null ? capacity : bus.capacity}" 
+                       min="1" required>
+                <c:if test="${not empty error_capacity}">
+                    <div class="error">${error_capacity}</div>
                 </c:if>
 
-                <form action="BusServlet" method="post">
-                    <input type="hidden" name="action" value="update">
-                    <input type="hidden" name="bus_id" value="${bus.busId}">
+                <c:if test="${not empty error_general}">
+                    <div class="error">${error_general}</div>
+                </c:if>
 
-                    <label>Biển số xe:</label>
-                    <input type="text" name="plate_number" value="${bus.plateNumber}" required>
-
-                    <label>Sức chứa:</label>
-                    <input type="number" name="capacity" value="${bus.capacity}" min="1" required>
-
-                    <div class="actions">
-                        <a class="back-btn" href="BusServlet?action=list">← Quay lại</a>
-                        <button type="submit">Cập nhật</button>
-                    </div>
-                </form>
-            </div>
+                <div class="actions">
+                    <a class="back-btn" href="BusServlet?action=list">← Quay lại</a>
+                    <button type="submit">Cập nhật</button>
+                </div>
+            </form>
         </div>
-
     </body>
 </html>
