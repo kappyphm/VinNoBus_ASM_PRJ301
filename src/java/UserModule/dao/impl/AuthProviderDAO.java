@@ -9,6 +9,7 @@ import UserModule.dao.IAuthProviderDAO;
 import UserModule.model.entity.AuthProvider;
 import dal.DBContext;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -94,6 +95,7 @@ public class AuthProviderDAO extends DBContext implements IAuthProviderDAO {
                 }
             }
         }
+        return Optional.empty();
     }
 
     @Override
