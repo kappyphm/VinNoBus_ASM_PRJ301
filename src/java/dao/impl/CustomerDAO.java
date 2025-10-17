@@ -68,7 +68,7 @@ public class CustomerDAO extends DBContext implements ICustomerDAO {
                 }
             }
         }
-
+        return Optional.empty();
     }
 
     @Override
