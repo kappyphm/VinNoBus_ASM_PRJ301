@@ -5,6 +5,7 @@
 package UserModule.model.entity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  *
@@ -17,7 +18,7 @@ public class AuthProvider {
     private String provider;      // LOCAL, GOOGLE
     private String providerUid;   // Firebase UID nếu Google
     private String passwordHash;  // Chỉ cho LOCAL
-    private User user;            // Aggregation
+    private UUID user;            // Aggregation
     private LocalDateTime createdAt;
 
     public int getId() {
@@ -52,11 +53,11 @@ public class AuthProvider {
         this.passwordHash = passwordHash;
     }
 
-    public User getUser() {
+    public UUID getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UUID user) {
         this.user = user;
     }
 

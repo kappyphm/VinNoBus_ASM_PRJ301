@@ -13,6 +13,25 @@ public class Query {
     //User
     public static final String SAVE_USER = "";
 
+    //AuthProvider
+
+    public static final String SAVE_AUTH_PROVIDER = "INSERT INTO AuthProvider (user_id, provider, provider_uid, password_hash ) VALUES (?,?,?,?)";
+    public static final String UPDATE_AUTH_PROVIDER = """
+                                                  UPDATE AuthProvider SET
+                                                    user_id = ?, 
+                                                    provider = ?, 
+                                                    provider_uid = ?, 
+                                                    password_hash = ?
+                                                  WHERE
+                                                    id = ?
+                                                  """;
+    public static final String DELETE_AUTH_PROVIDER = "DELETE FROM AuthProvider WHERE id = ?";
+    public static final String DELETE_AUTH_PROVIDERS_BY_USERID = "DELETE FROM AuthProvider WHERE user_id = ?";
+    public static final String FIND_AUTH_PROVIDER_BY_ID = "SELECT * FROM AuthProvider WHERE id = ?";
+    public static final String FIND_AUTH_PROVIDERS_BY_USERID = "SELECT * FROM AuthProvider WHERE user_id = ?";
+    public static final String FIND_AUTH_PROVIDER_BY_PROVIDER_UID = "SELECT * FROM AuthProvider WHERE provider = ? AND provider_uid = ?";
+    
+
     //Customer
     public static final String ADD_CUSTOMER = "INSERT INTO Customer (user_id, customer_code, full_name, phone, address) VALUES (?,?,?,?,?)";
     public static final String UPDATE_CUSTOMER = """

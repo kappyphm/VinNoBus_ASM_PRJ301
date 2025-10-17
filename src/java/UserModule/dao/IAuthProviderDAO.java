@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 import UserModule.model.entity.AuthProvider;
+import java.util.Optional;
 
 /**
  * DAO interface for managing CRUD operations of AuthProvider. AuthProvider is
@@ -26,7 +27,7 @@ public interface IAuthProviderDAO {
      */
     void deleteByUserId(UUID userId) throws SQLException;
 
-    AuthProvider findById(int id) throws SQLException;
+    Optional<AuthProvider> findById(int id) throws SQLException;
 
     /**
      * Retrieves all AuthProviders of a User.
@@ -46,5 +47,5 @@ public interface IAuthProviderDAO {
      * @return AuthProvider object, or null if not found
      * @throws SQLException if a database access error occurs
      */
-    AuthProvider findByProviderUid(String provider, String providerUid) throws SQLException;
+    Optional<AuthProvider> findByProviderUid(String provider, String providerUid) throws SQLException;
 }
