@@ -1,9 +1,9 @@
-package dao;
+package UserModule.dao;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
-import model.entity.AuthProvider;
+import UserModule.model.entity.AuthProvider;
 
 /**
  * DAO interface for managing CRUD operations of AuthProvider. AuthProvider is

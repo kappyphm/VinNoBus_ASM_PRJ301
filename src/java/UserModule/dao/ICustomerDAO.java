@@ -1,10 +1,10 @@
-package dao;
+package UserModule.dao;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import model.entity.Customer;
+import UserModule.model.entity.Customer;
 
 /**
  * DAO interface for managing CRUD operations of Customer.

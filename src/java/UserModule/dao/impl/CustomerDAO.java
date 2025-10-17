@@ -2,18 +2,18 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package dao.impl;
+package UserModule.dao.impl;
 
-import static constant.Query.*;
+import static UserModule.constant.Query.*;
 import dal.DBContext;
-import dao.ICustomerDAO;
+import UserModule.dao.ICustomerDAO;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import model.entity.Customer;
+import UserModule.model.entity.Customer;
 
 /**
  *

@@ -2,15 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package dao.impl;
+package UserModule.dao.impl;
 
-import static constant.Query.SAVE_USER;
+import static UserModule.constant.Query.SAVE_USER;
 import dal.DBContext;
-import dao.IUserDAO;
+import UserModule.dao.IUserDAO;
 import java.sql.*;
 import java.util.List;
 import java.util.UUID;
-import model.entity.User;
+import UserModule.model.entity.User;
 
 /**
  *

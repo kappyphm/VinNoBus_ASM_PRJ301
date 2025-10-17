@@ -1,10 +1,10 @@
-package dao;
+package UserModule.dao;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import model.entity.Role;
+import UserModule.model.entity.Role;
 
 /**
  * DAO interface for managing CRUD operations of Role. Also handles User ↔ Role

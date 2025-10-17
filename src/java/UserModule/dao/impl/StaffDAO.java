@@ -2,20 +2,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package dao.impl;
+package UserModule.dao.impl;
 
-import static constant.Query.ADD_STAFF;
-import static constant.Query.DELETE_STAFF_BY_USERID;
-import static constant.Query.FIND_ALL_STAFF;
-import static constant.Query.FIND_STAFF_BY_ID;
-import static constant.Query.UPDATE_STAFF;
+import static UserModule.constant.Query.ADD_STAFF;
+import static UserModule.constant.Query.DELETE_STAFF_BY_USERID;
+import static UserModule.constant.Query.FIND_ALL_STAFF;
+import static UserModule.constant.Query.FIND_STAFF_BY_ID;
+import static UserModule.constant.Query.UPDATE_STAFF;
 import dal.DBContext;
-import dao.IStaffDAO;
+import UserModule.dao.IStaffDAO;
 import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import model.entity.Staff;
+import UserModule.model.entity.Staff;
 
 /**
  *

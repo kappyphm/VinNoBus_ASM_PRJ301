@@ -2,24 +2,24 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package dao.impl;
+package UserModule.dao.impl;
 
-import static constant.Query.ADD_ROLE;
-import static constant.Query.DELETE_ROLE;
-import static constant.Query.DELETE_USER_ROLE;
-import static constant.Query.FIND_ALL_ROLE;
-import static constant.Query.FIND_ROLES_BY_USER_ID;
-import static constant.Query.FIND_ROLE_BY_ID;
-import static constant.Query.FIND_ROLE_BY_NAME;
-import static constant.Query.UPDATE_ROLE;
+import static UserModule.constant.Query.ADD_ROLE;
+import static UserModule.constant.Query.DELETE_ROLE;
+import static UserModule.constant.Query.DELETE_USER_ROLE;
+import static UserModule.constant.Query.FIND_ALL_ROLE;
+import static UserModule.constant.Query.FIND_ROLES_BY_USER_ID;
+import static UserModule.constant.Query.FIND_ROLE_BY_ID;
+import static UserModule.constant.Query.FIND_ROLE_BY_NAME;
+import static UserModule.constant.Query.UPDATE_ROLE;
 import dal.DBContext;
-import dao.IRoleDAO;
+import UserModule.dao.IRoleDAO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import model.entity.Role;
+import UserModule.model.entity.Role;
 
 /**
  *
