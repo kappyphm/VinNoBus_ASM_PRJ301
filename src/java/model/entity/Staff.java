@@ -23,7 +23,6 @@ public class Staff {
     private String staffCode;
     private String department;
     private String position;
-    private boolean isActive;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
@@ -74,13 +73,6 @@ public class Staff {
         this.position = position;
     }
 
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
 
     public Timestamp getCreatedAt() {
         return createdAt;

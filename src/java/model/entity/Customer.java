@@ -20,7 +20,8 @@ public class Customer {
 
     private int customerId;
     private int userId;
-    private String status;
+    private int loyaltyPoints;
+    private String membershipLevel;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
@@ -47,14 +48,6 @@ public class Customer {
         this.userId = userId;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public Timestamp getCreatedAt() {
         return createdAt;
     }
@@ -71,4 +64,20 @@ public class Customer {
         this.updatedAt = updatedAt;
     }
     // endregion
+
+    public String getMembershipLevel() {
+        return membershipLevel;
+    }
+
+    public void setMembershipLevel(String membershipLevel) {
+        this.membershipLevel = membershipLevel;
+    }
+
+    public int getLoyaltyPoints() {
+        return loyaltyPoints;
+    }
+
+    public void setLoyaltyPoints(int loyaltyPoints) {
+        this.loyaltyPoints = loyaltyPoints;
+    }
 }
