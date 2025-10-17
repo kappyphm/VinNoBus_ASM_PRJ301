@@ -165,7 +165,7 @@
                 <h2>Chi tiết Xe Bus</h2>
                 <div class="detail-item"><span>Biển số xe:</span> ${bus.plateNumber}</div>
                 <div class="detail-item"><span>Sức chứa:</span> ${bus.capacity}</div>
-                <div class="detail-item"><span>Mã xe:</span> ${bus.busId}</div>
+                <div class="detail-item"><span>Bus ID:</span> ${bus.busId}</div>
                 <a class="back-btn" href="BusServlet?action=list">← Quay lại danh sách</a>
             </div>
         </main>
