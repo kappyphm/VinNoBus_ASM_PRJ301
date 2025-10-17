@@ -11,6 +11,7 @@ import dal.DBContext;
 import dao.IStaffDAO;
 import java.sql.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import model.entity.Staff;
 
@@ -59,12 +60,21 @@ public class StaffDAO extends DBContext implements IStaffDAO {
     }
 
     @Override
-    public Staff findById(int id) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Optional<Staff> findById(int id) throws SQLException {
+        Staff staff = new Staff();
+        String sql = FIND_STAFF_BY_ID;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                staff = parse(rs);
+            }
+        }
+
     }
 
     @Override
-    public Staff findByUserId(UUID userId) throws SQLException {
+    public Optional<Staff> findByUserId(UUID userId) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -73,4 +83,14 @@ public class StaffDAO extends DBContext implements IStaffDAO {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    private Staff parse(ResultSet rs) throws SQLException {
+        Staff staff = new Staff();
+        staff.setUser_id((UUID) rs.getObject("user_id"));
+        staff.setStaffCode(rs.getString("staff_code"));
+        staff.setFullName(rs.getString("full_name"));
+        staff.setPhone(rs.getString("phone"));
+        staff.setDepartment(rs.getString("department"));
+        staff.setPosition(rs.getString("position"));
+        return staff;
+    }
 }

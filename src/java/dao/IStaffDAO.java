@@ -6,6 +6,7 @@ package dao;
 
 import java.sql.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import model.entity.Staff;
 
@@ -46,7 +47,7 @@ public interface IStaffDAO {
      * @return the Staff object, or null if not found
      * @throws SQLException if a database access error occurs
      */
-    Staff findById(int id) throws SQLException;
+    Optional<Staff> findById(int id) throws SQLException;
 
     /**
      * Retrieves Staff by User ID.
@@ -55,7 +56,7 @@ public interface IStaffDAO {
      * @return the Staff object, or null if not found
      * @throws SQLException if a database access error occurs
      */
-    Staff findByUserId(UUID userId) throws SQLException;
+    Optional<Staff> findByUserId(UUID userId) throws SQLException;
 
     /**
      * Retrieves all Staff records.

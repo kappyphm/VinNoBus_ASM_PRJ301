@@ -26,7 +26,10 @@ public class Query {
                                                 user_id = ?
                                               """;
     public static final String DELETE_STAFF_BY_USERID = "DELETE FROM Staff WHERE user_id = ?";
-    public static final String FIND_STAFF_BY_ID
+    public static final String FIND_STAFF_BY_ID = "SELECT * FROM Staff WHERE user_id = ?";
+    public static final String FIND_STAFF_BY_USERID = "SELECT * FROM Staff WHERE user_id = ?";
+    public static final String FIND_ALL_STAFF = "SELECT * FROM Staff";
+    
     //Role
     public static final String ADD_ROLE = "INSERT INTO Roles(role_name) VALUES (?)";
     public static final String UPDATE_ROLE = "UPDATE Roles SET role_name=? WHERE role_id=?";
