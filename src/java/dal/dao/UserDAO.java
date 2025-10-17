@@ -5,12 +5,13 @@ import dal.exception.DataAccessException;
 import dal.sql.UserSQL;
 import java.sql.*;
 import java.util.*;
+import java.util.logging.Level;
 import model.entity.Profile;
 import model.entity.User;
 
 /**
- * DAO quản lý User. Sử dụng AbstractDAO, logging & DataAccessException chuẩn.
- * Hỗ trợ lazy-loading Profile khi cần.
+ * DAO quản lý User. Sử dụng AbstractDAO, logging & DataAccessException.
+ * lazy-loading Profile khi cần.
  */
 public class UserDAO extends AbstractDAO<User> {
 
@@ -72,7 +73,8 @@ public class UserDAO extends AbstractDAO<User> {
             u.setProfile(profile);
             return profile;
         } catch (DataAccessException e) {
-            logger.warning("Failed to load profile for userId=" + u.getUserId());
+            //logger.warning("Failed to load profile for userId=" + u.getUserId());
+            logger.log(Level.SEVERE, "Failed to load profile for userId=" + u.getUserId(), e);
             return Optional.empty();
         }
     }
