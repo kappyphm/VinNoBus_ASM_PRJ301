@@ -4,9 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * CustomerCriteria ---------------- Tiêu chí lọc, phân trang, sắp xếp cho bảng
- * customer. - Lọc theo membershipLevel, loyaltyPoints (min/max) - Phân trang và
- * sort được kế thừa từ AbstractCriteria
+ * Criteria tìm kiếm Customer. Có thể mở rộng filter thêm membershipLevel,
+ * loyaltyPoints range, active status,...
  */
 public class CustomerCriteria extends AbstractCriteria {
 
@@ -14,7 +13,6 @@ public class CustomerCriteria extends AbstractCriteria {
     private Integer minLoyaltyPoints;
     private Integer maxLoyaltyPoints;
 
-    // ----- Build WHERE clause động -----
     @Override
     public String buildWhereClause() {
         StringBuilder sb = new StringBuilder();
@@ -30,7 +28,6 @@ public class CustomerCriteria extends AbstractCriteria {
         return sb.toString();
     }
 
-    // ----- Trả về các tham số tương ứng với WHERE -----
     @Override
     public Object[] getParams() {
         List<Object> params = new ArrayList<>();
@@ -46,7 +43,7 @@ public class CustomerCriteria extends AbstractCriteria {
         return params.toArray();
     }
 
-    // ----- Getters & Setters -----
+    // Getters & Setters
     public String getMembershipLevel() {
         return membershipLevel;
     }

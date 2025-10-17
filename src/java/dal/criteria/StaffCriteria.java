@@ -4,45 +4,67 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * StaffCriteria
- * ----------------
- * Tiêu chí lọc, phân trang, sắp xếp cho bảng staff.
- * - Lọc theo staffCode, position, department
- * - Phân trang và sort được kế thừa từ AbstractCriteria
+ * Criteria tìm kiếm Staff. Có thể filter theo department, position,
+ * staffCode,...
  */
 public class StaffCriteria extends AbstractCriteria {
 
+    private String department;
+    private String position;
     private String staffCodeLike;
-    private String positionLike;
-    private String departmentLike;
 
-    // ----- Build WHERE clause động -----
     @Override
     public String buildWhereClause() {
         StringBuilder sb = new StringBuilder();
-        if (staffCodeLike != null) sb.append(" AND staff_code LIKE ?");
-        if (positionLike != null) sb.append(" AND position LIKE ?");
-        if (departmentLike != null) sb.append(" AND department LIKE ?");
+        if (department != null) {
+            sb.append(" AND department = ?");
+        }
+        if (position != null) {
+            sb.append(" AND position = ?");
+        }
+        if (staffCodeLike != null) {
+            sb.append(" AND staff_code LIKE ?");
+        }
         return sb.toString();
     }
 
-    // ----- Trả về các tham số tương ứng với WHERE -----
     @Override
     public Object[] getParams() {
         List<Object> params = new ArrayList<>();
-        if (staffCodeLike != null) params.add("%" + staffCodeLike + "%");
-        if (positionLike != null) params.add("%" + positionLike + "%");
-        if (departmentLike != null) params.add("%" + departmentLike + "%");
+        if (department != null) {
+            params.add(department);
+        }
+        if (position != null) {
+            params.add(position);
+        }
+        if (staffCodeLike != null) {
+            params.add("%" + staffCodeLike + "%");
+        }
         return params.toArray();
     }
 
-    // ----- Getters & Setters -----
-    public String getStaffCodeLike() { return staffCodeLike; }
-    public void setStaffCodeLike(String staffCodeLike) { this.staffCodeLike = staffCodeLike; }
+    // Getters & Setters
+    public String getDepartment() {
+        return department;
+    }
 
-    public String getPositionLike() { return positionLike; }
-    public void setPositionLike(String positionLike) { this.positionLike = positionLike; }
+    public void setDepartment(String department) {
+        this.department = department;
+    }
 
-    public String getDepartmentLike() { return departmentLike; }
-    public void setDepartmentLike(String departmentLike) { this.departmentLike = departmentLike; }
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public String getStaffCodeLike() {
+        return staffCodeLike;
+    }
+
+    public void setStaffCodeLike(String staffCodeLike) {
+        this.staffCodeLike = staffCodeLike;
+    }
 }

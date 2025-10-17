@@ -26,34 +26,16 @@ import java.util.Optional;
  */
 public class User {
 
-    /**
-     * Primary key of the user. Auto-incremented by database.
-     */
     private int userId;
 
-    /**
-     * Firebase UID, uniquely identifies this user from Firebase Authentication.
-     */
     private String firebaseUid;
 
-    /**
-     * Role of this user (e.g. ADMIN, STAFF, CUSTOMER).
-     */
     private String role;
 
-    /**
-     * Active state of this account. True means active.
-     */
     private boolean isActive;
 
-    /**
-     * Timestamp of when this record was created.
-     */
     private Timestamp createdAt;
 
-    /**
-     * Timestamp of the last update to this record.
-     */
     private Timestamp updatedAt;
 
     /**

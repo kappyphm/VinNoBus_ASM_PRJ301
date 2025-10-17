@@ -4,16 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * UserCriteria ---------------- Tiêu chí lọc, phân trang, sắp xếp cho bảng
- * [user]. - Lọc theo firebaseUid, role, isActive - Phân trang và sort được kế
- * thừa từ AbstractCriteria
+ * Criteria tìm kiếm User. Có thể filter theo role, isActive, firebaseUid,...
  */
 public class UserCriteria extends AbstractCriteria {
 
     private String role;
     private Boolean isActive;
 
-    // ----- Build WHERE clause động -----
     @Override
     public String buildWhereClause() {
         StringBuilder sb = new StringBuilder();
@@ -26,7 +23,6 @@ public class UserCriteria extends AbstractCriteria {
         return sb.toString();
     }
 
-    // ----- Trả về các tham số tương ứng với WHERE -----
     @Override
     public Object[] getParams() {
         List<Object> params = new ArrayList<>();
@@ -39,9 +35,7 @@ public class UserCriteria extends AbstractCriteria {
         return params.toArray();
     }
 
-    // ----- Getters & Setters -----
-
-
+    // Getters & Setters
     public String getRole() {
         return role;
     }
@@ -57,4 +51,5 @@ public class UserCriteria extends AbstractCriteria {
     public void setIsActive(Boolean isActive) {
         this.isActive = isActive;
     }
+
 }
