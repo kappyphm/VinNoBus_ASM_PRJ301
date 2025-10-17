@@ -4,10 +4,14 @@
  */
 package dao.impl;
 
+import static constant.Query.*;
 import dal.DBContext;
 import dao.ICustomerDAO;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import model.entity.Customer;
 
@@ -19,32 +23,91 @@ public class CustomerDAO extends DBContext implements ICustomerDAO {
 
     @Override
     public void save(Customer customer) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = ADD_CUSTOMER;
+        try(var ps = connection.prepareStatement(sql)) {
+            ps.setObject(1, customer.getUser());
+            ps.setString(2, customer.getCustomerCode());
+            ps.setString(3, customer.getFullName());
+            ps.setString(4, customer.getPhone());
+            ps.setString(5, customer.getAddress());
+            ps.executeUpdate();
+        }
+
     }
 
     @Override
     public void update(Customer customer) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = UPDATE_CUSTOMER;
+        try(var ps = connection.prepareStatement(sql)) {
+            ps.setString(1, customer.getCustomerCode());
+            ps.setString(2, customer.getFullName());
+            ps.setString(3, customer.getPhone());
+            ps.setString(4, customer.getAddress());
+            ps.setObject(5, customer.getUser());
+            ps.executeUpdate();
+        }
     }
 
     @Override
     public void deleteByUserId(UUID userId) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = DELETE_CUSTOMER_BY_USERID;
+        try(var ps = connection.prepareStatement(sql)) {
+            ps.setObject(1, userId);
+            ps.executeUpdate();
+        }
     }
 
     @Override
-    public Customer findById(int id) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Optional<Customer> findById(int id) throws SQLException {
+        String sql = FIND_CUSTOMER_BY_ID;
+        try(var ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            try(var rs = ps.executeQuery()) {
+                if(rs.next()) {
+                    return Optional.of(parse(rs));
+                }
+            }
+        }
+
     }
 
     @Override
-    public Customer findByUserId(UUID userId) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Optional<Customer> findByUserId(UUID userId) throws SQLException {
+        String sql = FIND_CUSTOMER_BY_USERID;
+        try(var ps = connection.prepareStatement(sql)) {
+            ps.setObject(1, userId);
+            try(var rs = ps.executeQuery()) {
+                if(rs.next()) {
+                    return Optional.of(parse(rs));
+                }
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
     public List<Customer> findAll() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = FIND_ALL_CUSTOMER;
+        try(var ps = connection.prepareStatement(sql)) {
+            try(var rs = ps.executeQuery()) {
+                List<Customer> customers = new ArrayList<>();
+                while(rs.next()) {
+                    customers.add(parse(rs));
+                }
+                return customers;
+            }
+        }
+    }
+
+    private Customer parse(ResultSet rs) throws SQLException {
+        Customer customer = new Customer();
+        customer.setId(rs.getInt("id"));
+        customer.setCustomerCode(rs.getString("customer_code"));
+        customer.setFullName(rs.getString("full_name"));
+        customer.setPhone(rs.getString("phone"));
+        customer.setAddress(rs.getString("address"));
+        customer.setUser((UUID) rs.getObject("user_id"));
+        return customer;
     }
     
 }

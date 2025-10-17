@@ -2,6 +2,7 @@ package dao;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import model.entity.Customer;
 
@@ -22,9 +23,9 @@ public interface ICustomerDAO {
      */
     void deleteByUserId(UUID userId) throws SQLException;
 
-    Customer findById(int id) throws SQLException;
+    Optional<Customer> findById(int id) throws SQLException;
 
-    Customer findByUserId(UUID userId) throws SQLException;
+    Optional<Customer> findByUserId(UUID userId) throws SQLException;
 
     List<Customer> findAll() throws SQLException;
 }

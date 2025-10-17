@@ -13,6 +13,22 @@ public class Query {
     //User
     public static final String SAVE_USER = "";
 
+    //Customer
+    public static final String ADD_CUSTOMER = "INSERT INTO Customer (user_id, customer_code, full_name, phone, address) VALUES (?,?,?,?,?)";
+    public static final String UPDATE_CUSTOMER = """
+                                                UPDATE Customer SET
+                                                  customer_code = ?, 
+                                                  full_name = ?, 
+                                                  phone = ?, 
+                                                  address = ?
+                                                WHERE
+                                                  user_id = ?
+                                                """;
+    public static final String DELETE_CUSTOMER_BY_USERID = "DELETE FROM Customer WHERE user_id = ?";
+    public static final String FIND_CUSTOMER_BY_ID = "SELECT * FROM Customer WHERE id = ?";
+    public static final String FIND_CUSTOMER_BY_USERID = "SELECT * FROM Customer WHERE user_id = ?";
+    public static final String FIND_ALL_CUSTOMER = "SELECT * FROM Customer";
+
     //Staff
     public static final String ADD_STAFF = "INSERT INTO Staff (user_id, staff_code, full_name, phone, department, position) VALUES (?,?,?,?,?,?)";
     public static final String UPDATE_STAFF = """
@@ -26,7 +42,7 @@ public class Query {
                                                 user_id = ?
                                               """;
     public static final String DELETE_STAFF_BY_USERID = "DELETE FROM Staff WHERE user_id = ?";
-    public static final String FIND_STAFF_BY_ID = "SELECT * FROM Staff WHERE user_id = ?";
+    public static final String FIND_STAFF_BY_ID = "SELECT * FROM Staff WHERE id = ?";
     public static final String FIND_STAFF_BY_USERID = "SELECT * FROM Staff WHERE user_id = ?";
     public static final String FIND_ALL_STAFF = "SELECT * FROM Staff";
     

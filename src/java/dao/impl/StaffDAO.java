@@ -6,6 +6,8 @@ package dao.impl;
 
 import static constant.Query.ADD_STAFF;
 import static constant.Query.DELETE_STAFF_BY_USERID;
+import static constant.Query.FIND_ALL_STAFF;
+import static constant.Query.FIND_STAFF_BY_ID;
 import static constant.Query.UPDATE_STAFF;
 import dal.DBContext;
 import dao.IStaffDAO;
@@ -61,26 +63,46 @@ public class StaffDAO extends DBContext implements IStaffDAO {
 
     @Override
     public Optional<Staff> findById(int id) throws SQLException {
-        Staff staff = new Staff();
+        
         String sql = FIND_STAFF_BY_ID;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                staff = parse(rs);
+                Staff staff = parse(rs);
+                return Optional.of(staff);
             }
         }
-
+        return Optional.empty();
     }
 
     @Override
     public Optional<Staff> findByUserId(UUID userId) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        String sql = FIND_STAFF_BY_ID;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setObject(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Staff staff = parse(rs);
+                return Optional.of(staff);
+            }
+        }
+        return Optional.empty();
     }
 
     @Override
     public List<Staff> findAll() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        String sql = FIND_ALL_STAFF;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            List<Staff> staffList = new java.util.ArrayList<>();
+            while (rs.next()) {
+                Staff staff = parse(rs);
+                staffList.add(staff);
+            }
+            return staffList;
+        }
     }
 
     private Staff parse(ResultSet rs) throws SQLException {
