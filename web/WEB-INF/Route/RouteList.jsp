@@ -1,8 +1,3 @@
-<%-- 
-    Document   : RouteList
-    Created on : Oct 14, 2025, 7:11:36 PM
-    Author     : Admin
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.*, RouteModule.model.Route" %>
 <!DOCTYPE html>
@@ -156,23 +151,72 @@
                 color: white;
                 pointer-events: none;
             }
-        </style>
 
+            .message {
+                text-align: center;
+                margin-bottom: 15px;
+                padding: 10px;
+                border-radius: 8px;
+                font-weight: 500;
+            }
+
+            .success {
+                background-color: #d4edda;
+                color: #155724;
+                border: 1px solid #c3e6cb;
+            }
+
+            .error {
+                background-color: #f8d7da;
+                color: #721c24;
+                border: 1px solid #f5c6cb;
+            }
+            .search-box {
+                margin-bottom: 20px;
+                display: flex;
+                justify-content: space-between; /* thêm tuyến trái - tìm kiếm phải */
+                align-items: center;
+            }
+        </style>
     </head>
     <body>
-
         <div class="container">
             <h2>📋 Danh sách tuyến xe buýt</h2>
 
+            <!-- Hiển thị thông báo -->
+            <%
+                // Lấy message từ session (sau khi redirect)
+                String message = (String) session.getAttribute("message");
+                String errorMessage = (String) session.getAttribute("errorMessage");
+
+                // Nếu không có trong session thì lấy từ request (trường hợp forward)
+                if (message == null) message = (String) request.getAttribute("message");
+                if (errorMessage == null) errorMessage = (String) request.getAttribute("errorMessage");
+
+                if (message != null) {
+            %>
+            <div class="message success"><%= message %></div>
+            <%
+                    session.removeAttribute("message"); // Xóa sau khi hiển thị
+                }
+
+                if (errorMessage != null) {
+            %>
+            <div class="message error"><%= errorMessage %></div>
+            <%
+                    session.removeAttribute("errorMessage");
+                }
+            %>
+
             <div class="search-box">
-                <form action="RouteServlet" method="get">
+                <a href="RouteServlet?action=add" class="btn btn-add">+ Thêm tuyến</a>
+                <form action="RouteServlet" method="get" style="display: flex; align-items: center; gap: 8px;">
                     <input type="hidden" name="action" value="list">
-                    <input type="text" name="search" placeholder="Tìm theo tên..." value="<%= request.getAttribute("search") == null ? "" : request.getAttribute("search") %>">
+                    <input type="text" name="search" placeholder="Tìm theo tên..."
+                           value="<%= request.getAttribute("search") == null ? "" : request.getAttribute("search") %>">
                     <button type="submit" class="btn btn-add">Tìm kiếm</button>
                 </form>
-                <a href="RouteServlet?action=add" class="btn btn-add">+ Thêm tuyến</a>
             </div>
-
             <%
                 List<Route> routes = (List<Route>) request.getAttribute("listRoutes");
                 if (routes == null || routes.isEmpty()) {
@@ -244,4 +288,3 @@
         </div>
     </body>
 </html>
-

@@ -1,16 +1,12 @@
 <%-- 
-    Document   : RouteForm
-    Created on : Oct 15, 2025, 1:00:52 PM
+    Document   : RouteAdd
+    Created on : Oct 18, 2025, 12:21:03 PM
     Author     : Admin
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="RouteModule.model.Route" %>
-<%
-    Route route = (Route) request.getAttribute("route");
-%>
 <html>
     <head>
-        <title>Chỉnh Sửa Tuyến</title>
+        <title>Thêm Tuyến Mới</title>
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -40,14 +36,14 @@
                 font-size: 15px;
             }
             button {
-                background: #007bff;
+                background: #28a745;
                 color: white;
                 border: none;
                 border-radius: 8px;
                 cursor: pointer;
             }
             button:hover {
-                background: #0069d9;
+                background: #218838;
             }
             a {
                 text-decoration: none;
@@ -82,9 +78,7 @@
     </head>
     <body>
         <div class="container">
-            <h2>✏️ Chỉnh Sửa Tuyến</h2>
-
-            <%-- ✅ Hiển thị thông báo --%>
+            <h2>➕ Thêm Tuyến Mới</h2>
             <%
                 String message = (String) session.getAttribute("message");
                 String error = (String) request.getAttribute("errorMessage");
@@ -100,26 +94,20 @@
             <%
                 }
             %>
-
-            <form action="RouteServlet?action=update" method="post">
-                <input type="hidden" name="routeId" value="<%= route != null ? route.getRouteId() : "" %>">
-
+            <form action="RouteServlet?action=add" method="post">
                 <label>Tên tuyến:</label>
-                <input type="text" name="routeName" value="<%= route != null ? route.getRouteName() : "" %>" >
-
+                <input type="text" name="routeName" required>
                 <label>Loại tuyến:</label>
-                <select name="type" >
-                    <option value="CIRCULAR" <%= route != null && "CIRCULAR".equals(route.getType()) ? "selected" : "" %>>CIRCULAR</option>
-                    <option value="ROUND_TRIP" <%= route != null && "ROUND_TRIP".equals(route.getType()) ? "selected" : "" %>>ROUND_TRIP</option>
+                <select name="type" required>
+                    <option value="">-- Chọn loại --</option>
+                    <option value="CIRCULAR">CIRCULAR</option>
+                    <option value="ROUND_TRIP">ROUND_TRIP</option>
                 </select>
-
                 <label>Tần suất (chuyến/ngày):</label>
-                <input type="number" name="frequency" min="1" value="<%= route != null ? route.getFrequency() : "" %>" >
-
-                <button type="submit">Cập Nhật Tuyến</button>
+                <input type="number" name="frequency" min="1" required>
+                <button type="submit">Thêm Tuyến</button>
                 <a href="RouteServlet?action=list">⬅ Quay lại danh sách</a>
             </form>
         </div>
     </body>
 </html>
-
