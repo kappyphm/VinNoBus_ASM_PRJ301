@@ -28,7 +28,7 @@ public class User {
 
     private int userId;
 
-    private String firebaseUid;
+    private String sub;
 
     private String role;
 
@@ -50,18 +50,8 @@ public class User {
     public User() {
     }
 
-    /**
-     * Full constructor.
-     */
-    public User(int userId, String firebaseUid, String role, boolean isActive,
-            Timestamp createdAt, Timestamp updatedAt) {
-        this.userId = userId;
-        this.firebaseUid = firebaseUid;
-        this.role = role;
-        this.isActive = isActive;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
+
+
 
     // region Getters and Setters
     public int getUserId() {
@@ -72,13 +62,15 @@ public class User {
         this.userId = userId;
     }
 
-    public String getFirebaseUid() {
-        return firebaseUid;
+    public String getSub() {
+        return sub;
     }
 
-    public void setFirebaseUid(String firebaseUid) {
-        this.firebaseUid = firebaseUid;
+    public void setSub(String sub) {
+        this.sub = sub;
     }
+
+    
 
     public String getRole() {
         return role;
