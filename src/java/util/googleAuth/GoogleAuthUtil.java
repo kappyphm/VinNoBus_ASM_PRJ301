@@ -11,34 +11,66 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.entity.GoogleUserProfile;
 
 /**
- * Tiện ích xác thực người dùng bằng Google OAuth 2.0. Hỗ trợ luồng
- * Authorization Code để lấy id_token và trích xuất thông tin user.
+ * Utility class for authenticating users via Google OAuth 2.0. Loads client
+ * credentials from a .properties file and verifies ID tokens.
  */
 public final class GoogleAuthUtil {
 
-    // --- CẤU HÌNH ---
-    private static final String CLIENT_ID = "108530769869-h4fkmloblr6vgfgvn8j4eol1kbsm9h4s.apps.googleusercontent.com";
-    private static final String CLIENT_SECRET = "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";
-    private static final String REDIRECT_URI = "http://localhost:9999/FirebaseAuth/oauth2callback";
+    private static final Logger LOGGER = Logger.getLogger(GoogleAuthUtil.class.getName());
 
     private static final String AUTH_ENDPOINT = "https://accounts.google.com/o/oauth2/v2/auth";
     private static final String TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token";
     private static final String TOKEN_INFO_ENDPOINT = "https://oauth2.googleapis.com/tokeninfo";
 
-    // Logger chuẩn
-    private static final Logger LOGGER = Logger.getLogger(GoogleAuthUtil.class.getName());
+    // Loaded from google-oauth.properties
+    private static String CLIENT_ID;
+    private static String CLIENT_SECRET;
+    private static String REDIRECT_URI;
 
-    // Ngăn tạo instance
+    static {
+        loadConfig();
+    }
+
     private GoogleAuthUtil() {
     }
 
     /**
-     * Xây dựng URL đăng nhập Google.
+     * Loads client_id, client_secret, and redirect_uri from
+     * google-oauth.properties.
+     */
+    private static void loadConfig() {
+        try (InputStream is = GoogleAuthUtil.class.getClassLoader().getResourceAsStream("../GoogleAuth.properties")) {
+            if (is == null) {
+                throw new IOException("Missing google-oauth.properties in classpath.");
+            }
+
+            Properties props = new Properties();
+            props.load(is);
+
+            CLIENT_ID = props.getProperty("google.client.id");
+            CLIENT_SECRET = props.getProperty("google.client.secret");
+            REDIRECT_URI = props.getProperty("google.redirect.uri");
+
+            if (CLIENT_ID == null || CLIENT_SECRET == null || REDIRECT_URI == null) {
+                throw new IOException("Missing required properties in google-oauth.properties.");
+            }
+
+            LOGGER.info("✅ Google OAuth configuration loaded successfully.");
+
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "❌ Failed to load Google OAuth configuration.", e);
+        }
+    }
+
+    /**
+     * Builds the Google authorization URL to redirect the user to the login
+     * page.
      */
     public static String buildAuthorizationUrl(String state) {
         return AUTH_ENDPOINT
@@ -51,9 +83,9 @@ public final class GoogleAuthUtil {
     }
 
     /**
-     * Gửi authorization code lên Google để lấy id_token.
+     * Exchanges the authorization code for an ID token.
      *
-     * @throws GoogleAuthException nếu không thể lấy token
+     * @throws GoogleAuthException if the token exchange fails.
      */
     public static String getIdToken(String code) throws GoogleAuthException {
         try {
@@ -76,8 +108,8 @@ public final class GoogleAuthUtil {
             int responseCode = conn.getResponseCode();
             if (responseCode != 200) {
                 String error = new String(conn.getErrorStream().readAllBytes(), StandardCharsets.UTF_8);
-                LOGGER.log(Level.SEVERE, "Google token API trả về lỗi: {0}", error);
-                throw new GoogleAuthException("Không thể lấy id_token từ Google. Mã lỗi: " + responseCode);
+                LOGGER.log(Level.SEVERE, "Google Token API returned error: {0}", error);
+                throw new GoogleAuthException("Failed to obtain id_token from Google. HTTP " + responseCode);
             }
 
             String responseBody = new String(conn.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
@@ -85,25 +117,25 @@ public final class GoogleAuthUtil {
                 JsonObject json = reader.readObject();
                 String idToken = json.getString("id_token", null);
                 if (idToken == null) {
-                    throw new GoogleAuthException("Phản hồi không chứa id_token hợp lệ.");
+                    throw new GoogleAuthException("Response does not contain a valid id_token.");
                 }
                 return idToken;
             }
 
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Lỗi khi gửi yêu cầu lấy id_token", e);
-            throw new GoogleAuthException("Không thể kết nối đến Google để lấy id_token.", e);
+            LOGGER.log(Level.SEVERE, "Error while requesting id_token from Google", e);
+            throw new GoogleAuthException("Unable to connect to Google Token API.", e);
         }
     }
 
     /**
-     * Xác minh id_token và lấy thông tin người dùng.
+     * Verifies the given ID token and extracts the user profile.
      *
-     * @throws GoogleAuthException nếu token không hợp lệ
+     * @throws GoogleAuthException if verification fails.
      */
     public static GoogleUserProfile verifyAndExtractUserProfile(String idToken) throws GoogleAuthException {
         if (idToken == null || idToken.isEmpty()) {
-            throw new GoogleAuthException("id_token rỗng hoặc không hợp lệ.");
+            throw new GoogleAuthException("id_token is null or empty.");
         }
 
         try {
@@ -116,14 +148,12 @@ public final class GoogleAuthUtil {
                 String aud = info.getString("aud", "");
                 String iss = info.getString("iss", "");
 
-                // Xác minh token
                 if (!CLIENT_ID.equals(aud)
                         || !(iss.equals("https://accounts.google.com") || iss.equals("accounts.google.com"))) {
-                    LOGGER.log(Level.WARNING, "Token không hợp lệ: sai aud hoặc iss. aud={0}, iss={1}", new Object[]{aud, iss});
-                    throw new GoogleAuthException("Token không hợp lệ: aud/iss sai.");
+                    LOGGER.log(Level.WARNING, "Invalid token: wrong aud or iss. aud={0}, iss={1}", new Object[]{aud, iss});
+                    throw new GoogleAuthException("Invalid token: aud/iss mismatch.");
                 }
 
-                // Trích xuất thông tin user
                 String sub = info.getString("sub", null);
                 String email = info.getString("email", null);
                 String name = info.getString("name", "User");
@@ -136,8 +166,8 @@ public final class GoogleAuthUtil {
             }
 
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Lỗi khi xác minh id_token", e);
-            throw new GoogleAuthException("Không thể xác minh id_token với Google.", e);
+            LOGGER.log(Level.SEVERE, "Error verifying id_token with Google", e);
+            throw new GoogleAuthException("Failed to verify id_token with Google.", e);
         }
     }
 }
