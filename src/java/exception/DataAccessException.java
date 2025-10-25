@@ -1,4 +1,4 @@
-package dal.exception;
+package exception;
 
 /**
  * DataAccessException ------------------- Exception runtime chung cho tầng DAO.
