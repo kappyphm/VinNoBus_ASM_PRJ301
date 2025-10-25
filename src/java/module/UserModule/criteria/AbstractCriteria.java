@@ -1,4 +1,4 @@
-package dal.criteria;
+package module.UserModule.criteria;
 
 /**
  * AbstractCriteria ----------------- Lớp cha trừu tượng cho tất cả tiêu chí

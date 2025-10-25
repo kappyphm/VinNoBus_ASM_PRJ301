@@ -1,4 +1,4 @@
-package service;
+package module.UserModule.service;
 
 import dal.DBContext;
 import java.sql.Connection;

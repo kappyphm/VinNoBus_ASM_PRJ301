@@ -3,21 +3,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller;
+package module.UserModule.controller;
 
-import dal.dao.UserDAO;
+import module.UserModule.dao.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.dto.ProfileDTO;
+import module.UserModule.model.dto.ProfileDTO;
 
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import service.ProfileService;
-import service.UserService;
+import module.UserModule.service.ProfileService;
+import module.UserModule.service.UserService;
 
 /**
  *

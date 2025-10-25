@@ -1,17 +1,17 @@
-package service;
+package module.UserModule.service;
 
-import dal.dao.ProfileDAO;
-import dal.dao.UserDAO;
+import module.UserModule.dao.ProfileDAO;
+import module.UserModule.dao.UserDAO;
 import exception.AuthException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.entity.GoogleUserProfile;
-import model.entity.Profile;
-import model.entity.User;
-import model.input.UserProfileInput;
+import module.UserModule.model.entity.GoogleUserProfile;
+import module.UserModule.model.entity.Profile;
+import module.UserModule.model.entity.User;
+import module.UserModule.model.input.UserProfileInput;
 
 public class AuthService extends BaseService {
 

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package module.UserModule.controller;
 
 import exception.AuthException;
 import jakarta.servlet.ServletException;
@@ -11,8 +11,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import model.input.UserProfileInput;
-import service.AuthService;
+import module.UserModule.model.input.UserProfileInput;
+import module.UserModule.service.AuthService;
 
 /**
  *

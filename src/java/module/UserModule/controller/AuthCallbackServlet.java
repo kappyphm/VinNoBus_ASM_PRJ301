@@ -1,4 +1,4 @@
-package controller;
+package module.UserModule.controller;
 
 import exception.AuthException;
 import jakarta.servlet.*;
@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.entity.GoogleUserProfile;
-import model.entity.User;
-import service.AuthService;
+import module.UserModule.model.entity.GoogleUserProfile;
+import module.UserModule.model.entity.User;
+import module.UserModule.service.AuthService;
 import util.googleAuth.GoogleAuthException;
 import util.googleAuth.GoogleAuthUtil;
 

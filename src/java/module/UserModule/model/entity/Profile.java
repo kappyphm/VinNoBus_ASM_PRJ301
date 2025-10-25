@@ -1,4 +1,4 @@
-package model.entity;
+package module.UserModule.model.entity;
 
 import java.sql.Date;
 import java.sql.Timestamp;

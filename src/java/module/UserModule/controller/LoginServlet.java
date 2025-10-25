@@ -1,4 +1,4 @@
-package controller;
+package module.UserModule.controller;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.*;

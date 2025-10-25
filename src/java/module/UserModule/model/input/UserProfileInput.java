@@ -1,26 +1,27 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package model.dto;
+package module.UserModule.model.input;
 
-import java.util.Date;
+public class UserProfileInput {
 
-/**
- *
- * @author kappyphm
- */
-public class ProfileDTO {
-    
     private String userId;
     private String fullName;
     private String email;
     private String phone;
     private String address;
-    private Date dateOfBirth;
     private String avatarUrl;
+    private String dateOfBirth;
 
-    public ProfileDTO() {
+    public UserProfileInput() {
+    }
+
+    public UserProfileInput(String userId, String fullName, String email, String phone, String address, String avatarUrl,
+            String dateOfBirth) {
+        this.userId = userId;
+        this.fullName = fullName;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
+        this.avatarUrl = avatarUrl;
+        this.dateOfBirth = dateOfBirth;
     }
 
     public String getUserId() {
@@ -63,20 +64,20 @@ public class ProfileDTO {
         this.address = address;
     }
 
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
     public String getAvatarUrl() {
         return avatarUrl;
     }
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
 }

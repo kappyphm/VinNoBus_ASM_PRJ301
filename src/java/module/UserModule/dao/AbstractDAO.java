@@ -1,6 +1,6 @@
-package dal.dao;
+package module.UserModule.dao;
 
-import dal.criteria.AbstractCriteria;
+import module.UserModule.criteria.AbstractCriteria;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;

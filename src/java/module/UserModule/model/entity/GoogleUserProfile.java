@@ -1,4 +1,4 @@
-package model.entity;
+package module.UserModule.model.entity;
 
 public class GoogleUserProfile {
 

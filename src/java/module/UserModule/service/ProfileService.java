@@ -2,13 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package service;
+package module.UserModule.service;
 
-import dal.dao.ProfileDAO;
+import module.UserModule.dao.ProfileDAO;
 import java.util.Date;
 import java.util.Optional;
-import model.dto.ProfileDTO;
-import model.entity.Profile;
+import module.UserModule.model.dto.ProfileDTO;
+import module.UserModule.model.entity.Profile;
 
 /**
  *
