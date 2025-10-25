@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import module.UserModule.model.entity.GoogleUserProfile;
+import module.auth.model.entity.GoogleUserProfile;
 
 /**
  * Utility class for authenticating users via Google OAuth 2.0. Loads client
