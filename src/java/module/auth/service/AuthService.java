@@ -1,4 +1,4 @@
-package module.user.service;
+package module.auth.service;
 
 import module.core.BaseService;
 import module.user.dao.ProfileDAO;

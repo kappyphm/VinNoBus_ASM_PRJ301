@@ -5,19 +5,15 @@
 
 package module.user.controller;
 
-import module.auth.dao.UserDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import module.user.model.dto.ProfileDTO;
-
 import java.io.IOException;
 import java.util.logging.Logger;
-
+import module.user.model.dto.ProfileDTO;
 import module.user.service.ProfileService;
-import module.user.service.UserService;
 
 /**
  *
@@ -27,7 +23,6 @@ import module.user.service.UserService;
 public class ProfileServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(ProfileServlet.class.getName());
-    private UserService userService = new UserService();
     private ProfileService profileService = new ProfileService();
 
     @Override

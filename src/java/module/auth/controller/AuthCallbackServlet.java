@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import module.auth.model.entity.GoogleUserProfile;
 import module.auth.model.entity.User;
-import module.user.service.AuthService;
+import module.auth.service.AuthService;
 import util.googleAuth.GoogleAuthException;
 import util.googleAuth.GoogleAuthUtil;
 
