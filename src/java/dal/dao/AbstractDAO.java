@@ -4,6 +4,7 @@ import dal.criteria.AbstractCriteria;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,7 +15,7 @@ import java.util.logging.Logger;
  *
  * @param <T>
  */
-public abstract class AbstractDAO<T> {
+public abstract class AbstractDAO<T, ID> {
 
     protected Connection connection;
 
@@ -25,6 +26,8 @@ public abstract class AbstractDAO<T> {
 
     // --- Abstract methods cần triển khai cho từng entity cụ thể ---
     protected abstract T mapResultSetToEntity(ResultSet rs) throws SQLException;
+
+    protected abstract ID extractGeneratedKey(ResultSet rs) throws SQLException;
 
     protected abstract String getTableName();
 
@@ -58,57 +61,82 @@ public abstract class AbstractDAO<T> {
     /**
      * Tìm theo ID
      */
-    public T findById(Object id) {
+    public Optional<T> findById(ID id) {
         String sql = "SELECT * FROM " + getTableName() + " WHERE " + getPrimaryKeyColumn() + " = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setObject(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return mapResultSetToEntity(rs);
+                return Optional.of(mapResultSetToEntity(rs));
             }
         } catch (SQLException ex) {
             Logger.getLogger(AbstractDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return Optional.empty();
+    }
+
+    protected Optional<T> findByColumn(String column, Object value) {
+        String sql = "SELECT * FROM " + getTableName() + " WHERE " + column + " = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, value);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return Optional.of(mapResultSetToEntity(rs));
+            }
+        } catch (SQLException e) {
+            Logger.getLogger(AbstractDAO.class.getName()).log(Level.SEVERE, null, e);
+        }
+        return Optional.empty();
     }
 
     /**
      * Thêm mới bản ghi
      */
-    public boolean insert(T entity) {
+    public Optional<ID> insert(T entity) {
         try (PreparedStatement stmt = prepareInsertStatement(entity, connection)) {
-            return stmt.executeUpdate() > 0;
+            ResultSet rs = stmt.executeQuery();
+            ID generatedId = extractGeneratedKey(rs);
+            return Optional.ofNullable(generatedId);
         } catch (SQLException ex) {
             Logger.getLogger(AbstractDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+            return Optional.empty();
         }
     }
 
     /**
      * Cập nhật bản ghi
      */
-    public boolean update(T entity) {
+    public Optional<ID> update(T entity) {
         try (PreparedStatement stmt = prepareUpdateStatement(entity, connection)) {
-            return stmt.executeUpdate() > 0;
+            ResultSet rs = stmt.executeQuery();
+            ID updatedId = extractGeneratedKey(rs);
+            return Optional.ofNullable(updatedId);
         } catch (SQLException ex) {
             Logger.getLogger(AbstractDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
         }
+        return Optional.empty();
     }
 
     /**
      * Xóa theo ID
      */
-    public boolean delete(Object id) {
-        String sql = "DELETE FROM " + getTableName() + " WHERE " + getPrimaryKeyColumn() + " = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setObject(1, id);
-            return stmt.executeUpdate() > 0;
-        } catch (SQLException ex) {
-            Logger.getLogger(AbstractDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
+    public Optional<ID> delete(Object id) {
+    String sql = "DELETE FROM " + getTableName() + " " +
+                 "OUTPUT deleted." + getPrimaryKeyColumn() + " " +
+                 "WHERE " + getPrimaryKeyColumn() + " = ?";
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setObject(1, id);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            ID deletedId = extractGeneratedKey(rs);
+            return Optional.ofNullable(deletedId);
         }
+    } catch (SQLException ex) {
+        Logger.getLogger(AbstractDAO.class.getName()).log(Level.SEVERE, null, ex);
     }
+    return Optional.empty();
+}
+
 
     // ================================================================
     // ==                     CRITERIA QUERIES                       ==

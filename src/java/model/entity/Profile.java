@@ -1,5 +1,6 @@
 package model.entity;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 /**
@@ -19,14 +20,13 @@ import java.sql.Timestamp;
  */
 public class Profile {
 
-    private int profileId;
     private int userId;
     private String fullName;
     private String email;
     private String phone;
     private String address;
     private String avatarUrl;
-    private Timestamp dateOfBirth;
+    private Date dateOfBirth;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
@@ -37,13 +37,7 @@ public class Profile {
     }
 
     // region Getters and Setters
-    public int getProfileId() {
-        return profileId;
-    }
 
-    public void setProfileId(int profileId) {
-        this.profileId = profileId;
-    }
 
     public int getUserId() {
         return userId;
@@ -93,11 +87,11 @@ public class Profile {
         this.avatarUrl = avatarUrl;
     }
 
-    public Timestamp getDateOfBirth() {
+    public Date getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Timestamp dateOfBirth) {
+    public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -116,5 +110,5 @@ public class Profile {
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
-    // endregion
+
 }
