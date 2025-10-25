@@ -4,17 +4,12 @@
  */
 package service;
 
-import dal.dao.UserDAO;
-
 /**
  *
  * @author kappyphm
  */
-public class UserService extends BaseService{
+public class UserService extends BaseService {
 
-    private UserDAO userDAO = new UserDAO(getConnection());
 
-    
 
-    
 }

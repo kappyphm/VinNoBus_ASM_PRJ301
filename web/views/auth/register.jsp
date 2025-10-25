@@ -34,7 +34,7 @@
 
                 <!-- user sub -->
                 <div>
-                    <input type="hidden" name="googleSub" value="${sessionScope.googleProfile.sub}">
+                    <input type="hidden" name="googleSub" value="${sessionScope.googleProfile.userId}">
                 </div>
 
                 <!-- Full Name -->

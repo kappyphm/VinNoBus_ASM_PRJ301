@@ -38,11 +38,11 @@ public class RegisterServlet extends HttpServlet {
         String address = req.getParameter("address");
         String dateOfBirth = req.getParameter("dateOfBirth");
         String avatarUrl = req.getParameter("pictureUrl");
-        String sub = req.getParameter("googleSub");
+        String userId = req.getParameter("googleSub");
 
 
         UserProfileInput profileInput = new UserProfileInput(
-                sub,
+                userId,
                 fullName,
                 email,
                 phone,
@@ -54,7 +54,7 @@ public class RegisterServlet extends HttpServlet {
         try {
             authService.register(profileInput);
             //set user_sub in session
-            req.getSession().setAttribute("user_sub", sub);
+            req.getSession().setAttribute("user_id", userId);
             resp.sendRedirect(req.getContextPath() + "/login");
         } catch (AuthException e) {
             req.setAttribute("errorMessage", "Registration failed: " + e.getMessage());

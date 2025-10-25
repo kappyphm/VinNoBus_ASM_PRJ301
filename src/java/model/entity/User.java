@@ -26,9 +26,7 @@ import java.util.Optional;
  */
 public class User {
 
-    private int userId;
-
-    private String sub;
+    private String userId;
 
     private String role;
 
@@ -50,27 +48,14 @@ public class User {
     public User() {
     }
 
-
-
-
     // region Getters and Setters
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
-
-    public String getSub() {
-        return sub;
-    }
-
-    public void setSub(String sub) {
-        this.sub = sub;
-    }
-
-    
 
     public String getRole() {
         return role;

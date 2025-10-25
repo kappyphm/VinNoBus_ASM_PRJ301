@@ -53,7 +53,7 @@ public class AuthCallbackServlet extends HttpServlet {
 
             // if user is present, log them in; else redirect to registration
             if (user.isPresent()) {
-                request.getSession().setAttribute("user_sub", user.get().getSub());
+                request.getSession().setAttribute("user_id", user.get().getUserId());
                 LOGGER.log(Level.INFO, "User logged in successfully: {0}", user.get().getUserId());
                 response.sendRedirect(request.getContextPath() + "/profile");
             } else {

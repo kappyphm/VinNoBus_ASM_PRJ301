@@ -19,7 +19,7 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
 
         //Check user is login
-        if (request.getSession().getAttribute("user_sub") != null) {
+        if (request.getSession().getAttribute("user_id") != null) {
             LOGGER.info("User already logged in, redirecting to profile.");
             response.sendRedirect(request.getContextPath() + "/profile");
             return;

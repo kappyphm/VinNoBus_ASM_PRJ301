@@ -2,7 +2,7 @@ package model.entity;
 
 public class GoogleUserProfile {
 
-    private final String sub;
+    private final String userId;
     private final String email;
     private final String name;
     private final String picture;
@@ -10,9 +10,9 @@ public class GoogleUserProfile {
     private final String familyName;
     private final String locale;
 
-    public GoogleUserProfile(String sub, String email, String name,
+    public GoogleUserProfile(String userId, String email, String name,
             String picture, String givenName, String familyName, String locale) {
-        this.sub = sub;
+        this.userId = userId;
         this.email = email;
         this.name = name;
         this.picture = picture;
@@ -21,10 +21,10 @@ public class GoogleUserProfile {
         this.locale = locale;
     }
 
-    public String getSub() {
-        return sub;
+    public String getUserId() {
+        return userId;
     }
-
+    
     public String getEmail() {
         return email;
     }

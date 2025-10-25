@@ -20,7 +20,7 @@ import java.sql.Timestamp;
  */
 public class Profile {
 
-    private int userId;
+    private String userId;
     private String fullName;
     private String email;
     private String phone;
@@ -39,11 +39,11 @@ public class Profile {
     // region Getters and Setters
 
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 

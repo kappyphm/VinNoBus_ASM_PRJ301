@@ -5,7 +5,7 @@
 
 -- Xóa bảng theo đúng thứ tự quan hệ
 IF OBJECT_ID('dbo.staff', 'U') IS NOT NULL DROP TABLE dbo.staff;
-IF OBJECT_ID('dbo.customer', 'U') IS NOT NULL DROP TABLE dbo.customer;
+IF OBJECT_ID('dbo.customer', 'U'	) IS NOT NULL DROP TABLE dbo.customer;
 IF OBJECT_ID('dbo.profile', 'U') IS NOT NULL DROP TABLE dbo.profile;
 IF OBJECT_ID('dbo.[user]', 'U') IS NOT NULL DROP TABLE dbo.[user];
 GO
@@ -14,8 +14,7 @@ GO
 -- 1️⃣ USER TABLE
 -- ==========================================================
 CREATE TABLE dbo.[user] (
-    user_id INT IDENTITY(1,1),
-    sub VARCHAR(128) NOT NULL UNIQUE,
+    user_id VARCHAR(128) NOT NULL UNIQUE,
     role VARCHAR(20) NOT NULL 
         CHECK (role IN ('ADMIN', 'STAFF', 'CUSTOMER')) 
         DEFAULT 'CUSTOMER',
@@ -44,8 +43,7 @@ GO
 -- 2️⃣ PROFILE TABLE
 -- ==========================================================
 CREATE TABLE dbo.profile (
-    profile_id INT IDENTITY(1,1),
-    user_id INT NOT NULL UNIQUE,
+    user_id VARCHAR(128) NOT NULL UNIQUE,
     full_name NVARCHAR(255) NULL,
     birth_date DATE NULL,
     phone VARCHAR(20) NULL,
@@ -54,7 +52,7 @@ CREATE TABLE dbo.profile (
     avatar_url VARCHAR(255) NULL,
     created_at DATETIME NOT NULL DEFAULT GETDATE(),
     updated_at DATETIME NOT NULL DEFAULT GETDATE(),
-    CONSTRAINT pk_profile PRIMARY KEY (profile_id),
+    CONSTRAINT pk_profile PRIMARY KEY (user_id),
     CONSTRAINT fk_profile_user FOREIGN KEY (user_id)
         REFERENCES dbo.[user](user_id)
         ON DELETE CASCADE
@@ -70,7 +68,7 @@ BEGIN
     UPDATE p
     SET p.updated_at = GETDATE()
     FROM dbo.profile p
-    INNER JOIN inserted i ON p.profile_id = i.profile_id;
+    INNER JOIN inserted i ON p.user_id = i.user_id;
 END;
 GO
 
@@ -79,7 +77,7 @@ GO
 -- ==========================================================
 CREATE TABLE dbo.customer (
     customer_id INT IDENTITY(1,1),
-    user_id INT NOT NULL UNIQUE,
+    user_id VARCHAR(128) NOT NULL UNIQUE,
     membership_level VARCHAR(50) NOT NULL DEFAULT 'STANDARD',
     loyalty_points INT NOT NULL DEFAULT 0,
     created_at DATETIME NOT NULL DEFAULT GETDATE(),
@@ -109,7 +107,7 @@ GO
 -- ==========================================================
 CREATE TABLE dbo.staff (
     staff_id INT IDENTITY(1,1),
-    user_id INT NOT NULL UNIQUE,
+    user_id VARCHAR(128) NOT NULL UNIQUE,
     staff_code VARCHAR(50) NOT NULL,
     position NVARCHAR(100) NULL,
     department NVARCHAR(100) NULL,

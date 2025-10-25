@@ -24,13 +24,13 @@ public class AuthService extends BaseService {
 
         try {
 
-            Optional<User> existingUserOpt = userDAO.findBySub(profile.getSub());
+            Optional<User> existingUserOpt = userDAO.findById(profile.getUserId());
 
             if (existingUserOpt.isPresent()) {
-                LOGGER.log(Level.INFO, "Existing user found for sub: {0}", profile.getSub());
+                LOGGER.log(Level.INFO, "Existing user found for sub: {0}", profile.getUserId());
                 return existingUserOpt;
             } else {
-                LOGGER.log(Level.INFO, "No existing user found. Creating new user for sub: {0}", profile.getSub());
+                LOGGER.log(Level.INFO, "No existing user found. Creating new user for sub: {0}", profile.getUserId());
                 return Optional.empty();
             }
 
@@ -45,36 +45,26 @@ public class AuthService extends BaseService {
             beginTransaction();
 
             User newUser = new User();
-            newUser.setSub(profileInput.getSub());
+            newUser.setUserId(profileInput.getUserId());
             newUser.setRole("CUSTOMER");
 
-            Optional<Integer> newUserIdOpt = userDAO.insert(newUser);
-            if (!newUserIdOpt.isPresent()) {
-                throw new AuthException("Failed to create new user.");
-            }
+            userDAO.insert(newUser);
 
             Profile newProfile = new Profile();
-            newProfile.setUserId(newUserIdOpt.get());
+            newProfile.setUserId(profileInput.getUserId());
             newProfile.setFullName(profileInput.getFullName());
             newProfile.setEmail(profileInput.getEmail());
             newProfile.setPhone(profileInput.getPhone());
             newProfile.setAddress(profileInput.getAddress());
             newProfile.setAvatarUrl(profileInput.getAvatarUrl());
             newProfile.setDateOfBirth(Date.valueOf(profileInput.getDateOfBirth()));
-            Optional<Integer> newProfileIdOpt = profileDAO.insert(newProfile);
-            if (!newProfileIdOpt.isPresent()) {
-                throw new AuthException("Failed to create user profile.");
-            }
+            profileDAO.insert(newProfile);
 
             commitTransaction();
         } catch (SQLException e) {
             rollbackTransaction();
             LOGGER.log(Level.SEVERE, "Error during registration: " + e.getMessage(), e);
             throw new AuthException("Registration failed due to a database error: " + e.getMessage(), e);
-        } catch (AuthException e) {
-            rollbackTransaction();
-            LOGGER.log(Level.SEVERE, "AuthException during registration: " + e.getMessage(), e);
-            throw e;
         } catch (Exception e) {
             rollbackTransaction();
             LOGGER.log(Level.SEVERE, "Unexpected error during registration: " + e.getMessage(), e);
