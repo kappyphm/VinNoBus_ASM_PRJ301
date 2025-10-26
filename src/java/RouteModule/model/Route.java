@@ -1,11 +1,16 @@
 package RouteModule.model;
 
+import StationModule.model.Station;
+import java.util.List;
+
 public class Route {
 
     private int routeId;
     private String routeName;
     private String type;
     private int frequency;
+    private List<Station> stations;
+    private int estimatedTime;
 
     public Route() {
     }
@@ -15,6 +20,15 @@ public class Route {
         this.routeName = routeName;
         this.type = type;
         this.frequency = frequency;
+    }
+
+    public Route(int routeId, String routeName, String type, int frequency, List<Station> stations, int estimatedTime) {
+        this.routeId = routeId;
+        this.routeName = routeName;
+        this.type = type;
+        this.frequency = frequency;
+        this.stations = stations;
+        this.estimatedTime = estimatedTime;
     }
 
     public int getRouteId() {
@@ -47,6 +61,22 @@ public class Route {
 
     public void setFrequency(int frequency) {
         this.frequency = frequency;
+    }
+
+    public List<Station> getStations() {
+        return stations;
+    }
+
+    public void setStations(List<Station> stations) {
+        this.stations = stations;
+    }
+
+    public int getEstimatedTime() {
+        return estimatedTime;
+    }
+
+    public void setEstimatedTime(int estimatedTime) {
+        this.estimatedTime = estimatedTime;
     }
 
 }
