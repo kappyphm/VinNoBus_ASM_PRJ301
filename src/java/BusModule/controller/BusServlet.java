@@ -319,7 +319,6 @@ public class BusServlet extends HttpServlet {
         } else {
             request.setAttribute("message", "🔍 Tìm thấy " + list.size() + " xe bus phù hợp.");
         }
-
         request.getRequestDispatcher("/WEB-INF/Bus/BusList.jsp").forward(request, response);
     }
 
