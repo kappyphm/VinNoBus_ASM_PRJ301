@@ -55,11 +55,11 @@ public class AuthCallbackServlet extends HttpServlet {
             if (user.isPresent()) {
                 request.getSession().setAttribute("user_id", user.get().getUserId());
                 LOGGER.log(Level.INFO, "User logged in successfully: {0}", user.get().getUserId());
-                response.sendRedirect(request.getContextPath() + "/profile");
+                response.sendRedirect(request.getContextPath() + "/user/profile");
             } else {
                 LOGGER.info("No existing user found, redirecting to registration.");
                 request.getSession().setAttribute("googleProfile", profile);
-                response.sendRedirect(request.getContextPath() + "/register");
+                response.sendRedirect(request.getContextPath() + "/auth/register");
             }
 
         } catch (GoogleAuthException e) {

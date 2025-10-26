@@ -19,7 +19,7 @@ import module.user.service.ProfileService;
  *
  * @author kappyphm
  */
-@WebServlet(name="ProfileServlet", urlPatterns={"/profile"})
+@WebServlet(name="ProfileServlet", urlPatterns={"/user/profile"})
 public class ProfileServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(ProfileServlet.class.getName());

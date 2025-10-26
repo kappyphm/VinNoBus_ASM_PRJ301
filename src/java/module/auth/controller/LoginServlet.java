@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.googleAuth.GoogleAuthUtil;
 
-@WebServlet("/login")
+@WebServlet("/auth/login")
 public class LoginServlet extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(LoginServlet.class.getName());
@@ -21,7 +21,7 @@ public class LoginServlet extends HttpServlet {
         //Check user is login
         if (request.getSession().getAttribute("user_id") != null) {
             LOGGER.info("User already logged in, redirecting to profile.");
-            response.sendRedirect(request.getContextPath() + "/profile");
+            response.sendRedirect(request.getContextPath() + "/user/profile");
             return;
         }
 

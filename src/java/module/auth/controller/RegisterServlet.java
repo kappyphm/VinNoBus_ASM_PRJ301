@@ -11,14 +11,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import module.user.model.input.UserProfileInput;
 import module.auth.service.AuthService;
+import module.user.model.input.UserProfileInput;
 
 /**
  *
  * @author kappyphm
  */
-@WebServlet(name = "RegisterServlet", urlPatterns = {"/register"})
+@WebServlet(name = "RegisterServlet", urlPatterns = {"/auth/register"})
 public class RegisterServlet extends HttpServlet {
 
     private final AuthService authService = new AuthService();
@@ -55,7 +55,8 @@ public class RegisterServlet extends HttpServlet {
             authService.register(profileInput);
             //set user_sub in session
             req.getSession().setAttribute("user_id", userId);
-            resp.sendRedirect(req.getContextPath() + "/login");
+            req.getSession().removeAttribute("googleProfile");
+            resp.sendRedirect(req.getContextPath() + "/auth/login");
         } catch (AuthException e) {
             req.setAttribute("errorMessage", "Registration failed: " + e.getMessage());
             req.getRequestDispatcher("/views/auth/register.jsp").forward(req, resp);
