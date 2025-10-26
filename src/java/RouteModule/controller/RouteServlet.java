@@ -72,7 +72,6 @@ public class RouteServlet extends HttpServlet {
         if (action == null) {
             action = "list"; // mặc định
         }
-
         try {
             switch (action) {
                 case "list":
@@ -115,7 +114,6 @@ public class RouteServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-
         try {
             switch (action) {
                 case "add":
@@ -146,8 +144,7 @@ public class RouteServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-    // ======================= CÁC HÀM XỬ LÝ =======================
-
+  
     private void listRoutes(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
         String search = request.getParameter("search");
