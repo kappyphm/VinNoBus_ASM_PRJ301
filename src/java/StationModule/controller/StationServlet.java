@@ -125,11 +125,28 @@ public class StationServlet extends HttpServlet {
 
     private void listStations(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<Station> stations = stationServices.getAllStations();
+        int page = 1;
+        int pageSize = 10;
+        String pageParam = request.getParameter("page");
+        if (pageParam != null) {
+            try {
+                page = Integer.parseInt(pageParam);
+                if (page < 1) {
+                    page = 1;
+                }
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
+        }
+        List<Station> stations = stationServices.getStationsByPage(page, pageSize);
+        int totalStations = stationServices.getTotalStations();
+        int totalPages = (int) Math.ceil((double) totalStations / pageSize);
+        request.setAttribute("stations", stations);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
         if (stations == null || stations.isEmpty()) {
             request.setAttribute("message", "📭 Hiện chưa có trạm xe nào trong hệ thống.");
         }
-        request.setAttribute("stations", stations);
         request.getRequestDispatcher("/WEB-INF/Station/StationList.jsp").forward(request, response);
     }
 
@@ -264,6 +281,7 @@ public class StationServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/Station/StationEdit.jsp").forward(request, response);
         }
     }
+
     /**
      * Returns a short description of the servlet.
      *
