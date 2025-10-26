@@ -671,11 +671,6 @@
                     </tbody>
                 </table>
             </div>
-<<<<<<< Updated upstream
-
-
-=======
->>>>>>> Stashed changes
             <div class="pagination">
                 <c:forEach var="i" begin="1" end="${totalPages}">
                     <c:choose>
