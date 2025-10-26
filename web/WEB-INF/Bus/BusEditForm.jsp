@@ -144,27 +144,23 @@
             <form action="BusServlet" method="post">
                 <input type="hidden" name="action" value="update">
                 <input type="hidden" name="bus_id" value="${bus_id != null ? bus_id : bus.busId}">
-
                 <label>Biển số xe:</label>
                 <input type="text" name="plate_number" 
                        value="${plate_number != null ? plate_number : bus.plateNumber}" 
-                       placeholder="VD: 29B-123.45" required>
+                       placeholder="VD: 29B-123.45"  >
                 <c:if test="${not empty error_plate}">
                     <div class="error">${error_plate}</div>
                 </c:if>
-
                 <label>Sức chứa:</label>
                 <input type="number" name="capacity" 
                        value="${capacity != null ? capacity : bus.capacity}" 
-                       min="1" required>
+                       min="1"  >
                 <c:if test="${not empty error_capacity}">
                     <div class="error">${error_capacity}</div>
                 </c:if>
-
                 <c:if test="${not empty error_general}">
                     <div class="error">${error_general}</div>
                 </c:if>
-
                 <div class="actions">
                     <a class="back-btn" href="BusServlet?action=list">← Quay lại</a>
                     <button type="submit">Cập nhật</button>
