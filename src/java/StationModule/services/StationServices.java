@@ -41,4 +41,12 @@ public class StationServices {
     public boolean deleteStation(int id) {
         return stationDAO.delete(id);
     }
+
+    public List<Station> getStationsByPage(int page, int pageSize) {
+        return stationDAO.getStationsByPage(page, pageSize);
+    }
+
+    public int getTotalStations() {
+        return stationDAO.getTotalStations();
+    }
 }
