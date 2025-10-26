@@ -5,7 +5,10 @@
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="java.util.List" %>
 <%@ page import="RouteModule.model.Route" %>
+<%@ page import="StationModule.model.Station" %>
+
 <%
     Route route = (Route) request.getAttribute("route");
     if (route == null) {
@@ -14,7 +17,9 @@
 <%
         return;
     }
+    List<Station> stations = route.getStations();
 %>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -29,8 +34,8 @@
             }
 
             .container {
-                width: 600px;
-                margin: 60px auto;
+                width: 800px;
+                margin: 50px auto;
                 background: #fff;
                 padding: 30px 40px;
                 border-radius: 14px;
@@ -46,12 +51,13 @@
             table {
                 width: 100%;
                 border-collapse: collapse;
+                margin-bottom: 25px;
             }
 
-            td {
+            td, th {
                 padding: 10px 12px;
                 border-bottom: 1px solid #ddd;
-                font-size: 16px;
+                font-size: 15px;
             }
 
             td.label {
@@ -59,6 +65,12 @@
                 color: #333;
                 width: 40%;
                 background: #f9fbfd;
+            }
+
+            th {
+                background-color: #007bff;
+                color: white;
+                text-align: left;
             }
 
             .actions {
@@ -96,6 +108,16 @@
                 opacity: 0.9;
             }
 
+            .station-table {
+                margin-top: 20px;
+            }
+
+            .empty-msg {
+                text-align: center;
+                color: #666;
+                margin-top: 10px;
+                font-style: italic;
+            }
         </style>
     </head>
     <body>
@@ -117,9 +139,37 @@
                 </tr>
                 <tr>
                     <td class="label">Tần suất:</td>
-                    <td><%= route.getFrequency() %></td>
+                    <td><%= route.getFrequency() %> phút</td>
+                </tr>
+                <tr>
+                    <td class="label">Tổng thời gian dự kiến:</td>
+                    <td><%= route.getEstimatedTime() %> phút</td>
                 </tr>
             </table>
+
+            <h3>Danh sách trạm đi qua trong tuyến</h3>
+            <% if (stations != null && !stations.isEmpty()) { %>
+            <table class="station-table">
+                <tr>
+                    <th>Mã trạm</th>
+                    <th>Tên trạm</th>
+                    <th>Vị trí</th>
+                    <th>Giờ mở cửa</th>
+                    <th>Giờ đóng cửa</th>
+                </tr>
+                <% for (Station s : stations) { %>
+                <tr>
+                    <td><%= s.getStationId() %></td>
+                    <td><%= s.getStationName() %></td>
+                    <td><%= s.getLocation() %></td>
+                    <td><%= s.getOpenTime() %></td>
+                    <td><%= s.getCloseTime() %></td>
+                </tr>
+                <% } %>
+            </table>
+            <% } else { %>
+            <div class="empty-msg">Không có trạm nào thuộc tuyến này.</div>
+            <% } %>
 
             <div class="actions">
                 <a href="RouteServlet?action=list" class="btn btn-back">⬅ Quay lại</a>
