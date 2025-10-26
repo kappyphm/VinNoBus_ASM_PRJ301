@@ -534,7 +534,6 @@
                 color:#721c24;
                 border-left: 5px solid #e74c3c;
             }
-<<<<<<< Updated upstream
             table {
                 width: 100%;
                 border-collapse: collapse;
@@ -610,8 +609,6 @@
                 background: #2176b5;
                 transform: translateY(-2px);
             }
-=======
->>>>>>> Stashed changes
         </style>
     </head>
     <body>
