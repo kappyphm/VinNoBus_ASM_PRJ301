@@ -13,23 +13,21 @@ public class StationDAO extends DBContext implements iStationDAO {
     public List<Station> getAll() {
         List<Station> list = new ArrayList<>();
         String sql = """
-            SELECT s.station_id, s.station_name, s.location, s.open_time, s.close_time,
-                   STRING_AGG(r.route_name, ', ') AS route_names
-            FROM Station s
-            LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
-            LEFT JOIN Route r ON r.route_id = rs.route_id
-            GROUP BY s.station_id, s.station_name, s.location, s.open_time, s.close_time
+           SELECT s.station_id, s.station_name, s.location, s.openTime, s.closeTime,
+                  STRING_AGG(r.route_name, ', ') AS route_names
+           FROM Station s
+           LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
+           LEFT JOIN Route r ON r.route_id = rs.route_id
+           GROUP BY s.station_id, s.station_name, s.location, s.openTime, s.closeTime
         """;
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Station s = new Station();
                 s.setStationId(rs.getInt("station_id"));
                 s.setStationName(rs.getString("station_name"));
                 s.setLocation(rs.getString("location"));
-                s.setOpenTime(rs.getString("open_time"));
-                s.setCloseTime(rs.getString("close_time"));
+                s.setOpenTime(rs.getString("openTime"));
+                s.setCloseTime(rs.getString("closeTime"));
 
                 String routes = rs.getString("route_names");
                 if (routes != null && !routes.isEmpty()) {
@@ -37,8 +35,6 @@ public class StationDAO extends DBContext implements iStationDAO {
                 }
                 list.add(s);
             }
-            rs.close();
-            ps.close();
         } catch (SQLException e) {
             System.out.println("Lỗi khi lấy danh sách trạm: " + e.getMessage());
         }
@@ -48,35 +44,31 @@ public class StationDAO extends DBContext implements iStationDAO {
     @Override
     public Station getById(int id) {
         String sql = """
-            SELECT s.station_id, s.station_name, s.location, s.open_time, s.close_time,
-                   STRING_AGG(r.route_name, ', ') AS route_names
-            FROM Station s
-            LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
-            LEFT JOIN Route r ON r.route_id = rs.route_id
-            WHERE s.station_id = ?
-            GROUP BY s.station_id, s.station_name, s.location, s.open_time, s.close_time
+           SELECT s.station_id, s.station_name, s.location, s.openTime, s.closeTime,
+                  STRING_AGG(r.route_name, ', ') AS route_names
+           FROM Station s
+           LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
+           LEFT JOIN Route r ON r.route_id = rs.route_id
+           WHERE s.station_id = ?
+           GROUP BY s.station_id, s.station_name, s.location, s.openTime, s.closeTime
         """;
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                Station s = new Station();
-                s.setStationId(rs.getInt("station_id"));
-                s.setStationName(rs.getString("station_name"));
-                s.setLocation(rs.getString("location"));
-                s.setOpenTime(rs.getString("open_time"));
-                s.setCloseTime(rs.getString("close_time"));
-                String routes = rs.getString("route_names");
-                if (routes != null && !routes.isEmpty()) {
-                    s.setRouteNames(Arrays.asList(routes.split(",\\s*")));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Station s = new Station();
+                    s.setStationId(rs.getInt("station_id"));
+                    s.setStationName(rs.getString("station_name"));
+                    s.setLocation(rs.getString("location"));
+                    s.setOpenTime(rs.getString("openTime"));
+                    s.setCloseTime(rs.getString("closeTime"));
+                    String routes = rs.getString("route_names");
+                    if (routes != null && !routes.isEmpty()) {
+                        s.setRouteNames(Arrays.asList(routes.split(",\\s*")));
+                    }
+                    return s;
                 }
-                rs.close();
-                ps.close();
-                return s;
             }
-            rs.close();
-            ps.close();
         } catch (SQLException e) {
             System.out.println("Lỗi khi lấy trạm theo ID: " + e.getMessage());
         }
@@ -87,33 +79,31 @@ public class StationDAO extends DBContext implements iStationDAO {
     public List<Station> getByName(String name) {
         List<Station> list = new ArrayList<>();
         String sql = """
-            SELECT s.station_id, s.station_name, s.location, s.open_time, s.close_time,
-                   STRING_AGG(r.route_name, ', ') AS route_names
-            FROM Station s
-            LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
-            LEFT JOIN Route r ON r.route_id = rs.route_id
-            WHERE s.station_name LIKE ?
-            GROUP BY s.station_id, s.station_name, s.location, s.open_time, s.close_time
+           SELECT s.station_id, s.station_name, s.location, s.openTime, s.closeTime,
+                  STRING_AGG(r.route_name, ', ') AS route_names
+           FROM Station s
+           LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
+           LEFT JOIN Route r ON r.route_id = rs.route_id
+           WHERE s.station_name LIKE ?
+           GROUP BY s.station_id, s.station_name, s.location, s.openTime, s.closeTime
         """;
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, "%" + name + "%");
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Station s = new Station();
-                s.setStationId(rs.getInt("station_id"));
-                s.setStationName(rs.getString("station_name"));
-                s.setLocation(rs.getString("location"));
-                s.setOpenTime(rs.getString("open_time"));
-                s.setCloseTime(rs.getString("close_time"));
-                String routes = rs.getString("route_names");
-                if (routes != null && !routes.isEmpty()) {
-                    s.setRouteNames(Arrays.asList(routes.split(",\\s*")));
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Station s = new Station();
+                    s.setStationId(rs.getInt("station_id"));
+                    s.setStationName(rs.getString("station_name"));
+                    s.setLocation(rs.getString("location"));
+                    s.setOpenTime(rs.getString("openTime"));
+                    s.setCloseTime(rs.getString("closeTime"));
+                    String routes = rs.getString("route_names");
+                    if (routes != null && !routes.isEmpty()) {
+                        s.setRouteNames(Arrays.asList(routes.split(",\\s*")));
+                    }
+                    list.add(s);
                 }
-                list.add(s);
             }
-            rs.close();
-            ps.close();
         } catch (SQLException e) {
             System.out.println("Lỗi khi tìm trạm theo tên: " + e.getMessage());
         }
@@ -122,15 +112,13 @@ public class StationDAO extends DBContext implements iStationDAO {
 
     @Override
     public boolean create(Station s) {
-        String sql = "INSERT INTO Station (station_name, location, open_time, close_time) VALUES (?, ?, ?, ?)";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        String sql = "INSERT INTO Station (station_name, location, openTime, closeTime) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, s.getStationName());
             ps.setString(2, s.getLocation());
             ps.setString(3, s.getOpenTime());
             ps.setString(4, s.getCloseTime());
             int rows = ps.executeUpdate();
-            ps.close();
             return rows > 0;
         } catch (SQLException e) {
             System.out.println("Lỗi khi thêm trạm: " + e.getMessage());
@@ -140,16 +128,14 @@ public class StationDAO extends DBContext implements iStationDAO {
 
     @Override
     public boolean update(Station s) {
-        String sql = "UPDATE Station SET station_name=?, location=?, open_time=?, close_time=? WHERE station_id=?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        String sql = "UPDATE Station SET station_name=?, location=?, openTime=?, closeTime=? WHERE station_id=?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, s.getStationName());
             ps.setString(2, s.getLocation());
             ps.setString(3, s.getOpenTime());
             ps.setString(4, s.getCloseTime());
             ps.setInt(5, s.getStationId());
             int rows = ps.executeUpdate();
-            ps.close();
             return rows > 0;
         } catch (SQLException e) {
             System.out.println("Lỗi khi cập nhật trạm: " + e.getMessage());
@@ -160,11 +146,9 @@ public class StationDAO extends DBContext implements iStationDAO {
     @Override
     public boolean delete(int id) {
         String sql = "DELETE FROM Station WHERE station_id=?";
-        try {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             int rows = ps.executeUpdate();
-            ps.close();
             return rows > 0;
         } catch (SQLException e) {
             System.out.println("Lỗi khi xóa trạm: " + e.getMessage());
