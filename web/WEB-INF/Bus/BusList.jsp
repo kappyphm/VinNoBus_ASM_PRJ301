@@ -534,7 +534,81 @@
                 color:#721c24;
                 border-left: 5px solid #e74c3c;
             }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                text-align: center;
+                table-layout: auto; /* Cho cột co giãn theo nội dung */
+            }
 
+            th, td {
+                padding: 12px 10px;
+                font-size: 15px;
+                border: 1px solid #ddd;
+                vertical-align: middle;
+                white-space: nowrap; /* Không xuống dòng nếu nội dung ngắn */
+            }
+
+            td .action {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px; /* Khoảng cách icon và chữ */
+            }
+
+            tr:nth-child(even) {
+                background-color: #f9f9f9;
+            }
+
+            tr:hover {
+                background-color: #eaf4fd;
+                transform: scale(1.01);
+                box-shadow: 0 2px 10px rgba(52,152,219,0.15);
+            }
+
+            /* Các nút hành động trong ô */
+            .action {
+                padding: 6px 12px;
+                margin: 0 2px;
+                border-radius: 6px;
+                font-size: 13px;
+                font-weight: 500;
+                transition: all 0.25s ease;
+                display: inline-block;
+            }
+
+            /* Màu nút */
+            .action.edit {
+                background: #f39c12;
+                color: white;
+            }
+            .action.edit:hover {
+                background: #e67e22;
+                transform: translateY(-2px);
+            }
+            .action.delete {
+                background: #e74c3c;
+                color: white;
+            }
+            .action.delete:hover {
+                background: #c0392b;
+                transform: translateY(-2px);
+            }
+            .action.assign {
+                background: #2ecc71;
+                color: white;
+            }
+            .action.assign:hover {
+                background: #27ae60;
+                transform: translateY(-2px);
+            }
+            .action.detail {
+                background: #3498db;
+                color: white;
+            }
+            .action.detail:hover {
+                background: #2176b5;
+                transform: translateY(-2px);
+            }
         </style>
     </head>
     <body>
@@ -578,28 +652,32 @@
 
             <div class="table-wrapper">
                 <table>
-                    <tr>
-                        <th>ID</th>
-                        <th>Biển số</th>
-                        <th>Số chỗ ngồi</th>
-                        <th>Hành động</th>
-                    </tr>
-                    <c:forEach var="bus" items="${busList}">
+                    <thead>
                         <tr>
-                            <td>${bus.busId}</td>
-                            <td>${bus.plateNumber}</td>
-                            <td>${bus.capacity}</td>
-                            <td>
-                                <a class="button action edit" href="BusServlet?action=edit&id=${bus.busId}">Edit</a>
-                                <a class="button action delete" href="BusServlet?action=delete&id=${bus.busId}"
-                                   onclick="return confirm('Bạn có chắc muốn xóa?');">Delete</a>
-                                <a class="button action assign" href="BusServlet?action=assign&id=${bus.busId}">Assign</a>
-                                <a class="button action detail" href="BusServlet?action=detail&id=${bus.busId}">Details</a>
-                            </td>
+                            <th>ID</th>
+                            <th>Biển số</th>
+                            <th>Số chỗ ngồi</th>
+                            <th>Hành động</th>
                         </tr>
-                    </c:forEach>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="bus" items="${busList}">
+                            <tr>
+                                <td>${bus.busId}</td>
+                                <td>${bus.plateNumber}</td>
+                                <td>${bus.capacity}</td>
+                                <td>
+                                    <a class="button action edit" href="BusServlet?action=edit&id=${bus.busId}">✏️ Edit</a>
+                                    <a class="button action delete" href="BusServlet?action=delete&id=${bus.busId}" onclick="return confirm('Bạn có chắc muốn xóa?');">🗑️ Delete</a>
+                                    <a class="button action assign" href="BusServlet?action=assign&id=${bus.busId}">👤 Assign</a>
+                                    <a class="button action detail" href="BusServlet?action=detail&id=${bus.busId}">🚍 Details</a>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
                 </table>
             </div>
+
 
             <div class="pagination">
                 <c:forEach var="i" begin="1" end="${totalPages}">
