@@ -1,6 +1,7 @@
 package RouteModule.dao;
 
 import RouteModule.model.Route;
+import StationModule.model.Station;
 import dal.DBContext;
 import java.sql.*;
 import java.util.ArrayList;
@@ -63,23 +64,19 @@ public class RouteDAO extends DBContext implements iRouteDAO {
     public List<Route> getAllRoutes(String search, String type, String sortColumn, String sortOrder, int page, int pageSize) throws SQLException {
         List<Route> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM Route WHERE 1=1");
-
         if (search != null && !search.isEmpty()) {
             sql.append(" AND route_name LIKE ?");
         }
         if (type != null && !type.isEmpty()) {
             sql.append(" AND type = ?");
         }
-
         if (sortColumn != null && !sortColumn.isEmpty()) {
             sql.append(" ORDER BY ").append(sortColumn).append(" ");
             sql.append(sortOrder != null && !sortOrder.isEmpty() ? sortOrder : "ASC");
         } else {
             sql.append(" ORDER BY route_id ASC");
         }
-
         sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
-
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             int index = 1;
             if (search != null && !search.isEmpty()) {
@@ -90,7 +87,6 @@ public class RouteDAO extends DBContext implements iRouteDAO {
             }
             ps.setInt(index++, (page - 1) * pageSize);
             ps.setInt(index, pageSize);
-
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(new Route(
@@ -108,14 +104,12 @@ public class RouteDAO extends DBContext implements iRouteDAO {
     @Override
     public int countRoutes(String search, String type) throws SQLException {
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM Route WHERE 1=1");
-
         if (search != null && !search.isEmpty()) {
             sql.append(" AND route_name LIKE ?");
         }
         if (type != null && !type.isEmpty()) {
             sql.append(" AND type = ?");
         }
-
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             int index = 1;
             if (search != null && !search.isEmpty()) {
@@ -124,7 +118,6 @@ public class RouteDAO extends DBContext implements iRouteDAO {
             if (type != null && !type.isEmpty()) {
                 ps.setString(index++, type);
             }
-
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
@@ -151,13 +144,56 @@ public class RouteDAO extends DBContext implements iRouteDAO {
 
     @Override
     public Route getRouteDetails(int routeId) throws SQLException {
-        // Có thể mở rộng: join với bảng khác để lấy thêm thông tin
-        return getRouteById(routeId);
+        String sql = """
+        SELECT 
+            r.route_id, r.route_name, r.type, r.frequency,
+            s.station_id, s.station_name, s.location, s.openTime, s.closeTime,
+            rs.estimated_time
+        FROM Route r
+        LEFT JOIN Route_Station rs ON r.route_id = rs.route_id
+        LEFT JOIN Station s ON rs.station_id = s.station_id
+        WHERE r.route_id = ?
+        ORDER BY rs.station_order
+    """;
+        Route route = null;
+        List<Station> stations = new ArrayList<>();
+        int totalTime = 0;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, routeId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    if (route == null) {
+                        route = new Route(
+                                rs.getInt("route_id"),
+                                rs.getString("route_name"),
+                                rs.getString("type"),
+                                rs.getInt("frequency")
+                        );
+                    }
+                    int stationId = rs.getInt("station_id");
+                    if (stationId != 0) {
+                        Station station = new Station(
+                                stationId,
+                                rs.getString("station_name"),
+                                rs.getString("location"),
+                                rs.getString("openTime"),
+                                rs.getString("closeTime")
+                        );
+                        stations.add(station);
+                        totalTime += rs.getInt("estimated_time");
+                    }
+                }
+            }
+        }
+        if (route != null) {
+            route.setStations(stations);
+            route.setEstimatedTime(totalTime);
+        }
+        return route;
     }
 
     @Override
     public int getEstimatedDuration(int routeId) throws SQLException {
-        // Giả sử tạm thời dùng frequency như thời lượng dự kiến
         String sql = "SELECT frequency FROM Route WHERE route_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, routeId);
