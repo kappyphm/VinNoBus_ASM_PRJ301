@@ -33,10 +33,11 @@
                 animation: fadeSlideUp 0.5s ease;
             }
             .container {
-                width: 90%;
-                margin: 60px auto;
+                width: 95%;
+                max-width: 1600px;
+                margin: 50px auto;
                 background: #fff;
-                padding: 40px 50px;
+                padding: 40px 60px;
                 border-radius: 18px;
                 box-shadow: 0 12px 30px rgba(0,0,0,0.08);
                 animation: fadeSlideUp 0.7s ease;
@@ -94,8 +95,9 @@
                 overflow-x:auto;
                 border-radius:14px;
                 background:#fff;
-                box-shadow:0 0 15px rgba(0,0,0,0.05);
+                box-shadow:0 2px 15px rgba(0,0,0,0.08);
                 animation: fadeSlideUp 0.9s ease;
+                width: 100%;
             }
             table {
                 width:100%;
@@ -124,7 +126,9 @@
                 transform:scale(1.01);
                 box-shadow:0 2px 10px rgba(52,152,219,0.15);
             }
-
+            td {
+                min-width: 150px;
+            }
             /* 🪄 Nút trong bảng */
             .action {
                 padding:8px 14px;
@@ -214,9 +218,41 @@
                 box-shadow: 0 2px 10px rgba(52,152,219,0.15);
             }
             th:last-child, td:last-child {
-                width: 200px; /* Điều chỉnh rộng cho đủ chứa 3 nút */
-                white-space: nowrap; /* Không xuống dòng, các nút nằm chung 1 hàng */
+                width: 200px;
+                white-space: nowrap;
             }
+            .pagination {
+                text-align: center;
+                margin-top: 30px;
+                animation: fadeSlideUp 1s ease;
+            }
+
+            .pagination a {
+                display: inline-block;
+                padding: 8px 13px;
+                margin: 3px;
+                text-decoration: none;
+                color: #3498db;
+                border: 1px solid #3498db;
+                border-radius: 8px;
+                transition: 0.3s;
+                font-weight: 500;
+            }
+
+            .pagination a:hover {
+                background-color: #3498db;
+                color: white;
+                transform: translateY(-3px);
+                box-shadow: 0 5px 10px rgba(52,152,219,0.3);
+            }
+
+            .pagination .current {
+                background-color: #3498db;
+                color: white;
+                font-weight: 600;
+                box-shadow: 0 3px 8px rgba(52,152,219,0.4);
+            }
+
         </style>
     </head>
     <body>
@@ -271,8 +307,25 @@
                     </tbody>
                 </table>
             </div>
+            <%
+                Integer currentPage = (Integer) request.getAttribute("currentPage");
+                Integer totalPages = (Integer) request.getAttribute("totalPages");
+            %>
+            <% if (totalPages != null && totalPages > 1) { %>
+            <div class="pagination">
+               
+                <% for (int i = 1; i <= totalPages; i++) { %>
+                <% if (i == currentPage) { %>
+                <a class="current"><%= i %></a>
+                <% } else { %>
+                <a href="StationServlet?action=list&page=<%= i %>"><%= i %></a>
+                <% } %>
+                <% } %>
+            </div>
+            <% } %>
         </div>
-    </body>
-    <jsp:include page="/footer.jsp" />
+    </div>
+</body>
+<jsp:include page="/footer.jsp" />
 </html>
 
