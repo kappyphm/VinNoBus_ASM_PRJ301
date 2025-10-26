@@ -534,6 +534,7 @@
                 color:#721c24;
                 border-left: 5px solid #e74c3c;
             }
+<<<<<<< Updated upstream
             table {
                 width: 100%;
                 border-collapse: collapse;
@@ -609,33 +610,30 @@
                 background: #2176b5;
                 transform: translateY(-2px);
             }
+=======
+>>>>>>> Stashed changes
         </style>
     </head>
     <body>
         <div class="container">
             <h2>Danh sách Bus</h2>
-
             <% if (request.getAttribute("message") != null) { %>
             <div class="alert alert-success">
                 <%= request.getAttribute("message") %>
             </div>
             <% } %>
-
             <% if (request.getAttribute("error") != null) { %>
             <div class="alert alert-error">
                 <%= request.getAttribute("error") %>
             </div>
             <% } %>
-
             <div class="toolbar">
                 <a class="button" href="BusServlet?action=add">+ Thêm Xe Bus</a>
-
                 <form method="get" action="BusServlet">
                     <input type="hidden" name="action" value="list"/>
                     <input type="text" name="search" value="${param.search}" placeholder="Nhập biển số..."/>
                     <button type="submit">Tìm kiếm</button>
                 </form>
-
                 <form method="get" action="BusServlet">
                     <input type="hidden" name="action" value="list"/>
                     <select name="sort">
@@ -649,7 +647,6 @@
                     <button type="submit" class="sort-btn">Sắp xếp</button>
                 </form>
             </div>
-
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -677,8 +674,11 @@
                     </tbody>
                 </table>
             </div>
+<<<<<<< Updated upstream
 
 
+=======
+>>>>>>> Stashed changes
             <div class="pagination">
                 <c:forEach var="i" begin="1" end="${totalPages}">
                     <c:choose>
@@ -693,6 +693,5 @@
             </div>
         </div>
     </body>
-
     <jsp:include page="/footer.jsp" />
 </html>
