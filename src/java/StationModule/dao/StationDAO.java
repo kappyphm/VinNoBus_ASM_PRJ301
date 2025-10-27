@@ -156,6 +156,7 @@ public class StationDAO extends DBContext implements iStationDAO {
         }
     }
 
+    @Override
     public List<Station> getStationsByPage(int page, int pageSize) {
         List<Station> list = new ArrayList<>();
         String sql = """
@@ -194,6 +195,7 @@ public class StationDAO extends DBContext implements iStationDAO {
         return list;
     }
 
+    @Override
     public int getTotalStations() {
         String sql = "SELECT COUNT(*) FROM Station";
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {

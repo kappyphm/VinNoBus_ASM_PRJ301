@@ -17,4 +17,8 @@ public interface iStationDAO {
     public boolean update(Station station) throws SQLException; // PUT /stations/{id}
 
     public boolean delete(int stationId) throws SQLException;   // DELETE /stations/{id}
+
+    public List<Station> getStationsByPage(int page, int pageSize) throws SQLException;
+
+    public int getTotalStations() throws SQLException;
 }
