@@ -291,12 +291,9 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo" onclick="window.location.href = 'index.html';" style="cursor: pointer;">
-            🚌 <span>Bus Management System</span>
-        </div>
+
         <jsp:include page="/header.jsp" />
-    </header>
+
     <main>
         <h1>Chào mừng đến với Hệ thống Quản lý Tuyến Xe</h1>
         <p>Chọn mục ở menu trên hoặc sử dụng các nút dưới đây để bắt đầu quản lý.</p>
