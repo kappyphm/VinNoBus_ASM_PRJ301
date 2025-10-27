@@ -5,7 +5,7 @@
 --%>
 
 <%@ page contentType="text/html; charset=UTF-8" %>
-
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <style>
     /* ===== Reset & Global ===== */
     * {
@@ -116,6 +116,7 @@
             <li><a href="TripServlet?action=list">Chuyến Xe</a></li>
             <li><a href="StationServlet?action=list">Trạm Xe</a></li>
             <li><a href="ReportServlet?action=overview">Báo Cáo</a></li>
+            <li><%@include file="/components/AuthComp.jsp" %></li>
         </ul>
     </nav>
 </header>

@@ -1,64 +1,339 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+
+<%@ page contentType="text/html; charset=UTF-8" %>
 
 
 <!DOCTYPE html>
 <html lang="vi">
-<head>
+    <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giới thiệu dịch vụ xe bus</title>
-
-    <!-- Font Roboto -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
+    <title>Hệ thống Quản lý Tuyến Xe</title>
     <style>
+        /* ===== Reset & Global ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #e6efff, #f8fbff);
+            color: #333;
+            min-height: 100vh;
+            animation: fadeIn 1s ease forwards;
+        }
+
+        /* ===== Header ===== */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: rgba(0, 98, 204, 0.9);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 18px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ===== Navigation ===== */
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding-bottom: 4px;
+        }
+
+        nav ul li a::after {
+            content: "";
+            position: absolute;
+            width: 0%;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: #ffdd57;
+            transition: width 0.3s ease;
+        }
+
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+
+        nav ul li a:hover {
+            color: #ffdd57;
+        }
+
+        /* ===== Main Section ===== */
+        main {
+            text-align: center;
+            padding: 90px 20px 60px;
+            animation: slideUp 1.2s ease forwards;
+        }
+
+        h1 {
+            font-size: 34px;
+            margin-bottom: 20px;
+            color: #004a99;
+        }
+
+        p {
+            font-size: 18px;
+            color: #555;
+        }
+
+        /* ===== Buttons Section ===== */
+        .menu-buttons {
+            margin-top: 50px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .menu-buttons a {
+            display: inline-block;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #0078d7, #005fa3);
+            color: white;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(0);
+        }
+
+        .menu-buttons a:hover {
+            background: linear-gradient(135deg, #005fa3, #004f88);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.2);
+        }
+
+        /* ===== Footer ===== */
+        footer {
+            text-align: center;
+            padding: 25px;
+            background: #f5f5f5;
+            color: #666;
+            font-size: 14px;
+            border-top: 1px solid #ddd;
+        }
+
+        /* ===== Animations ===== */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .menu-buttons a {
+                width: 90%;
+                max-width: 300px;
+            }
+        }
+        .footer {
+            background: linear-gradient(135deg, #0d2b66, #005fa3);
+            color: #fff;
+            padding: 40px 20px 20px;
+            font-family: 'Segoe UI', sans-serif;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease forwards;
+        }
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer h3 {
+            margin-bottom: 10px;
+            font-size: 22px;
+            letter-spacing: 1px;
+        }
+
+        .footer h4 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #ffdd57;
+        }
+
+        .footer p {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #d1d9ff;
+            line-height: 1.5;
+        }
+
+        /* Social icons */
+        .social-icons {
+            display: flex;
+            gap: 12px;
+            margin-top: 5px;
+        }
+
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 50%;
+            color: white;
+            font-size: 18px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background: #ffdd57;
+            color: #0d2b66;
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        /* Footer bottom */
+        .footer-bottom {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 13px;
+            color: #cfd8ff;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 15px;
+        }
+
+        /* ===== Animations ===== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 768px) {
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .footer-right, .footer-center, .footer-left {
+                width: 100%;
+            }
+
+            .social-icons {
+                justify-content: center;
+            }
         }
     </style>
 </head>
-<body class="bg-neutral-950 text-gray-100 min-h-screen flex flex-col">
-    <!-- Navbar -->
-    <nav class="bg-neutral-900 shadow-md shadow-neutral-800/40">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-8">
-                <a href="index.jsp" class="text-xl font-bold text-white hover:text-gray-300 transition">BusService</a>
-                <ul class="flex space-x-6">
-                    <li><a href="index.jsp" class="hover:text-gray-300 transition">Trang chủ</a></li>
-                    <li><a href="muave.jsp" class="hover:text-gray-300 transition">Mua vé</a></li>
-                    <li><a href="tracuu.jsp" class="hover:text-gray-300 transition">Tra cứu</a></li>
-                    <li><a href="gioithieu.jsp" class="text-gray-300 font-medium">Giới thiệu</a></li>
-                </ul>
-            </div>
-
-            <%@include file="/components/AuthComp.jsp" %>
+<body>
+    <header>
+        <div class="logo" onclick="window.location.href = 'index.html';" style="cursor: pointer;">
+            🚌 <span>Bus Management System</span>
         </div>
-    </nav>
-
-    <!-- Nội dung chính -->
-    <main class="flex-1 max-w-4xl mx-auto px-6 py-12">
-        <h1 class="text-3xl font-semibold mb-6 text-white">Giới thiệu dịch vụ xe bus thông minh</h1>
-        <div class="space-y-5 text-gray-300 leading-relaxed">
-            <p>Dịch vụ xe bus thông minh được phát triển nhằm mang lại trải nghiệm di chuyển tiện lợi, nhanh chóng và an toàn cho mọi người dân. 
-            Hệ thống được tối ưu hóa để giúp người dùng dễ dàng tra cứu, đặt vé và theo dõi lịch trình xe bus theo thời gian thực.</p>
-
-            <p>Với giao diện thân thiện, dễ sử dụng, người dùng có thể mua vé online, kiểm tra thông tin các tuyến, cũng như nhận thông báo về thay đổi lịch trình 
-            ngay trên điện thoại hoặc máy tính.</p>
-
-            <p>Chúng tôi hướng tới việc xây dựng một mạng lưới giao thông công cộng hiện đại, thân thiện với môi trường, 
-            góp phần giảm thiểu ùn tắc và ô nhiễm không khí tại các đô thị lớn.</p>
-
-            <p>Hãy cùng chúng tôi trải nghiệm sự tiện nghi của việc di chuyển bằng xe bus thông minh – an toàn, tiết kiệm và văn minh!</p>
+        <jsp:include page="/header.jsp" />
+    </header>
+    <main>
+        <h1>Chào mừng đến với Hệ thống Quản lý Tuyến Xe</h1>
+        <p>Chọn mục ở menu trên hoặc sử dụng các nút dưới đây để bắt đầu quản lý.</p>
+        <div class="menu-buttons">
+            <a href="BusServlet?action=list">🚍 Quản lý Xe Bus</a>
+            <a href="RouteServlet?action=list">🛣️ Quản lý Tuyến</a>
+            <a href="TripServlet?action=list">🕒 Quản lý Chuyến</a>
+            <a href="StationServlet?action=list">🚏 Quản lý Trạm</a>
+            <a href="ReportServlet?action=overview">📊 Báo Cáo Tổng Hợp</a>
         </div>
     </main>
-
-    <!-- Footer -->
-    <footer class="bg-neutral-900 text-gray-400 text-center py-4 text-sm">
-        © 2025 BusService. All rights reserved.
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <h3>Bus Management System</h3>
+                <p>Hệ thống quản lý tuyến xe thông minh và chuyên nghiệp</p>
+            </div>
+            <div class="footer-center">
+                <h4>Liên hệ</h4>
+                <p>📍 123 Đường ABC, TP.HCM</p>
+                <p>✉️ support@busmanagement.com</p>
+                <p>📞 +84 123 456 789</p>
+            </div>
+            <div class="footer-right">
+                <h4>Theo dõi chúng tôi</h4>
+                <div class="social-icons">
+                    <a href="#" class="social-icon">🌐</a>
+                    <a href="#" class="social-icon">🐦</a>
+                    <a href="#" class="social-icon">📘</a>
+                    <a href="#" class="social-icon">💼</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2025 Bus Management System - Designed by Ngô Quang Huy, Phạm Gia Khánh, Nguyễn Thị Thắm, Đinh Thị Thu Trang, Nguyễn Bá Quang Minh
+        </div>
     </footer>
+
 </body>
-</html>
+</html>                                    

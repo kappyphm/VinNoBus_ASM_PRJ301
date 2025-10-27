@@ -25,7 +25,7 @@ public class RegisterServlet extends HttpServlet {
     
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/views/auth/register.jsp").forward(req, resp);
+        req.getRequestDispatcher("/view/auth/register.jsp").forward(req, resp);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class RegisterServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/auth/login");
         } catch (AuthException e) {
             req.setAttribute("errorMessage", "Registration failed: " + e.getMessage());
-            req.getRequestDispatcher("/views/auth/register.jsp").forward(req, resp);
+            req.getRequestDispatcher("/view/auth/register.jsp").forward(req, resp);
         }
 
     }

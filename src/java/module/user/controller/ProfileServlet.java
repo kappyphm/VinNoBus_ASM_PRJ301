@@ -39,7 +39,7 @@ public class ProfileServlet extends HttpServlet {
 
         req.setAttribute("profile", profile);
 
-        req.getRequestDispatcher("/views/user/profile.jsp").forward(req, resp);
+        req.getRequestDispatcher("/view/user/profile.jsp").forward(req, resp);
     }
    
     
