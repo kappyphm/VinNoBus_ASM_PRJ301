@@ -4,17 +4,17 @@
  */
 package module.route.controller;
 
-import module.route.model.entity.Route;
-import module.route.service.RouteServices;
-import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.*;
 import java.util.List;
+import module.route.model.entity.Route;
+import module.route.service.RouteServices;
 
 /**
  *
@@ -95,10 +95,10 @@ public class RouteServlet extends HttpServlet {
             }
         } catch (SQLException e) {
             request.setAttribute("errorMessage", "❌ Lỗi cơ sở dữ liệu: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/Route/RouteList.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/Route/RouteList.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("errorMessage", "⚠️ Đã xảy ra lỗi không mong muốn: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/Route/RouteList.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/Route/RouteList.jsp").forward(request, response);
         }
     }
 
@@ -128,10 +128,10 @@ public class RouteServlet extends HttpServlet {
             }
         } catch (SQLException e) {
             request.setAttribute("errorMessage", "❌ Lỗi thao tác với cơ sở dữ liệu: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/Route/RouteList.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/Route/RouteList.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("errorMessage", "⚠️ Lỗi không xác định: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/Route/RouteList.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/Route/RouteList.jsp").forward(request, response);
         }
     }
 
@@ -179,8 +179,8 @@ public class RouteServlet extends HttpServlet {
         request.setAttribute("sortColumn", sortColumn);
         request.setAttribute("sortOrder", sortOrder);
 
-        // ✅ Đảm bảo đường dẫn đúng cấu trúc /WEB-INF/Route/
-        request.getRequestDispatcher("/WEB-INF/Route/RouteList.jsp").forward(request, response);
+        // ✅ Đảm bảo đường dẫn đúng cấu trúc /view/Route/
+        request.getRequestDispatcher("/view/Route/RouteList.jsp").forward(request, response);
     }
 
     private void showDetails(HttpServletRequest request, HttpServletResponse response)
@@ -197,7 +197,7 @@ public class RouteServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             request.setAttribute("errorMessage", "⚠️ ID tuyến xe không hợp lệ!");
         }
-        request.getRequestDispatcher("/WEB-INF/Route/RouteDetails.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/Route/RouteDetails.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
@@ -214,12 +214,12 @@ public class RouteServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             request.setAttribute("errorMessage", "⚠️ ID không hợp lệ khi chỉnh sửa tuyến!");
         }
-        request.getRequestDispatcher("/WEB-INF/Route/RouteForm.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/Route/RouteForm.jsp").forward(request, response);
     }
 
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/WEB-INF/Route/RouteAdd.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
     }
 
     private void addRoute(HttpServletRequest request, HttpServletResponse response)
@@ -231,7 +231,7 @@ public class RouteServlet extends HttpServlet {
         // ====== VALIDATION ======
         if (name == null || name.trim().isEmpty()) {
             request.setAttribute("errorMessage", "⚠️ Tên tuyến không được để trống!");
-            request.getRequestDispatcher("/WEB-INF/Route/RouteAdd.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
             return;
         }
         int frequency;
@@ -242,7 +242,7 @@ public class RouteServlet extends HttpServlet {
             }
         } catch (NumberFormatException e) {
             request.setAttribute("errorMessage", "⚠️ Tần suất phải là số nguyên dương (phút)!");
-            request.getRequestDispatcher("/WEB-INF/Route/RouteAdd.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
             return;
         }
         // ====== THỰC HIỆN THÊM ======
@@ -253,7 +253,7 @@ public class RouteServlet extends HttpServlet {
             response.sendRedirect("RouteServlet?action=list");
         } else {
             request.setAttribute("errorMessage", "❌ Thêm thất bại! Tuyến \"" + name + "\" đã tồn tại hoặc dữ liệu không hợp lệ.");
-            request.getRequestDispatcher("/WEB-INF/Route/RouteAdd.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
         }
     }
 
@@ -267,7 +267,7 @@ public class RouteServlet extends HttpServlet {
 
             if (name == null || name.trim().isEmpty()) {
                 request.setAttribute("errorMessage", "⚠️ Tên tuyến không được để trống!");
-                request.getRequestDispatcher("/WEB-INF/Route/RouteForm.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/Route/RouteForm.jsp").forward(request, response);
                 return;
             }
 
@@ -283,7 +283,7 @@ public class RouteServlet extends HttpServlet {
 
         } catch (NumberFormatException e) {
             request.setAttribute("errorMessage", "⚠️ Dữ liệu nhập vào không hợp lệ!");
-            request.getRequestDispatcher("/WEB-INF/Route/RouteForm.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/Route/RouteForm.jsp").forward(request, response);
         }
     }
 
