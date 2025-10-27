@@ -17,7 +17,7 @@
     <nav class="bg-neutral-900 shadow-md shadow-neutral-800/40">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             <a href="${pageContext.request.contextPath}/" class="text-xl font-bold text-white">BusService</a>
-            <a href="${pageContext.request.contextPath}/logout" class="px-4 py-2 bg-red-600 hover:bg-red-500 rounded-xl shadow-sm transition">
+            <a href="${pageContext.request.contextPath}/auth/logout" class="px-4 py-2 bg-red-600 hover:bg-red-500 rounded-xl shadow-sm transition">
                 Đăng xuất
             </a>
         </div>
