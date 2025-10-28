@@ -612,6 +612,9 @@
         </style>
     </head>
     <body>
+        <c:if test="${not empty message}">
+            <p style="color: gray; text-align: center;">${message}</p>
+        </c:if>
         <div class="container">
             <h2>Danh sách Bus</h2>
             <% if (request.getAttribute("message") != null) { %>
