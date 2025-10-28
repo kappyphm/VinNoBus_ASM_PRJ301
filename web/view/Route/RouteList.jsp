@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.*, RouteModule.model.Route" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:include page="/header.jsp" />
 
 <!DOCTYPE html>
@@ -8,6 +8,7 @@
         <meta charset="UTF-8">
         <title>Danh sách tuyến xe buýt</title>
         <style>
+            /* Giữ nguyên toàn bộ style gốc */
             @keyframes fadeSlideUp {
                 from {
                     opacity: 0;
@@ -232,133 +233,24 @@
                 color:#721c24;
                 border-left: 5px solid #e74c3c;
             }
-            a, .button, button {
-                text-decoration: none;
-            }
-            .action {
-                text-decoration: none;
-            }
-            .pagination a {
-                text-decoration: none;
-            }
-            .table-wrapper {
-                overflow-x: auto;
-                border-radius: 14px;
-                background: #fff;
-                box-shadow: 0 0 15px rgba(0,0,0,0.05);
-            }
-
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                table-layout: auto; /* Cho cột co giãn theo nội dung */
-            }
-
-            th, td {
-                padding: 12px 10px;
-                font-size: 15px;
-                border: 1px solid #ddd; /* Thanh chia ô */
-                text-align: center;
-                vertical-align: middle;
-                white-space: nowrap; /* Không xuống dòng nếu nội dung ngắn */
-            }
-
-            /* Header */
-            th {
-                background-color: #3498db;
-                color: white;
-                font-weight: 600;
-                text-transform: uppercase;
-            }
-
-            /* Hàng chẵn lẻ */
-            tr:nth-child(even) {
-                background-color: #f9f9f9;
-            }
-
-            tr:hover {
-                background-color: #eaf4fd;
-                transform: scale(1.01);
-                box-shadow: 0 2px 10px rgba(52,152,219,0.15);
-            }
-
-            /* Nút trong bảng */
-            .action {
-                padding: 6px 12px;
-                margin: 0 2px;
-                border-radius: 6px;
-                font-size: 13px;
-                font-weight: 500;
-                transition: all 0.25s ease;
-                display: inline-block;
-                text-decoration: none; /* Bỏ gạch chân */
-            }
-
-            .action.edit {
-                background: #f39c12;
-                color: white;
-            }
-            .action.edit:hover {
-                background: #e67e22;
-                transform: translateY(-2px);
-            }
-
-            .action.delete {
-                background: #e74c3c;
-                color: white;
-            }
-            .action.delete:hover {
-                background: #c0392b;
-                transform: translateY(-2px);
-            }
-
-            .action.detail {
-                background: #3498db;
-                color: white;
-            }
-            .action.detail:hover {
-                background: #2176b5;
-                transform: translateY(-2px);
-            }
-
-            .action.assign {
-                background: #2ecc71;
-                color: white;
-            }
-            .action.assign:hover {
-                background: #27ae60;
-                transform: translateY(-2px);
-            }
-            td .action {
-                display: inline-flex;
-                align-items: center;
-                gap: 6px; /* Khoảng cách giữa emoji và chữ */
-            }
-
         </style>
     </head>
     <body>
         <div class="container">
             <h2>📋 Danh sách tuyến xe buýt</h2>
 
-            <%-- Hiển thị thông báo --%>
-            <%
-                String message = (String) session.getAttribute("message");
-                String errorMessage = (String) session.getAttribute("errorMessage");
-                if (message == null) message = (String) request.getAttribute("message");
-                if (errorMessage == null) errorMessage = (String) request.getAttribute("errorMessage");
-                if (message != null) { %>
-            <div class="alert alert-success"><%= message %></div>
-            <% session.removeAttribute("message"); }
-       if (errorMessage != null) { %>
-            <div class="alert alert-error"><%= errorMessage %></div>
-            <% session.removeAttribute("errorMessage"); } %>
+            <c:if test="${not empty message}">
+                <div class="alert alert-success">${message}</div>
+            </c:if>
+            <c:if test="${not empty errorMessage}">
+                <div class="alert alert-error">${errorMessage}</div>
+            </c:if>
 
             <div class="toolbar">
                 <a href="RouteServlet?action=add" class="button">+ Thêm tuyến</a>
                 <form action="RouteServlet" method="get">
                     <input type="hidden" name="action" value="list">
-                    <input type="text" name="search" placeholder="Tìm theo tên..." value="<%= request.getAttribute("search") != null ? request.getAttribute("search") : "" %>">
+                    <input type="text" name="search" placeholder="Tìm theo tên..." value="${search}">
                     <button type="submit" class="button">Tìm kiếm</button>
                 </form>
             </div>
@@ -375,56 +267,45 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <%
-                            List<Route> routes = (List<Route>) request.getAttribute("listRoutes");
-                            if (routes != null && !routes.isEmpty()) {
-                                for (Route r : routes) {
-                        %>
-                        <tr>
-                            <td><%= r.getRouteId() %></td>
-                            <td><%= r.getRouteName() %></td>
-                            <td><%= r.getType() %></td>
-                            <td><%= r.getFrequency() %></td>
-                            <td>
-                                <a href="RouteServlet?action=details&id=<%= r.getRouteId() %>" class="action detail">📄 Chi tiết</a>
-                                <a href="RouteServlet?action=edit&id=<%= r.getRouteId() %>" class="action edit">✏️ Sửa</a>
-                                <a href="RouteServlet?action=delete&id=<%= r.getRouteId() %>" class="action delete"
-                                   onclick="return confirm('Bạn có chắc muốn xóa tuyến này không?');">🗑️ Xóa</a>
-                            </td>
-                        </tr>
-                        <%
-                                }
-                            } else {
-                        %>
-                        <tr><td colspan="5">Không có tuyến nào.</td></tr>
-                        <%
-                            }
-                        %>
+                    <c:choose>
+                        <c:when test="${not empty listRoutes}">
+                            <c:forEach var="r" items="${listRoutes}">
+                                <tr>
+                                    <td>${r.routeId}</td>
+                                    <td>${r.routeName}</td>
+                                    <td>${r.type}</td>
+                                    <td>${r.frequency}</td>
+                                    <td>
+                                        <a href="RouteServlet?action=details&id=${r.routeId}" class="action detail">📄 Chi tiết</a>
+                                        <a href="RouteServlet?action=edit&id=${r.routeId}" class="action edit">✏️ Sửa</a>
+                                        <a href="RouteServlet?action=delete&id=${r.routeId}" class="action delete"
+                                           onclick="return confirm('Bạn có chắc muốn xóa tuyến này không?');">🗑️ Xóa</a>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <tr><td colspan="5">Không có tuyến nào.</td></tr>
+                        </c:otherwise>
+                    </c:choose>
                     </tbody>
                 </table>
             </div>
 
-            <%-- Phân trang --%>
-            <%
-                Integer currentPageObj = (Integer) request.getAttribute("currentPage");
-                Integer totalPagesObj = (Integer) request.getAttribute("totalPages");
-                int currentPage = currentPageObj != null ? currentPageObj : 1;
-                int totalPages = totalPagesObj != null ? totalPagesObj : 1;
-
-                if (totalPages > 1) {
-            %>
-            <div class="pagination">
-                <%
-                    for (int i = 1; i <= totalPages; i++) {
-                        if (i == currentPage) { %>
-                <a class="current" href="#"><%= i %></a>
-                <%      } else { %>
-                <a href="RouteServlet?action=list&page=<%= i %>"><%= i %></a>
-                <%      }
-                    }
-                %>
-            </div>
-            <% } %>
+            <c:if test="${totalPages > 1}">
+                <div class="pagination">
+                    <c:forEach var="i" begin="1" end="${totalPages}">
+                        <c:choose>
+                            <c:when test="${i == currentPage}">
+                                <a class="current" href="#">${i}</a>
+                            </c:when>
+                            <c:otherwise>
+                                <a href="RouteServlet?action=list&page=${i}">${i}</a>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+                </div>
+            </c:if>
         </div>
     </body>
     <jsp:include page="/footer.jsp" />
