@@ -161,6 +161,9 @@ public class BusServlet extends HttpServlet {
         request.setAttribute("busList", list);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("currentPage", page);
+        if (list.isEmpty() || list == null) {
+            request.setAttribute("message", "Không có xe nào trong hệ thống!");
+        }
         request.getRequestDispatcher("/view/Bus/BusList.jsp").forward(request, response);
     }
 
