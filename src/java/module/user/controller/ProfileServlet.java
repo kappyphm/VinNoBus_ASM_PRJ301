@@ -12,6 +12,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.logging.Logger;
+
+import module.auth.model.entity.User;
 import module.user.model.dto.ProfileDTO;
 import module.user.service.ProfileService;
 
@@ -27,7 +29,13 @@ public class ProfileServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String userId = (String) req.getSession().getAttribute("user_id");
+        User sessionUser = (User) req.getSession().getAttribute("user");
+        if (sessionUser == null) {
+            resp.sendRedirect(req.getContextPath() + "/auth/login");
+            return;
+        }
+
+        String userId = sessionUser.getUserId();
 
         ProfileDTO profile = profileService.getUserProfile(userId);
 

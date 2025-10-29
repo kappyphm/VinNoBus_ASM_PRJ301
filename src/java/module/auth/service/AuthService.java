@@ -1,17 +1,17 @@
 package module.auth.service;
 
-import module.core.BaseService;
-import module.user.dao.ProfileDAO;
-import module.auth.dao.UserDAO;
 import exception.AuthException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import module.auth.dao.UserDAO;
 import module.auth.model.entity.GoogleUserProfile;
-import module.user.model.entity.Profile;
 import module.auth.model.entity.User;
+import module.core.BaseService;
+import module.user.dao.ProfileDAO;
+import module.user.model.entity.Profile;
 import module.user.model.input.UserProfileInput;
 
 public class AuthService extends BaseService {
@@ -41,7 +41,7 @@ public class AuthService extends BaseService {
         }
     }
 
-    public void register(UserProfileInput profileInput) throws AuthException {
+    public Optional<User> register(UserProfileInput profileInput) throws AuthException {
         try {
             beginTransaction();
 
@@ -62,6 +62,7 @@ public class AuthService extends BaseService {
             profileDAO.insert(newProfile);
 
             commitTransaction();
+            return userDAO.findById(profileInput.getUserId());
         } catch (SQLException e) {
             rollbackTransaction();
             LOGGER.log(Level.SEVERE, "Error during registration: " + e.getMessage(), e);

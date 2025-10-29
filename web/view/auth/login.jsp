@@ -14,7 +14,7 @@
     </head>
     <body>
         <h1>LOGIN</h1>
-        <form action="login" method="GET">
+        <form action="/auth/login" method="GET">
             <input type="submit" value="LOGIN" />
         </form>
     </body>

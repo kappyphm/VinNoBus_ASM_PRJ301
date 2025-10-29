@@ -21,7 +21,7 @@
                 </div>
             </c:if>
 
-            <form action="register" method="post" class="space-y-5">
+            <form action="/auth/register" method="post" class="space-y-5">
                 <!-- Profile Picture -->
                 <div>
                     <c:if test="${not empty sessionScope.googleProfile.picture}">
