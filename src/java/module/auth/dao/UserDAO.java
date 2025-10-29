@@ -55,7 +55,9 @@ public class UserDAO extends AbstractDAO<User, String> {
 
     @Override
     protected PreparedStatement prepareUpdateStatement(User entity, Connection conn) throws SQLException {
-        String sql = "UPDATE " + getTableName() + " SET role = ?, is_active = ? WHERE " + getPrimaryKeyColumn() + " = ?";
+        String sql = "UPDATE " + getTableName() + " SET role = ?, is_active = ? "
+                + "OUTPUT inserted." + getPrimaryKeyColumn() + " "
+                + "WHERE " + getPrimaryKeyColumn() + " = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setString(1, entity.getRole());
         stmt.setBoolean(2, entity.isActive());
