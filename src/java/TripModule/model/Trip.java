@@ -2,15 +2,14 @@
 package TripModule.model;
 
 import java.time.LocalTime;
-import java.util.UUID;
 
 public class Trip {
 
     private int tripId;
     private int routeId;
     private int busId;
-    private UUID driverId;
-    private UUID conductorId;
+    private String driverId;
+    private String conductorId;
     private LocalTime departureTime;
     private LocalTime arrivalTime;
     private String status;
@@ -18,7 +17,7 @@ public class Trip {
     public Trip() {
     }
 
-    public Trip(int tripId, int routeId, int busId, UUID driverId, UUID conductorId, LocalTime departureTime, LocalTime arrivalTime, String status) {
+    public Trip(int tripId, int routeId, int busId, String driverId, String conductorId, LocalTime departureTime, LocalTime arrivalTime, String status) {
         this.tripId = tripId;
         this.routeId = routeId;
         this.busId = busId;
@@ -53,19 +52,19 @@ public class Trip {
         this.busId = busId;
     }
 
-    public UUID getDriverId() {
+    public String getDriverId() {
         return driverId;
     }
 
-    public void setDriverId(UUID driverId) {
+    public void setDriverId(String driverId) {
         this.driverId = driverId;
     }
 
-    public UUID getConductorId() {
+    public String getConductorId() {
         return conductorId;
     }
 
-    public void setConductorId(UUID conductorId) {
+    public void setConductorId(String conductorId) {
         this.conductorId = conductorId;
     }
 
