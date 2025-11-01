@@ -28,7 +28,8 @@ public class BusDAO extends DBContext implements iBusDAO {
                     return new Bus(
                             rs.getInt("bus_id"),
                             rs.getString("plate_number"),
-                            rs.getInt("capacity")
+                            rs.getInt("capacity"),
+                            rs.getString("current_status")
                     );
                 }
             }
@@ -71,7 +72,8 @@ public class BusDAO extends DBContext implements iBusDAO {
                 list.add(new Bus(
                         rs.getInt("bus_id"),
                         rs.getString("plate_number"),
-                        rs.getInt("capacity")
+                        rs.getInt("capacity"),
+                        rs.getString("current_status")
                 ));
             }
         }
@@ -107,7 +109,8 @@ public class BusDAO extends DBContext implements iBusDAO {
                     list.add(new Bus(
                             rs.getInt("bus_id"),
                             rs.getString("plate_number"),
-                            rs.getInt("capacity")
+                            rs.getInt("capacity"),
+                            rs.getString("current_status")
                     ));
                 }
             }
@@ -154,7 +157,8 @@ public class BusDAO extends DBContext implements iBusDAO {
                     list.add(new Bus(
                             rs.getInt("bus_id"),
                             rs.getString("plate_number"),
-                            rs.getInt("capacity")
+                            rs.getInt("capacity"),
+                            rs.getString("current_status")
                     ));
                 }
             }
