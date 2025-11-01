@@ -42,6 +42,22 @@
                 <div class="mb-4 text-[16px]"><span class="font-semibold">Biển số xe:</span> ${bus.plateNumber}</div>
                 <div class="mb-4 text-[16px]"><span class="font-semibold">Sức chứa:</span> ${bus.capacity}</div>
                 <div class="mb-4 text-[16px]"><span class="font-semibold">Bus ID:</span> ${bus.busId}</div>
+                <div class="mb-4 text-[16px]"><span class="font-semibold">Trạng thái:</span> 
+                    <span class="
+                          px-2 py-1 rounded-full text-white font-medium
+                          <c:choose>
+                              <c:when test='${bus.currentStatus == "AVAILABLE"}'>bg-green-500</c:when>
+                              <c:when test='${bus.currentStatus == "IN_USE"}'>bg-blue-500</c:when>
+                              <c:when test='${bus.currentStatus == "MAINTENANCE"}'>bg-yellow-500</c:when>
+                              <c:when test='${bus.currentStatus == "BROKEN"}'>bg-red-500</c:when>
+                              <c:when test='${bus.currentStatus == "REPAIRING"}'>bg-orange-500</c:when>
+                              <c:when test='${bus.currentStatus == "RESERVED"}'>bg-purple-500</c:when>
+                              <c:otherwise>bg-gray-500</c:otherwise>
+                          </c:choose>
+                          ">
+                        ${bus.currentStatus}
+                    </span>
+                </div>
 
                 <a href="BusServlet?action=list"
                    class="inline-block mt-5 px-5 py-3 rounded-xl font-medium text-white text-center
