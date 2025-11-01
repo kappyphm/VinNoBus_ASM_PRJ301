@@ -5,7 +5,6 @@
 package module.ticket.model;
 
 import java.util.Date;
-import java.util.UUID;
 
 /**
  *
@@ -14,13 +13,13 @@ import java.util.UUID;
 public class Ticket {
 
     private int ticketId;
-    private UUID customerId;
+    private String customerId;
     private int tripId;
     private int routeId;
     private double price;
     private Date issueDate;
     private Date expiryDate;
-    private UUID createdBy;
+    private String createdBy;
     private Integer invoiceId;
 
     public Ticket() {
@@ -34,11 +33,11 @@ public class Ticket {
         this.ticketId = ticketId;
     }
 
-    public UUID getCustomerId() {
+    public String getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(UUID customerId) {
+    public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
 
@@ -82,20 +81,20 @@ public class Ticket {
         this.expiryDate = expiryDate;
     }
 
-    public UUID getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(UUID createdBy) {
-        this.createdBy = createdBy;
-    }
-
     public Integer getInvoiceId() {
         return invoiceId;
     }
 
     public void setInvoiceId(Integer invoiceId) {
         this.invoiceId = invoiceId;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 
 }
