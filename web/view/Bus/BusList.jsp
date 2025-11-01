@@ -103,6 +103,7 @@
                             <th class="py-3 px-4 border border-gray-200">ID</th>
                             <th class="py-3 px-4 border border-gray-200">Biển số</th>
                             <th class="py-3 px-4 border border-gray-200">Số chỗ ngồi</th>
+                            <th class="py-3 px-4 border border-gray-200">Trạng thái</th> 
                             <th class="py-3 px-4 border border-gray-200">Hành động</th>
                         </tr>
                     </thead>
@@ -112,6 +113,7 @@
                                 <td class="py-3 px-4 border border-gray-200">${bus.busId}</td>
                                 <td class="py-3 px-4 border border-gray-200">${bus.plateNumber}</td>
                                 <td class="py-3 px-4 border border-gray-200">${bus.capacity}</td>
+                                <td class="py-3 px-4 border border-gray-200">${bus.currentStatus}</td>
                                 <td class="py-3 px-4 border border-gray-200 flex flex-wrap justify-center gap-2">
                                     <a
                                         href="BusServlet?action=edit&id=${bus.busId}"
