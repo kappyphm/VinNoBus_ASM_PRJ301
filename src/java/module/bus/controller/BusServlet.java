@@ -178,9 +178,16 @@ public class BusServlet extends HttpServlet {
         String plate = request.getParameter("plate_number");
         String capStr = request.getParameter("capacity");
         String currentStatus = request.getParameter("current_Status");
-        
+
         if (plate == null || plate.trim().isEmpty()) {
             request.setAttribute("error", "Biển số xe không được để trống.");
+            request.getRequestDispatcher("/view/Bus/BusAdd.jsp").forward(request, response);
+            return;
+        }
+
+        String platePattern = "^(29B|30B)-\\d{5}$";
+        if (!plate.trim().matches(platePattern)) {
+            request.setAttribute("error", "❌ Biển số không hợp lệ. Hãy nhập theo định dạng: 29B-xxxxx hoặc 30B-xxxxx (ví dụ: 29B-12345).");
             request.getRequestDispatcher("/view/Bus/BusAdd.jsp").forward(request, response);
             return;
         }
@@ -196,7 +203,7 @@ public class BusServlet extends HttpServlet {
             request.getRequestDispatcher("/view/Bus/BusAdd.jsp").forward(request, response);
             return;
         }
-        Bus bus = new Bus(0, plate.trim(), capacity,currentStatus.trim());
+        Bus bus = new Bus(0, plate.trim(), capacity, currentStatus.trim());
         boolean success = busServices.addBus(bus);
 
         if (success) {
@@ -256,6 +263,13 @@ public class BusServlet extends HttpServlet {
             request.setAttribute("error_plate", "Biển số xe không được để trống.");
             hasError = true;
         }
+        
+        // Kiểm tra định dạng biển số xe
+        String platePattern = "^(29B|30B)-\\d{5}$";
+        if (!plate.trim().matches(platePattern)) {
+            request.setAttribute("error_plate", "❌ Biển số không hợp lệ. Hãy nhập theo định dạng: 29B-xxxxx hoặc 30B-xxxxx (ví dụ: 29B-12345).");
+            hasError = true;
+        }
 
         // Kiểm tra capacity
         try {
@@ -278,7 +292,6 @@ public class BusServlet extends HttpServlet {
         Bus bus = new Bus(id, plate.trim(), capacity, currentStatus.trim());
         try {
             boolean success = busServices.updateBus(bus);
-
             if (success) {
                 request.setAttribute("message", "✅ Cập nhật xe bus thành công: " + plate);
                 listBus(request, response);
