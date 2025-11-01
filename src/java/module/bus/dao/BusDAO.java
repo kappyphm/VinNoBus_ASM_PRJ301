@@ -10,10 +10,11 @@ public class BusDAO extends DBContext implements iBusDAO {
 
     @Override
     public boolean addBus(Bus bus) throws SQLException {
-        String sql = "INSERT INTO Bus (plate_number, capacity) VALUES (?, ?)";
+        String sql = "INSERT INTO Bus (plate_number, capacity, current_status) VALUES (?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, bus.getPlateNumber());
             ps.setInt(2, bus.getCapacity());
+            ps.setString(3, bus.getCurrentStatus());
             return ps.executeUpdate() > 0;
         }
     }
@@ -48,11 +49,12 @@ public class BusDAO extends DBContext implements iBusDAO {
 
     @Override
     public boolean updateBus(Bus bus) throws SQLException {
-        String sql = "UPDATE Bus SET plate_number=?, capacity=? WHERE bus_id=?";
+        String sql = "UPDATE Bus SET plate_number=?, capacity=?, current_status=? WHERE bus_id=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, bus.getPlateNumber());
             ps.setInt(2, bus.getCapacity());
-            ps.setInt(3, bus.getBusId());
+            ps.setString(3, bus.getCurrentStatus());
+            ps.setInt(4, bus.getBusId());
             return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             // Bắt lỗi trùng khóa duy nhất
