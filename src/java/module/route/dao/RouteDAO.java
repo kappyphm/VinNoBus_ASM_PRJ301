@@ -205,4 +205,34 @@ public class RouteDAO extends DBContext implements iRouteDAO {
         }
         return 0;
     }
+
+    @Override
+    public boolean isRouteNameExist(String routeName) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Route WHERE route_name = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, routeName);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isRouteNameExistForOtherId(String routeName, int id) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Route WHERE route_name = ? AND route_id <> ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, routeName);
+            ps.setInt(2, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        return false;
+    }
+
 }
