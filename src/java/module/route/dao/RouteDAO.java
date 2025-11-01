@@ -208,9 +208,9 @@ public class RouteDAO extends DBContext implements iRouteDAO {
 
     @Override
     public boolean isRouteNameExist(String routeName) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM Route WHERE route_name = ?";
+        String sql = "SELECT COUNT(*) FROM Route WHERE UPPER(LTRIM(RTRIM(route_name))) = UPPER(?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, routeName);
+            ps.setString(1, routeName.trim().toUpperCase());
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
