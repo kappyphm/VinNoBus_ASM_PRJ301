@@ -161,7 +161,7 @@ public class BusServlet extends HttpServlet {
         request.setAttribute("busList", list);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("currentPage", page);
-        if (list.isEmpty() || list == null) {
+        if (list == null || list.isEmpty()) {
             request.setAttribute("message", "Không có xe nào trong hệ thống!");
         }
         request.getRequestDispatcher("/view/Bus/BusList.jsp").forward(request, response);
@@ -177,7 +177,7 @@ public class BusServlet extends HttpServlet {
 
         String plate = request.getParameter("plate_number");
         String capStr = request.getParameter("capacity");
-        String currentStatus = request.getParameter("current_Status");
+        String currentStatus = request.getParameter("current_status");
 
         if (plate == null || plate.trim().isEmpty()) {
             request.setAttribute("error", "Biển số xe không được để trống.");
@@ -263,7 +263,7 @@ public class BusServlet extends HttpServlet {
             request.setAttribute("error_plate", "Biển số xe không được để trống.");
             hasError = true;
         }
-        
+
         // Kiểm tra định dạng biển số xe
         String platePattern = "^(29B|30B)-\\d{5}$";
         if (!plate.trim().matches(platePattern)) {
@@ -328,7 +328,7 @@ public class BusServlet extends HttpServlet {
     private void searchBus(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
 
-        String keyword = request.getParameter("keyword");
+        String keyword = request.getParameter("search");
         List<Bus> list = busServices.searchBusByPlate(keyword);
         request.setAttribute("busList", list);
 
