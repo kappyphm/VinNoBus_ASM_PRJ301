@@ -5,6 +5,7 @@ public class BusDTO {
     private int busId;
     private String plateNumber;
     private int capacity;
+    private String currentStatus;
 
     public int getBusId() {
         return busId;
@@ -28,6 +29,14 @@ public class BusDTO {
 
     public void setCapacity(int capacity) {
         this.capacity = capacity;
+    }
+
+    public String getCurrentStatus() {
+        return currentStatus;
+    }
+
+    public void setCurrentStatus(String currentStatus) {
+        this.currentStatus = currentStatus;
     }
 
 }
