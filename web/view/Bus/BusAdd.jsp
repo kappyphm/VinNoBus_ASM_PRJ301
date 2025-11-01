@@ -4,100 +4,58 @@
 <html>
     <head>
         <title>Thêm Xe Bus Mới</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="font-[Segoe_UI] bg-gradient-to-br from-[#74b9ff] to-[#a29bfe] flex justify-center items-center h-screen m-0">
+
+        <div class="bg-white p-10 rounded-2xl shadow-[0_8px_25px_rgba(0,0,0,0.15)] w-[400px] text-center animate-[fadeIn_0.5s_ease]">
+            <h2 class="text-[#2d3436] text-2xl font-semibold mb-5">Thêm Xe Bus Mới</h2>
+
+            <!-- Hiển thị thông báo -->
+            <c:if test="${not empty message}">
+                <div class="text-[#27ae60] font-semibold mb-4">${message}</div>
+            </c:if>
+
+            <c:if test="${not empty error}">
+                <div class="text-[#d63031] font-semibold mb-4">${error}</div>
+            </c:if>
+
+            <form action="BusServlet" method="post" class="text-left">
+                <input type="hidden" name="action" value="add">
+
+                <label class="block font-semibold text-[#555] mt-4 mb-1">Biển số xe:</label>
+                <input 
+                    type="text" 
+                    name="plate_number" 
+                    placeholder="VD: 29B-123.45"
+                    class="w-full px-3 py-2 border border-[#dcdde1] rounded-lg outline-none text-[15px] focus:border-[#0984e3] focus:shadow-[0_0_5px_rgba(9,132,227,0.4)] transition"
+                    >
+
+                <label class="block font-semibold text-[#555] mt-4 mb-1">Sức chứa:</label>
+                <input 
+                    type="number" 
+                    name="capacity" 
+                    placeholder="VD: 40"
+                    class="w-full px-3 py-2 border border-[#dcdde1] rounded-lg outline-none text-[15px] focus:border-[#0984e3] focus:shadow-[0_0_5px_rgba(9,132,227,0.4)] transition"
+                    >
+
+                <button 
+                    type="submit"
+                    class="w-full bg-[#0984e3] text-white py-3 rounded-lg text-[16px] font-bold mt-5 cursor-pointer transition hover:bg-[#74b9ff]"
+                    >
+                    ➕ Thêm Xe Bus
+                </button>
+
+                <a 
+                    href="BusServlet?action=list"
+                    class="block text-center mt-5 text-[#636e72] text-sm hover:underline hover:text-[#2d3436]"
+                    >
+                    ← Quay lại danh sách
+                </a>
+            </form>
+        </div>
+
         <style>
-            body {
-                font-family: 'Segoe UI', Arial, sans-serif;
-                background: linear-gradient(135deg, #74b9ff, #a29bfe);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                margin: 0;
-            }
-
-            .form-container {
-                background-color: #fff;
-                padding: 35px 40px;
-                border-radius: 16px;
-                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-                width: 400px;
-                text-align: center;
-                animation: fadeIn 0.5s ease;
-            }
-
-            h2 {
-                color: #2d3436;
-                margin-bottom: 20px;
-            }
-
-            label {
-                display: block;
-                text-align: left;
-                font-weight: 600;
-                color: #555;
-                margin-top: 15px;
-                margin-bottom: 5px;
-            }
-
-            input[type="text"],
-            input[type="number"] {
-                width: 100%;
-                padding: 10px 12px;
-                border: 1px solid #dcdde1;
-                border-radius: 8px;
-                outline: none;
-                transition: 0.3s;
-                font-size: 15px;
-            }
-
-            input:focus {
-                border-color: #0984e3;
-                box-shadow: 0 0 5px rgba(9, 132, 227, 0.4);
-            }
-
-            button {
-                width: 100%;
-                background: #0984e3;
-                color: white;
-                padding: 12px;
-                border: none;
-                border-radius: 8px;
-                font-size: 16px;
-                font-weight: bold;
-                margin-top: 20px;
-                cursor: pointer;
-                transition: 0.3s;
-            }
-
-            button:hover {
-                background: #74b9ff;
-            }
-
-            a {
-                display: inline-block;
-                margin-top: 20px;
-                text-decoration: none;
-                color: #636e72;
-                font-size: 14px;
-            }
-
-            a:hover {
-                text-decoration: underline;
-                color: #2d3436;
-            }
-
-            .message {
-                color: #27ae60;
-                font-weight: 600;
-                margin-bottom: 15px;
-            }
-
-            .error {
-                color: #d63031;
-                font-weight: 600;
-                margin-bottom: 15px;
-            }
-
             @keyframes fadeIn {
                 from {
                     opacity: 0;
@@ -109,34 +67,5 @@
                 }
             }
         </style>
-    </head>
-    <body>
-
-        <div class="form-container">
-            <h2>Thêm Xe Bus Mới</h2>
-
-            <!-- Hiển thị thông báo -->
-            <c:if test="${not empty message}">
-                <div class="message">${message}</div>
-            </c:if>
-
-            <c:if test="${not empty error}">
-                <div class="error">${error}</div>
-            </c:if>
-
-            <form action="BusServlet" method="post">
-                <input type="hidden" name="action" value="add">
-
-                <label>Biển số xe:</label>
-                <input type="text" name="plate_number" placeholder="VD: 29B-123.45" >
-
-                <label>Sức chứa:</label>
-                <input type="number" name="capacity" placeholder="VD: 40">
-
-                <button type="submit">➕ Thêm Xe Bus</button>
-                <a href="BusServlet?action=list">← Quay lại danh sách</a>
-            </form>
-        </div>
-
     </body>
 </html>
