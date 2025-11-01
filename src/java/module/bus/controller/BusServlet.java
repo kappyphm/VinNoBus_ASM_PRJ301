@@ -185,9 +185,9 @@ public class BusServlet extends HttpServlet {
             return;
         }
 
-        String platePattern = "^(29B|30B)-\\d{5}$";
+        String platePattern = "^(29B|30B)-\\d{3}\\.\\d{2}$";
         if (!plate.trim().matches(platePattern)) {
-            request.setAttribute("error", "❌ Biển số không hợp lệ. Hãy nhập theo định dạng: 29B-xxxxx hoặc 30B-xxxxx (ví dụ: 29B-12345).");
+            request.setAttribute("error", "❌ Biển số không hợp lệ. Hãy nhập theo định dạng: 29B-xxx.xx hoặc 30B-xxx.xx (ví dụ: 29B-101.01).");
             request.getRequestDispatcher("/view/Bus/BusAdd.jsp").forward(request, response);
             return;
         }
@@ -265,9 +265,9 @@ public class BusServlet extends HttpServlet {
         }
 
         // Kiểm tra định dạng biển số xe
-        String platePattern = "^(29B|30B)-\\d{5}$";
+        String platePattern = "^(29B|30B)-\\d{3}\\.\\d{2}$";
         if (!plate.trim().matches(platePattern)) {
-            request.setAttribute("error_plate", "❌ Biển số không hợp lệ. Hãy nhập theo định dạng: 29B-xxxxx hoặc 30B-xxxxx (ví dụ: 29B-12345).");
+            request.setAttribute("error_plate", "❌ Biển số không hợp lệ. Hãy nhập theo định dạng: 29B-xxx.xx hoặc 30B-xxx.xx (ví dụ: 29B-101.01).");
             hasError = true;
         }
 
