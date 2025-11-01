@@ -5,14 +5,16 @@ public class Bus {
     private int busId;
     private String plateNumber;
     private int capacity;
+    private String currentStatus;
 
     public Bus() {
     }
 
-    public Bus(int busId, String plateNumber, int capacity) {
+    public Bus(int busId, String plateNumber, int capacity, String currentStatus) {
         this.busId = busId;
         this.plateNumber = plateNumber;
         this.capacity = capacity;
+        this.currentStatus = currentStatus;
     }
 
     public int getBusId() {
@@ -38,5 +40,13 @@ public class Bus {
     public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
-    
+
+    public String getCurrentStatus() {
+        return currentStatus;
+    }
+
+    public void setCurrentStatus(String currentStatus) {
+        this.currentStatus = currentStatus;
+    }
+
 }
