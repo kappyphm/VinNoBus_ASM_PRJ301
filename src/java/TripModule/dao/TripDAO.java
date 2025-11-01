@@ -6,7 +6,6 @@ import java.sql.*;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class TripDAO extends DBContext implements ITripDAO {
 
@@ -16,8 +15,8 @@ public class TripDAO extends DBContext implements ITripDAO {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, trip.getRouteId());
             ps.setInt(2, trip.getBusId());
-            ps.setObject(3, trip.getDriverId());
-            ps.setObject(4, trip.getConductorId());
+            ps.setString(3, trip.getDriverId());
+            ps.setString(4, trip.getConductorId());
             ps.setTime(5, Time.valueOf(trip.getDepartureTime()));
             ps.setTime(6, Time.valueOf(trip.getArrivalTime()));
             ps.setString(7, trip.getStatus());
@@ -54,8 +53,8 @@ public class TripDAO extends DBContext implements ITripDAO {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, trip.getRouteId());
             ps.setInt(2, trip.getBusId());
-            ps.setObject(3, trip.getDriverId());
-            ps.setObject(4, trip.getConductorId());
+            ps.setString(3, trip.getDriverId());
+            ps.setString(4, trip.getConductorId());
             ps.setTime(5, Time.valueOf(trip.getDepartureTime()));
             ps.setTime(6, Time.valueOf(trip.getArrivalTime()));
             ps.setString(7, trip.getStatus());
@@ -104,8 +103,13 @@ public class TripDAO extends DBContext implements ITripDAO {
         List<Trip> list = new ArrayList<>();
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
-            }
+                Object p = params.get(i);
+                if (p instanceof String) {
+                    ps.setString(i + 1, (String) p);
+                } else if (p instanceof Integer) {
+                    ps.setInt(i + 1, (Integer) p);
+                }
+            }            
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(extractTrip(rs));
@@ -133,7 +137,7 @@ public class TripDAO extends DBContext implements ITripDAO {
 
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             for (int i = 0; i < params.size(); i++) {
-                ps.setObject(i + 1, params.get(i));
+                ps.setString(i + 1, (String) params.get(i));
             }
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -170,20 +174,20 @@ public class TripDAO extends DBContext implements ITripDAO {
     }
 
     @Override
-    public boolean assignDriver(int tripId, UUID driverId) throws SQLException {
+    public boolean assignDriver(int tripId, String driverId) throws SQLException {
         String sql = "UPDATE Trip SET driver_id=? WHERE trip_id=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setObject(1, driverId);
+            ps.setString(1, driverId);
             ps.setInt(2, tripId);
             return ps.executeUpdate() > 0;
         }
     }
 
     @Override
-    public boolean assignConductor(int tripId, UUID conductorId) throws SQLException {
+    public boolean assignConductor(int tripId, String conductorId) throws SQLException {
         String sql = "UPDATE Trip SET conductor_id=? WHERE trip_id=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setObject(1, conductorId);
+            ps.setString(1, conductorId);
             ps.setInt(2, tripId);
             return ps.executeUpdate() > 0;
         }
@@ -211,11 +215,11 @@ public class TripDAO extends DBContext implements ITripDAO {
     }
 
     @Override
-    public List<Trip> findTripsByDriver(UUID driverId) throws SQLException {
+    public List<Trip> findTripsByDriver(String driverId) throws SQLException {
         List<Trip> list = new ArrayList<>();
         String sql = "SELECT * FROM Trip WHERE driver_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setObject(1, driverId);
+            ps.setString(1, driverId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(extractTrip(rs));
@@ -226,11 +230,11 @@ public class TripDAO extends DBContext implements ITripDAO {
     }
 
     @Override
-    public List<Trip> findTripsByConductor(UUID conductorId) throws SQLException {
+    public List<Trip> findTripsByConductor(String conductorId) throws SQLException {
         List<Trip> list = new ArrayList<>();
         String sql = "SELECT * FROM Trip WHERE conductor_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setObject(1, conductorId);
+            ps.setString(1, conductorId);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(extractTrip(rs));
@@ -287,7 +291,7 @@ public class TripDAO extends DBContext implements ITripDAO {
     }
 
     @Override
-    public boolean checkDriver(UUID driverId, LocalTime departure, LocalTime arrival) throws SQLException {
+    public boolean checkDriver(String driverId, LocalTime departure, LocalTime arrival) throws SQLException {
         String sql = """
         SELECT COUNT(*) AS cnt
         FROM Trip
@@ -299,7 +303,7 @@ public class TripDAO extends DBContext implements ITripDAO {
           )
     """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setObject(1, driverId);
+            ps.setString(1, driverId);
             ps.setTime(2, Time.valueOf(departure));
             ps.setTime(3, Time.valueOf(arrival));
             ps.setTime(4, Time.valueOf(departure));
@@ -343,7 +347,7 @@ public class TripDAO extends DBContext implements ITripDAO {
     }
 
     @Override
-    public boolean checkConductor(UUID conductorId, LocalTime departure, LocalTime arrival) throws SQLException {
+    public boolean checkConductor(String conductorId, LocalTime departure, LocalTime arrival) throws SQLException {
         String sql = """
         SELECT COUNT(*) AS cnt
         FROM Trip
@@ -355,7 +359,7 @@ public class TripDAO extends DBContext implements ITripDAO {
           )
     """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setObject(1, conductorId);
+            ps.setString(1, conductorId);
             ps.setTime(2, Time.valueOf(departure));
             ps.setTime(3, Time.valueOf(arrival));
             ps.setTime(4, Time.valueOf(departure));
@@ -375,8 +379,8 @@ public class TripDAO extends DBContext implements ITripDAO {
                 rs.getInt("trip_id"),
                 rs.getInt("route_id"),
                 rs.getInt("bus_id"),
-                (UUID) rs.getObject("driver_id"),
-                (UUID) rs.getObject("conductor_id"),
+                (String) rs.getObject("driver_id"),
+                (String) rs.getObject("conductor_id"),
                 rs.getTime("departure_time").toLocalTime(),
                 rs.getTime("arrival_time").toLocalTime(),
                 rs.getString("status")
