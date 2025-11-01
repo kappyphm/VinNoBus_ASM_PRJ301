@@ -228,18 +228,21 @@ public class RouteServlet extends HttpServlet {
         String type = request.getParameter("type");
         String freqStr = request.getParameter("frequency");
 
-        // ====== VALIDATION ======
+        // Kiểm tra tên trống
         if (name == null || name.trim().isEmpty()) {
             request.setAttribute("errorMessage", "⚠️ Tên tuyến không được để trống!");
             request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
             return;
         }
-        // ✅ Kiểm tra trùng tên tuyến
+
+        // ✅ Kiểm tra trùng tên tuyến trước khi thêm
         if (routeServices.isRouteNameExist(name.trim())) {
             request.setAttribute("errorMessage", "❌ Tuyến \"" + name.trim() + "\" đã tồn tại trong hệ thống!");
             request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
-            return;
+            return;  
         }
+
+        // Chuyển frequency sang int
         int frequency;
         try {
             frequency = Integer.parseInt(freqStr);
@@ -247,18 +250,19 @@ public class RouteServlet extends HttpServlet {
                 throw new NumberFormatException();
             }
         } catch (NumberFormatException e) {
-            request.setAttribute("errorMessage", "⚠️ Tần suất phải là số nguyên dương (phút)!");
+            request.setAttribute("errorMessage", "⚠️ Tần suất phải là số nguyên dương!");
             request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
             return;
         }
-        // ====== THỰC HIỆN THÊM ======
+
         Route route = new Route(0, name.trim(), type, frequency);
         boolean success = routeServices.addRoute(route);
+
         if (success) {
             request.getSession().setAttribute("message", "✅ Thêm tuyến \"" + name + "\" thành công!");
             response.sendRedirect("RouteServlet?action=list");
         } else {
-            request.setAttribute("errorMessage", "❌ Thêm thất bại! Tuyến \"" + name + "\" đã tồn tại hoặc dữ liệu không hợp lệ.");
+            request.setAttribute("errorMessage", "❌ Thêm thất bại! Có thể tuyến đã tồn tại.");
             request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
         }
     }
