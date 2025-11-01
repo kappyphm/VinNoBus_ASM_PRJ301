@@ -1,8 +1,3 @@
-<%-- 
-    Document   : BusDetails
-    Created on : Oct 16, 2025, 2:27:27 PM
-    Author     : Admin
---%>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
@@ -11,126 +6,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Chi tiết Xe Bus</title>
+        <script src="https://cdn.tailwindcss.com"></script>
         <style>
-            /* ===== Reset & Global ===== */
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-                transition: all 0.3s ease;
-            }
-            body {
-                font-family: 'Segoe UI', sans-serif;
-                background: linear-gradient(135deg, #e6efff, #f8fbff);
-                color: #333;
-                min-height: 100vh;
-            }
-
-            /* ===== Header ===== */
-            header {
-                position: sticky;
-                top: 0;
-                z-index: 10;
-                background: rgba(0, 98, 204, 0.9);
-                backdrop-filter: blur(10px);
-                color: white;
-                padding: 18px 50px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            }
-            .logo {
-                font-size: 24px;
-                font-weight: bold;
-            }
-            nav ul {
-                list-style: none;
-                display: flex;
-                gap: 25px;
-            }
-            nav ul li a {
-                color: white;
-                text-decoration: none;
-                font-weight: 500;
-                position: relative;
-                padding-bottom: 4px;
-            }
-            nav ul li a::after {
-                content: "";
-                position: absolute;
-                width: 0%;
-                height: 2px;
-                bottom: 0;
-                left: 0;
-                background-color: #ffdd57;
-                transition: width 0.3s ease;
-            }
-            nav ul li a:hover::after {
-                width: 100%;
-            }
-            nav ul li a:hover {
-                color: #ffdd57;
-            }
-
-            /* ===== Main content ===== */
-            main {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding: 80px 20px 60px;
-                animation: slideUp 0.8s ease forwards;
-            }
-            .details-box {
-                background: #fff;
-                padding: 35px 40px;
-                border-radius: 16px;
-                box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-                width: 400px;
-                text-align: left;
-            }
-            h2 {
-                text-align: center;
-                color: #004a99;
-                margin-bottom: 25px;
-            }
-            .detail-item {
-                margin-bottom: 15px;
-                font-size: 16px;
-            }
-            .detail-item span {
-                font-weight: 600;
-            }
-
-            a.back-btn {
-                display: inline-block;
-                margin-top: 20px;
-                padding: 12px 20px;
-                background: linear-gradient(135deg, #0078d7, #005fa3);
-                color: white;
-                border-radius: 12px;
-                text-decoration: none;
-                font-weight: 500;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            }
-            a.back-btn:hover {
-                background: linear-gradient(135deg, #005fa3, #004f88);
-                transform: translateY(-3px);
-                box-shadow: 0 8px 18px rgba(0,0,0,0.2);
-            }
-
-            /* ===== Footer ===== */
-            footer {
-                text-align: center;
-                padding: 25px;
-                background: #f5f5f5;
-                color: #666;
-                font-size: 14px;
-                border-top: 1px solid #ddd;
-                position: relative;
-            }
-
-            /* ===== Animations ===== */
             @keyframes slideUp {
                 from {
                     transform: translateY(40px);
@@ -141,33 +18,47 @@
                     opacity: 1;
                 }
             }
-
-            @media (max-width: 480px) {
-                .details-box {
-                    width: 90%;
-                    padding: 25px;
-                }
-                header {
-                    flex-direction: column;
-                    gap: 10px;
-                }
-                nav ul {
-                    flex-wrap: wrap;
-                    justify-content: center;
-                    gap: 10px;
-                }
-            }
         </style>
     </head>
-    <body>
-        <main>
-            <div class="details-box">
-                <h2>Chi tiết Xe Bus</h2>
-                <div class="detail-item"><span>Biển số xe:</span> ${bus.plateNumber}</div>
-                <div class="detail-item"><span>Sức chứa:</span> ${bus.capacity}</div>
-                <div class="detail-item"><span>Bus ID:</span> ${bus.busId}</div>
-                <a class="back-btn" href="BusServlet?action=list">← Quay lại danh sách</a>
+    <body class="font-[Segoe_UI] bg-gradient-to-br from-[#e6efff] to-[#f8fbff] text-[#333] min-h-screen">
+
+        <!-- Header -->
+        <header class="sticky top-0 z-10 bg-[rgba(0,98,204,0.9)] backdrop-blur-md text-white px-12 py-4 flex flex-wrap justify-between items-center shadow-[0_4px_15px_rgba(0,0,0,0.15)]">
+            <div class="text-2xl font-bold">Hệ thống Xe Bus</div>
+            <nav>
+                <ul class="flex flex-wrap gap-6">
+                    <li><a href="index.jsp" class="relative font-medium pb-1 after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-0 after:left-0 after:bg-[#ffdd57] hover:after:w-full hover:text-[#ffdd57] transition-all duration-300">Trang chủ</a></li>
+                    <li><a href="BusServlet?action=list" class="relative font-medium pb-1 after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-0 after:left-0 after:bg-[#ffdd57] hover:after:w-full hover:text-[#ffdd57] transition-all duration-300">Danh sách</a></li>
+                    <li><a href="BusServlet?action=addForm" class="relative font-medium pb-1 after:content-[''] after:absolute after:w-0 after:h-[2px] after:bottom-0 after:left-0 after:bg-[#ffdd57] hover:after:w-full hover:text-[#ffdd57] transition-all duration-300">Thêm mới</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Main -->
+        <main class="flex justify-center items-center px-5 py-20 animate-[slideUp_0.8s_ease_forwards]">
+            <div class="bg-white p-10 rounded-2xl shadow-[0_8px_25px_rgba(0,0,0,0.15)] w-[400px] text-left">
+                <h2 class="text-center text-[#004a99] text-2xl font-semibold mb-6">Chi tiết Xe Bus</h2>
+
+                <div class="mb-4 text-[16px]"><span class="font-semibold">Biển số xe:</span> ${bus.plateNumber}</div>
+                <div class="mb-4 text-[16px]"><span class="font-semibold">Sức chứa:</span> ${bus.capacity}</div>
+                <div class="mb-4 text-[16px]"><span class="font-semibold">Bus ID:</span> ${bus.busId}</div>
+
+                <a href="BusServlet?action=list"
+                   class="inline-block mt-5 px-5 py-3 rounded-xl font-medium text-white text-center
+                   bg-gradient-to-br from-[#0078d7] to-[#005fa3]
+                   shadow-[0_5px_15px_rgba(0,0,0,0.1)]
+                   hover:from-[#005fa3] hover:to-[#004f88]
+                   hover:-translate-y-[3px] hover:shadow-[0_8px_18px_rgba(0,0,0,0.2)]
+                   transition-all duration-300">
+                    ← Quay lại danh sách
+                </a>
             </div>
         </main>
+
+        <!-- Footer -->
+        <footer class="text-center py-6 bg-[#f5f5f5] text-[#666] text-sm border-t border-[#ddd]">
+            © 2025 Hệ thống quản lý xe bus. Mọi quyền được bảo lưu.
+        </footer>
+
     </body>
 </html>
