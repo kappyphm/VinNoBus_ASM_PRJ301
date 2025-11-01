@@ -58,4 +58,12 @@ public class RouteServices {
     public int getEstimatedDuration(int routeId) throws SQLException {
         return routeDAO.getEstimatedDuration(routeId);
     }
+
+    public boolean isRouteNameExist(String routeName) throws SQLException {
+        return routeDAO.isRouteNameExist(routeName);
+    }
+
+    public boolean isRouteNameExistForOtherId(String routeName, int id) throws SQLException {
+        return routeDAO.isRouteNameExistForOtherId(routeName, id);
+    }
 }
