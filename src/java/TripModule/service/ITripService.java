@@ -4,7 +4,6 @@ import TripModule.model.Trip;
 import java.sql.SQLException;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
 
 public interface ITripService {
 
@@ -32,9 +31,9 @@ public interface ITripService {
 
     boolean assignBus(int tripId, int busId) throws SQLException;
 
-    boolean assignDriver(int tripId, UUID driverId) throws SQLException;
+    boolean assignDriver(int tripId, String driverId) throws SQLException;
 
-    boolean assignConductor(int tripId, UUID conductorId) throws SQLException;
+    boolean assignConductor(int tripId, String conductorId) throws SQLException;
 
     // Thời gian & trạng thái
     boolean updateTripTime(int tripId, LocalTime departure, LocalTime arrival) throws SQLException;
@@ -42,9 +41,9 @@ public interface ITripService {
     boolean updateTripStatus(int tripId, String status) throws SQLException;
 
     // Tìm kiếm theo đối tượng
-    List<Trip> findTripsByDriver(UUID driverId) throws SQLException;
+    List<Trip> findTripsByDriver(String driverId) throws SQLException;
 
-    List<Trip> findTripsByConductor(UUID conductorId) throws SQLException;
+    List<Trip> findTripsByConductor(String conductorId) throws SQLException;
 
     List<Trip> findTripsByBus(int busId) throws SQLException;
 
@@ -53,10 +52,10 @@ public interface ITripService {
     List<Trip> findTripsByTime(LocalTime from, LocalTime to) throws SQLException;
 
     // Validation
-    boolean checkDriver(UUID driverId, LocalTime departure, LocalTime arrival) throws SQLException;
+    boolean checkDriver(String driverId, LocalTime departure, LocalTime arrival) throws SQLException;
 
     boolean checkBus(int busId, LocalTime departure, LocalTime arrival) throws SQLException;
 
-    boolean checkConductor(UUID conductorId, LocalTime departure, LocalTime arrival) throws SQLException;
+    boolean checkConductor(String conductorId, LocalTime departure, LocalTime arrival) throws SQLException;
 
 }
