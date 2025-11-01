@@ -2,14 +2,12 @@
 package TripModule.dto;
 
 import java.time.LocalTime;
-import java.util.UUID;
-
 public class TripDTO {
     private int tripId;
     private int routeId;
     private int busId;
-    private UUID driverId;
-    private UUID conductorId;
+    private String driverId;
+    private String conductorId;
     private LocalTime departuretime;
     private LocalTime arrivaltime;
     private String status;
@@ -26,11 +24,11 @@ public class TripDTO {
         return busId;
     }
 
-    public UUID getDriverId() {
+    public String getDriverId() {
         return driverId;
     }
 
-    public UUID getConductorId() {
+    public String getConductorId() {
         return conductorId;
     }
 
