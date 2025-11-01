@@ -5,7 +5,6 @@ import TripModule.model.Trip;
 import java.sql.*;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
 
 public interface ITripDAO {
 
@@ -33,9 +32,9 @@ public interface ITripDAO {
 
     public boolean assignBus(int tripId, int busId) throws SQLException;
 
-    public boolean assignDriver(int tripId, UUID driverId) throws SQLException;
+    public boolean assignDriver(int tripId, String driverId) throws SQLException;
 
-    public boolean assignConductor(int tripId, UUID conductorId) throws SQLException;
+    public boolean assignConductor(int tripId, String conductorId) throws SQLException;
 
     //Status & Time
     public boolean updateTripTime(int tripId, LocalTime departureTime, LocalTime arrivalTime) throws SQLException;
@@ -43,9 +42,9 @@ public interface ITripDAO {
     public boolean updateTripStatus(int tripId, String status) throws SQLException;
 
     //Find
-    List<Trip> findTripsByDriver(UUID driverId) throws SQLException;
+    List<Trip> findTripsByDriver(String driverId) throws SQLException;
 
-    List<Trip> findTripsByConductor(UUID conductorId) throws SQLException;
+    List<Trip> findTripsByConductor(String conductorId) throws SQLException;
 
     List<Trip> findTripsByBus(int busId) throws SQLException;
 
@@ -54,9 +53,9 @@ public interface ITripDAO {
     List<Trip> findTripsByTime(LocalTime from, LocalTime to) throws SQLException;
 
     //Validation
-    public boolean checkDriver(UUID driverId, LocalTime departure, LocalTime arrival) throws SQLException;
+    public boolean checkDriver(String driverId, LocalTime departure, LocalTime arrival) throws SQLException;
 
     public boolean checkBus(int busId, LocalTime departure, LocalTime arrival) throws SQLException;
 
-    public boolean checkConductor(UUID conductorId, LocalTime departure, LocalTime arrival) throws SQLException;//kiem tra validation o service
+    public boolean checkConductor(String conductorId, LocalTime departure, LocalTime arrival) throws SQLException;//kiem tra validation o service
 }
