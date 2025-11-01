@@ -28,4 +28,11 @@ public interface iRouteDAO {
     public Route getRouteDetails(int routeId) throws SQLException;
 
     public int getEstimatedDuration(int routeId) throws SQLException;
+
+    public boolean isRouteNameExist(String routeName) throws SQLException;
+    // kiểm tra trong DB có tên routeName hay chưa
+
+    public boolean isRouteNameExistForOtherId(String routeName, int id) throws SQLException;
+    // kiểm tra trong DB có tên routeName tồn tại nhưng không phải ID hiện tại
+
 }
