@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page pageEncoding="UTF-8" %>
 <jsp:include page="/header.jsp" />
 
 <!DOCTYPE html>
@@ -21,7 +22,8 @@
             }
         </style>
     </head>
-    <body class="font-[Segoe_UI] bg-gradient-to-br from-[#f5f7fa] to-[#eaf1f9] animate-[fadeSlideUp_0.5s_ease]">
+    <body class="font-sans bg-gradient-to-br from-[#f5f7fa] to-[#eaf1f9] animate-[fadeSlideUp_0.5s_ease]"
+          style="font-family: 'Segoe UI', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;">
 
         <div class="w-[90%] max-w-[1200px] mx-auto my-[60px] bg-white p-[40px_50px] rounded-[18px] shadow-[0_12px_30px_rgba(0,0,0,0.08)]
              hover:shadow-[0_18px_40px_rgba(0,0,0,0.1)] transition-shadow duration-300 animate-[fadeSlideUp_0.7s_ease]">
@@ -52,7 +54,7 @@
                     + Thêm tuyến
                 </a>
 
-                <form action="RouteServlet" method="get" class="flex items-center gap-[10px]">
+                <form action="RouteServlet" method="get" class="flex items-center gap-[10px]" accept-charset="UTF-8">
                     <input type="hidden" name="action" value="list">
                     <input type="text" name="search" placeholder="Tìm theo tên..."
                            value="${search}"
@@ -101,23 +103,27 @@
             </div>
 
 
-            <!-- ✅ Phân trang -->
-            <c:if test="${totalPages > 1}">
-                <div class="text-center mt-[30px] animate-[fadeSlideUp_1s_ease]">
-                    <c:forEach var="i" begin="1" end="${totalPages}">
-                        <c:choose>
-                            <c:when test="${i == currentPage}">
-                                <a href="#" class="inline-block px-[13px] py-[8px] m-[3px] text-white bg-[#3498db] rounded-[8px] font-semibold shadow-[0_3px_8px_rgba(52,152,219,0.4)]">${i}</a>
-                            </c:when>
-                            <c:otherwise>
-                                <a href="RouteServlet?action=list&page=${i}" class="inline-block px-[13px] py-[8px] m-[3px] text-[#3498db] border border-[#3498db] rounded-[8px] font-medium transition-all duration-200 hover:bg-[#3498db] hover:text-white hover:-translate-y-[3px] hover:shadow-[0_5px_10px_rgba(52,152,219,0.3)]">${i}</a>
-                            </c:otherwise>
-                        </c:choose>
-                    </c:forEach>
-                </div>
-            </c:if>
-        </div>
+            <!-- Phân trang RouteList.jsp -->
+            <div class="text-center mt-8 animate-[fadeSlideUp_1s_ease]">
+                <c:forEach var="i" begin="1" end="${totalPages}">
+                    <c:choose>
+                        <c:when test="${i == currentPage}">
+                            <a href="RouteServlet?action=list&page=${i}&search=${search}&type=${type}&sortColumn=${sortColumn}&sortOrder=${sortOrder}"
+                               class="inline-block bg-gradient-to-r from-[#3498db] to-[#2ecc71] text-white font-semibold px-3 py-2 rounded-md shadow hover:scale-105 mx-1">
+                                ${i}
+                            </a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="RouteServlet?action=list&page=${i}&search=${search}&type=${type}&sortColumn=${sortColumn}&sortOrder=${sortOrder}"
+                               class="inline-block border border-[#3498db] text-[#3498db] font-medium px-3 py-2 rounded-md hover:bg-gradient-to-r hover:from-[#3498db] hover:to-[#2ecc71] hover:text-white hover:shadow transition mx-1">
+                                ${i}
+                            </a>
+                        </c:otherwise>
+                    </c:choose>
+                </c:forEach>
+            </div>
 
+        </div>
     </body>
     <jsp:include page="/footer.jsp" />
 </html>
