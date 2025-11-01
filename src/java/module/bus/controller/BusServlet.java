@@ -177,7 +177,8 @@ public class BusServlet extends HttpServlet {
 
         String plate = request.getParameter("plate_number");
         String capStr = request.getParameter("capacity");
-
+        String currentStatus = request.getParameter("current_Status");
+        
         if (plate == null || plate.trim().isEmpty()) {
             request.setAttribute("error", "Biển số xe không được để trống.");
             request.getRequestDispatcher("/view/Bus/BusAdd.jsp").forward(request, response);
@@ -195,7 +196,7 @@ public class BusServlet extends HttpServlet {
             request.getRequestDispatcher("/view/Bus/BusAdd.jsp").forward(request, response);
             return;
         }
-        Bus bus = new Bus(0, plate.trim(), capacity);
+        Bus bus = new Bus(0, plate.trim(), capacity,currentStatus.trim());
         boolean success = busServices.addBus(bus);
 
         if (success) {
@@ -230,11 +231,13 @@ public class BusServlet extends HttpServlet {
         String idStr = request.getParameter("bus_id");
         String plate = request.getParameter("plate_number");
         String capStr = request.getParameter("capacity");
+        String currentStatus = request.getParameter("current_status");
 
         // Biến giữ dữ liệu để JSP giữ lại khi lỗi
         request.setAttribute("bus_id", idStr);
         request.setAttribute("plate_number", plate);
         request.setAttribute("capacity", capStr);
+        request.setAttribute("current_status", currentStatus);
 
         int id = 0;
         int capacity = 0;
@@ -272,8 +275,7 @@ public class BusServlet extends HttpServlet {
         }
 
         // Tạo đối tượng Bus
-        Bus bus = new Bus(id, plate.trim(), capacity);
-
+        Bus bus = new Bus(id, plate.trim(), capacity, currentStatus.trim());
         try {
             boolean success = busServices.updateBus(bus);
 
