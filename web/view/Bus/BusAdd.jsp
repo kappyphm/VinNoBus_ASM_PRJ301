@@ -38,7 +38,15 @@
                     placeholder="VD: 40"
                     class="w-full px-3 py-2 border border-[#dcdde1] rounded-lg outline-none text-[15px] focus:border-[#0984e3] focus:shadow-[0_0_5px_rgba(9,132,227,0.4)] transition"
                     >
-
+                <label class="block font-semibold text-[#555] mt-4 mb-1">Trạng thái:</label>
+                <select name="current_status" class="w-full px-3 py-2 border rounded-lg text-[15px] focus:border-[#0984e3] focus:shadow-[0_0_5px_rgba(9,132,227,0.4)]">
+                    <option value="AVAILABLE">AVAILABLE</option>
+                    <option value="IN_USE">IN_USE</option>
+                    <option value="MAINTENANCE">MAINTENANCE</option>
+                    <option value="BROKEN">BROKEN</option>
+                    <option value="REPAIRING">REPAIRING</option>
+                    <option value="RESERVED">RESERVED</option>
+                </select>
                 <button 
                     type="submit"
                     class="w-full bg-[#0984e3] text-white py-3 rounded-lg text-[16px] font-bold mt-5 cursor-pointer transition hover:bg-[#74b9ff]"
