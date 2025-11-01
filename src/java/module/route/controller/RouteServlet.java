@@ -234,6 +234,12 @@ public class RouteServlet extends HttpServlet {
             request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
             return;
         }
+        // ✅ Kiểm tra trùng tên tuyến
+        if (routeServices.isRouteNameExist(name.trim())) {
+            request.setAttribute("errorMessage", "❌ Tuyến \"" + name.trim() + "\" đã tồn tại trong hệ thống!");
+            request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
+            return;
+        }
         int frequency;
         try {
             frequency = Integer.parseInt(freqStr);
@@ -267,6 +273,12 @@ public class RouteServlet extends HttpServlet {
 
             if (name == null || name.trim().isEmpty()) {
                 request.setAttribute("errorMessage", "⚠️ Tên tuyến không được để trống!");
+                request.getRequestDispatcher("/view/Route/RouteForm.jsp").forward(request, response);
+                return;
+            }
+            // Kiểm tra trùng tên trước khi cập nhật (trừ chính tuyến đang chỉnh sửa)
+            if (routeServices.isRouteNameExistForOtherId(name.trim(), id)) {
+                request.setAttribute("errorMessage", "❌ Tuyến \"" + name.trim() + "\" đã tồn tại trong hệ thống!");
                 request.getRequestDispatcher("/view/Route/RouteForm.jsp").forward(request, response);
                 return;
             }
