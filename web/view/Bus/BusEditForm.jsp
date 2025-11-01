@@ -73,6 +73,16 @@
                     </div>
                 </c:if>
 
+                <label class="block font-semibold text-[#555] mt-4 mb-1">Trạng thái:</label>
+                <select name="current_status" class="w-full px-3 py-2 border rounded-lg text-[15px] transition-all duration-300 focus:border-[#0984e3] focus:shadow-[0_0_8px_rgba(9,132,227,0.4)] outline-none">
+                    <option value="AVAILABLE" ${bus.currentStatus == 'AVAILABLE' ? 'selected' : ''}>AVAILABLE</option>
+                    <option value="IN_USE" ${bus.currentStatus == 'IN_USE' ? 'selected' : ''}>IN_USE</option>
+                    <option value="MAINTENANCE" ${bus.currentStatus == 'MAINTENANCE' ? 'selected' : ''}>MAINTENANCE</option>
+                    <option value="BROKEN" ${bus.currentStatus == 'BROKEN' ? 'selected' : ''}>BROKEN</option>
+                    <option value="REPAIRING" ${bus.currentStatus == 'REPAIRING' ? 'selected' : ''}>REPAIRING</option>
+                    <option value="RESERVED" ${bus.currentStatus == 'RESERVED' ? 'selected' : ''}>RESERVED</option>
+                </select>
+
                 <c:if test="${not empty error_general}">
                     <div class="text-[#d63031] font-semibold mt-2 text-sm">
                         ${error_general}
