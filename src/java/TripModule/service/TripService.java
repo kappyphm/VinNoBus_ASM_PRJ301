@@ -4,7 +4,7 @@ import TripModule.dao.ITripDAO;
 import TripModule.dao.TripDAO;
 import TripModule.model.Trip;
 import java.sql.SQLException;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class TripService implements ITripService {
@@ -114,11 +114,11 @@ public class TripService implements ITripService {
 
     // --- Thời gian & trạng thái ---
     @Override
-    public boolean updateTripTime(int tripId, LocalTime departure, LocalTime arrival) throws SQLException {
-        if (departure.isAfter(arrival)) {
+    public boolean updateTripTime(int tripId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException {
+        if (departureTime.isAfter(arrivalTime)) {
             return false;
         }
-        return tripDAO.updateTripTime(tripId, departure, arrival);
+        return tripDAO.updateTripTime(tripId, departureTime, arrivalTime);
     }
 
     @Override
@@ -151,23 +151,23 @@ public class TripService implements ITripService {
     }
 
     @Override
-    public List<Trip> findTripsByTime(LocalTime from, LocalTime to) throws SQLException {
+    public List<Trip> findTripsByTime(LocalDateTime from, LocalDateTime to) throws SQLException {
         return tripDAO.findTripsByTime(from, to);
     }
 
     // --- Validation ---
     @Override
-    public boolean checkDriver(String driverId, LocalTime departure, LocalTime arrival) throws SQLException {
-        return tripDAO.checkDriver(driverId, departure, arrival);
+    public boolean checkDriver(String driverId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException {
+        return tripDAO.checkDriver(driverId, departureTime, arrivalTime);
     }
 
     @Override
-    public boolean checkBus(int busId, LocalTime departure, LocalTime arrival) throws SQLException {
-        return tripDAO.checkBus(busId, departure, arrival);
+    public boolean checkBus(int busId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException {
+        return tripDAO.checkBus(busId, departureTime, arrivalTime);
     }
 
     @Override
-    public boolean checkConductor(String conductorId, LocalTime departure, LocalTime arrival) throws SQLException {
-        return tripDAO.checkConductor(conductorId, departure, arrival);
+    public boolean checkConductor(String conductorId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException {
+        return tripDAO.checkConductor(conductorId, departureTime, arrivalTime);
     }
 }
