@@ -18,7 +18,6 @@ import java.sql.Timestamp;
  */
 public class Staff {
 
-    private int staffId;
     private int userId;
     private String staffCode;
     private String department;
@@ -32,14 +31,6 @@ public class Staff {
     public Staff() {
     }
 
-    // region Getters and Setters
-    public int getStaffId() {
-        return staffId;
-    }
-
-    public void setStaffId(int staffId) {
-        this.staffId = staffId;
-    }
 
     public int getUserId() {
         return userId;

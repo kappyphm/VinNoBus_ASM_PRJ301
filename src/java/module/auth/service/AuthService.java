@@ -61,6 +61,8 @@ public class AuthService extends BaseService {
             newProfile.setDateOfBirth(Date.valueOf(profileInput.getDateOfBirth()));
             profileDAO.insert(newProfile);
 
+            
+
             commitTransaction();
             return userDAO.findById(profileInput.getUserId());
         } catch (SQLException e) {

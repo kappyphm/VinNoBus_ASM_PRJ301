@@ -75,7 +75,7 @@ public class AuthController extends HttpServlet {
     }
 
     private void handleLogout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getSession().removeAttribute("user");
+        req.getSession().invalidate();
         //TODO: delete both staff data
         resp.sendRedirect(req.getContextPath() + "/");
     }

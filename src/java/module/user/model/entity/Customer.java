@@ -18,8 +18,7 @@ import java.sql.Timestamp;
  */
 public class Customer {
 
-    private int customerId;
-    private int userId;
+    private String userId;
     private int loyaltyPoints;
     private String membershipLevel;
     private Timestamp createdAt;
@@ -31,20 +30,11 @@ public class Customer {
     public Customer() {
     }
 
-    // region Getters and Setters
-    public int getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
-    }
-
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
