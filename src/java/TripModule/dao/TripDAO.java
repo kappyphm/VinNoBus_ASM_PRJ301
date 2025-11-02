@@ -3,7 +3,7 @@ package TripModule.dao;
 import dal.DBContext;
 import TripModule.model.Trip;
 import java.sql.*;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +17,8 @@ public class TripDAO extends DBContext implements ITripDAO {
             ps.setInt(2, trip.getBusId());
             ps.setString(3, trip.getDriverId());
             ps.setString(4, trip.getConductorId());
-            ps.setTime(5, Time.valueOf(trip.getDepartureTime()));
-            ps.setTime(6, Time.valueOf(trip.getArrivalTime()));
+            ps.setTimestamp(5, Timestamp.valueOf(trip.getDepartureTime()));
+            ps.setTimestamp(6, Timestamp.valueOf(trip.getArrivalTime()));
             ps.setString(7, trip.getStatus());
             return ps.executeUpdate() > 0;
         }
@@ -55,8 +55,8 @@ public class TripDAO extends DBContext implements ITripDAO {
             ps.setInt(2, trip.getBusId());
             ps.setString(3, trip.getDriverId());
             ps.setString(4, trip.getConductorId());
-            ps.setTime(5, Time.valueOf(trip.getDepartureTime()));
-            ps.setTime(6, Time.valueOf(trip.getArrivalTime()));
+            ps.setTimestamp(5, Timestamp.valueOf(trip.getDepartureTime()));
+            ps.setTimestamp(6, Timestamp.valueOf(trip.getArrivalTime()));
             ps.setString(7, trip.getStatus());
             ps.setInt(8, trip.getTripId());
             return ps.executeUpdate() > 0;
@@ -109,7 +109,7 @@ public class TripDAO extends DBContext implements ITripDAO {
                 } else if (p instanceof Integer) {
                     ps.setInt(i + 1, (Integer) p);
                 }
-            }            
+            }
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(extractTrip(rs));
@@ -194,11 +194,11 @@ public class TripDAO extends DBContext implements ITripDAO {
     }
 
     @Override
-    public boolean updateTripTime(int tripId, LocalTime departure, LocalTime arrival) throws SQLException {
+    public boolean updateTripTime(int tripId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException {
         String sql = "UPDATE Trip SET departure_time=?, arrival_time=? WHERE trip_id=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setTime(1, Time.valueOf(departure));
-            ps.setTime(2, Time.valueOf(arrival));
+            ps.setTimestamp(1, Timestamp.valueOf(departureTime));
+            ps.setTimestamp(2, Timestamp.valueOf(arrivalTime));
             ps.setInt(3, tripId);
             return ps.executeUpdate() > 0;
         }
@@ -275,12 +275,12 @@ public class TripDAO extends DBContext implements ITripDAO {
     }
 
     @Override
-    public List<Trip> findTripsByTime(LocalTime from, LocalTime to) throws SQLException {
+    public List<Trip> findTripsByTime(LocalDateTime from, LocalDateTime to) throws SQLException {
         List<Trip> list = new ArrayList<>();
         String sql = "SELECT * FROM Trip WHERE departure_time >= ? AND arrival_time <= ? ORDER BY departure_time ASC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setTime(1, Time.valueOf(from));
-            ps.setTime(2, Time.valueOf(to));
+            ps.setTimestamp(1, Timestamp.valueOf(from));
+            ps.setTimestamp(2, Timestamp.valueOf(to));
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(extractTrip(rs));
@@ -291,7 +291,7 @@ public class TripDAO extends DBContext implements ITripDAO {
     }
 
     @Override
-    public boolean checkDriver(String driverId, LocalTime departure, LocalTime arrival) throws SQLException {
+    public boolean checkDriver(String driverId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException {
         String sql = """
         SELECT COUNT(*) AS cnt
         FROM Trip
@@ -304,11 +304,11 @@ public class TripDAO extends DBContext implements ITripDAO {
     """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, driverId);
-            ps.setTime(2, Time.valueOf(departure));
-            ps.setTime(3, Time.valueOf(arrival));
-            ps.setTime(4, Time.valueOf(departure));
-            ps.setTime(5, Time.valueOf(arrival));
-            ps.setTime(6, Time.valueOf(departure));
+            ps.setTimestamp(2, Timestamp.valueOf(departureTime));
+            ps.setTimestamp(3, Timestamp.valueOf(arrivalTime));
+            ps.setTimestamp(4, Timestamp.valueOf(departureTime));
+            ps.setTimestamp(5, Timestamp.valueOf(arrivalTime));
+            ps.setTimestamp(6, Timestamp.valueOf(departureTime));
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -319,7 +319,7 @@ public class TripDAO extends DBContext implements ITripDAO {
     }
 
     @Override
-    public boolean checkBus(int busId, LocalTime departure, LocalTime arrival) throws SQLException {
+    public boolean checkBus(int busId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException {
         String sql = """
         SELECT COUNT(*) AS cnt
         FROM Trip
@@ -332,11 +332,11 @@ public class TripDAO extends DBContext implements ITripDAO {
     """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, busId);
-            ps.setTime(2, Time.valueOf(departure));
-            ps.setTime(3, Time.valueOf(arrival));
-            ps.setTime(4, Time.valueOf(departure));
-            ps.setTime(5, Time.valueOf(arrival));
-            ps.setTime(6, Time.valueOf(departure));
+            ps.setTimestamp(2, Timestamp.valueOf(departureTime));
+            ps.setTimestamp(3, Timestamp.valueOf(arrivalTime));
+            ps.setTimestamp(4, Timestamp.valueOf(departureTime));
+            ps.setTimestamp(5, Timestamp.valueOf(arrivalTime));
+            ps.setTimestamp(6, Timestamp.valueOf(departureTime));
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -347,7 +347,7 @@ public class TripDAO extends DBContext implements ITripDAO {
     }
 
     @Override
-    public boolean checkConductor(String conductorId, LocalTime departure, LocalTime arrival) throws SQLException {
+    public boolean checkConductor(String conductorId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException {
         String sql = """
         SELECT COUNT(*) AS cnt
         FROM Trip
@@ -360,11 +360,11 @@ public class TripDAO extends DBContext implements ITripDAO {
     """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, conductorId);
-            ps.setTime(2, Time.valueOf(departure));
-            ps.setTime(3, Time.valueOf(arrival));
-            ps.setTime(4, Time.valueOf(departure));
-            ps.setTime(5, Time.valueOf(arrival));
-            ps.setTime(6, Time.valueOf(departure));
+            ps.setTimestamp(2, Timestamp.valueOf(departureTime));
+            ps.setTimestamp(3, Timestamp.valueOf(arrivalTime));
+            ps.setTimestamp(4, Timestamp.valueOf(departureTime));
+            ps.setTimestamp(5, Timestamp.valueOf(arrivalTime));
+            ps.setTimestamp(6, Timestamp.valueOf(departureTime));
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -381,8 +381,8 @@ public class TripDAO extends DBContext implements ITripDAO {
                 rs.getInt("bus_id"),
                 (String) rs.getObject("driver_id"),
                 (String) rs.getObject("conductor_id"),
-                rs.getTime("departure_time").toLocalTime(),
-                rs.getTime("arrival_time").toLocalTime(),
+                rs.getTimestamp("departure_time").toLocalDateTime(),
+                rs.getTimestamp("arrival_time").toLocalDateTime(),
                 rs.getString("status")
         );
     }
