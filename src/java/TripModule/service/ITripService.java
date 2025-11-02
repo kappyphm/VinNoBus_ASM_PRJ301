@@ -2,7 +2,7 @@ package TripModule.service;
 
 import TripModule.model.Trip;
 import java.sql.SQLException;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ITripService {
@@ -36,7 +36,7 @@ public interface ITripService {
     boolean assignConductor(int tripId, String conductorId) throws SQLException;
 
     // Thời gian & trạng thái
-    boolean updateTripTime(int tripId, LocalTime departure, LocalTime arrival) throws SQLException;
+    boolean updateTripTime(int tripId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException;
 
     boolean updateTripStatus(int tripId, String status) throws SQLException;
 
@@ -49,13 +49,13 @@ public interface ITripService {
 
     List<Trip> findTripsByRoute(int routeId) throws SQLException;
 
-    List<Trip> findTripsByTime(LocalTime from, LocalTime to) throws SQLException;
+    List<Trip> findTripsByTime(LocalDateTime from, LocalDateTime to) throws SQLException;
 
     // Validation
-    boolean checkDriver(String driverId, LocalTime departure, LocalTime arrival) throws SQLException;
+    boolean checkDriver(String driverId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException;
 
-    boolean checkBus(int busId, LocalTime departure, LocalTime arrival) throws SQLException;
+    boolean checkBus(int busId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException;
 
-    boolean checkConductor(String conductorId, LocalTime departure, LocalTime arrival) throws SQLException;
+    boolean checkConductor(String conductorId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException;
 
 }
