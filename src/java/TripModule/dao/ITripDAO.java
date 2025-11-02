@@ -3,7 +3,7 @@ package TripModule.dao;
 
 import TripModule.model.Trip;
 import java.sql.*;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ITripDAO {
@@ -37,7 +37,7 @@ public interface ITripDAO {
     public boolean assignConductor(int tripId, String conductorId) throws SQLException;
 
     //Status & Time
-    public boolean updateTripTime(int tripId, LocalTime departureTime, LocalTime arrivalTime) throws SQLException;
+    public boolean updateTripTime(int tripId, LocalDateTime departureTimeTime, LocalDateTime arrivalTimeTime) throws SQLException;
 
     public boolean updateTripStatus(int tripId, String status) throws SQLException;
 
@@ -50,12 +50,12 @@ public interface ITripDAO {
 
     List<Trip> findTripsByRoute(int routeId) throws SQLException;
 
-    List<Trip> findTripsByTime(LocalTime from, LocalTime to) throws SQLException;
+    List<Trip> findTripsByTime(LocalDateTime from, LocalDateTime to) throws SQLException;
 
     //Validation
-    public boolean checkDriver(String driverId, LocalTime departure, LocalTime arrival) throws SQLException;
+    public boolean checkDriver(String driverId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException;
 
-    public boolean checkBus(int busId, LocalTime departure, LocalTime arrival) throws SQLException;
+    public boolean checkBus(int busId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException;
 
-    public boolean checkConductor(String conductorId, LocalTime departure, LocalTime arrival) throws SQLException;//kiem tra validation o service
+    public boolean checkConductor(String conductorId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException;//kiem tra validation o service
 }
