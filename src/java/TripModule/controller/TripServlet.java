@@ -153,15 +153,6 @@ public class TripServlet extends HttpServlet {
 
         // Validation dữ liệu nhập
         try {
-            tripId = Integer.parseInt(tripIdStr);
-            if (tripId <= 0) {
-                errors.add("Mã chuyến phải là số dương.");
-            }
-        } catch (NumberFormatException e) {
-            errors.add("Mã chuyến không hợp lệ, vui lòng nhập số.");
-        }
-
-        try {
             routeId = Integer.parseInt(routeIdStr);
             if (routeId <= 0) {
                 errors.add("Mã tuyến phải là số dương.");
@@ -181,22 +172,12 @@ public class TripServlet extends HttpServlet {
 
         // Kiểm tra tên tài xế
         if (driverId == null || driverId.trim().isBlank()) {
-            errors.add("Tên tài xế không được để trống.");
-        } else if (driverId.length() < 3) {
-            errors.add("Tên tài xế quá ngắn, vui lòng nhập đầy đủ họ tên.");
-        } else if (!driverId.matches("^[\\p{L}\\s]+$")) {
-            errors.add("Tên tài xế không hợp lệ.");
+            errors.add("Mã tài xế không được để trống.");
         }
-
 // Kiểm tra tên phụ xe
         if (conductorId == null || conductorId.trim().isBlank()) {
-            errors.add("Tên phụ xe không được để trống.");
-        } else if (conductorId.length() < 3) {
-            errors.add("Tên phụ xe quá ngắn, vui lòng nhập đầy đủ họ tên.");
-        } else if (!conductorId.matches("^[\\p{L}\\s]+$")) {
-            errors.add("Tên phụ xe không hợp lệ. ");
+            errors.add("Mã phụ xe không được để trống.");
         }
-
         try {
             departureTime = LocalDateTime.parse(departureStr);
             arrivalTime = LocalDateTime.parse(arrivalStr);
