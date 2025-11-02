@@ -1,15 +1,15 @@
 
 package TripModule.dto;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 public class TripDTO {
     private int tripId;
     private int routeId;
     private int busId;
     private String driverId;
     private String conductorId;
-    private LocalTime departuretime;
-    private LocalTime arrivaltime;
+    private LocalDateTime departuretime;
+    private LocalDateTime arrivaltime;
     private String status;
 
     public int getTripId() {
@@ -32,11 +32,11 @@ public class TripDTO {
         return conductorId;
     }
 
-    public LocalTime getDeparturetime() {
+    public LocalDateTime getDeparturetime() {
         return departuretime;
     }
 
-    public LocalTime getArrivaltime() {
+    public LocalDateTime getArrivaltime() {
         return arrivaltime;
     }
 
