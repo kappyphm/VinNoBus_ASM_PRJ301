@@ -180,7 +180,7 @@ CREATE TABLE BusLog (
     CONSTRAINT FK_BusLog_User FOREIGN KEY (created_by) REFERENCES [User](user_id)
 );
 
--- ==============================================
+-- ===============31978===============================
 -- B?ng Tr?m xe buýt (Station)
 -- Danh sách các tr?m trong h? th?ng
 -- ==============================================
@@ -230,8 +230,8 @@ CREATE TABLE Trip (
     bus_id INT NOT NULL,
     driver_id VARCHAR(128) NOT NULL UNIQUE,
     conductor_id VARCHAR(128) NOT NULL UNIQUE,
-    departure_time TIME NOT NULL,
-    arrival_time TIME NOT NULL,
+    departure_time DATETIME NOT NULL,
+    arrival_time DATETIME NOT NULL,
     status VARCHAR(20) DEFAULT 'NOT_STARTED' CHECK (status IN ('NOT_STARTED','IN_PROCESS','FINISHED','CANCELLED')),
 
     CONSTRAINT FK_Trip_Route FOREIGN KEY (route_id) REFERENCES Route(route_id),
