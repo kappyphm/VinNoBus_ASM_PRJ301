@@ -224,45 +224,54 @@ public class RouteServlet extends HttpServlet {
 
     private void addRoute(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException, ServletException {
-        String name = request.getParameter("routeName");
-        String type = request.getParameter("type");
-        String freqStr = request.getParameter("frequency");
-
-        // Kiểm tra tên trống
-        if (name == null || name.trim().isEmpty()) {
-            request.setAttribute("errorMessage", "⚠️ Tên tuyến không được để trống!");
-            request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
-            return;
-        }
-
-        // ✅ Kiểm tra trùng tên tuyến trước khi thêm
-        if (routeServices.isRouteNameExist(name.trim())) {
-            request.setAttribute("errorMessage", "❌ Tuyến \"" + name.trim() + "\" đã tồn tại trong hệ thống!");
-            request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
-            return;  
-        }
-
-        // Chuyển frequency sang int
-        int frequency;
         try {
-            frequency = Integer.parseInt(freqStr);
-            if (frequency <= 0) {
-                throw new NumberFormatException();
+            String name = request.getParameter("routeName");
+            String type = request.getParameter("type");
+            String freqStr = request.getParameter("frequency");
+
+            // Kiểm tra tên tuyến
+            if (name == null || name.trim().isEmpty()) {
+                request.setAttribute("errorMessage", "⚠️ Tên tuyến không được để trống!");
+                request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
+                return;
             }
-        } catch (NumberFormatException e) {
-            request.setAttribute("errorMessage", "⚠️ Tần suất phải là số nguyên dương!");
-            request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
-            return;
-        }
 
-        Route route = new Route(0, name.trim(), type, frequency);
-        boolean success = routeServices.addRoute(route);
+            name = name.trim();
+            type = type != null ? type.trim() : "";
 
-        if (success) {
-            request.getSession().setAttribute("message", "✅ Thêm tuyến \"" + name + "\" thành công!");
-            response.sendRedirect("RouteServlet?action=list");
-        } else {
-            request.setAttribute("errorMessage", "❌ Thêm thất bại! Có thể tuyến đã tồn tại.");
+            // Kiểm tra trùng tên tuyến
+            if (routeServices.isRouteNameExist(name)) {
+                request.setAttribute("errorMessage", "❌ Tuyến \"" + name + "\" đã tồn tại trong hệ thống!");
+                request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
+                return;
+            }
+
+            // Chuyển frequency sang int và kiểm tra số nguyên dương
+            int frequency;
+            try {
+                frequency = Integer.parseInt(freqStr);
+                if (frequency <= 0) {
+                    throw new NumberFormatException();
+                }
+            } catch (NumberFormatException e) {
+                request.setAttribute("errorMessage", "⚠️ Tần suất phải là số nguyên dương!");
+                request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
+                return;
+            }
+
+            // Tạo đối tượng Route và thêm vào DB
+            Route route = new Route(0, name, type, frequency);
+            boolean success = routeServices.addRoute(route);
+
+            if (success) {
+                request.getSession().setAttribute("message", "✅ Thêm tuyến \"" + name + "\" thành công!");
+                response.sendRedirect("RouteServlet?action=list");
+            } else {
+                request.setAttribute("errorMessage", "❌ Thêm thất bại! Có thể tuyến đã tồn tại.");
+                request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
+            }
+        } catch (Exception e) {
+            request.setAttribute("errorMessage", "⚠️ Có lỗi xảy ra, vui lòng thử lại.");
             request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
         }
     }
@@ -273,32 +282,50 @@ public class RouteServlet extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("routeId"));
             String name = request.getParameter("routeName");
             String type = request.getParameter("type");
-            int frequency = Integer.parseInt(request.getParameter("frequency"));
+            String freqStr = request.getParameter("frequency");
 
+            // ===== VALIDATION =====
             if (name == null || name.trim().isEmpty()) {
                 request.setAttribute("errorMessage", "⚠️ Tên tuyến không được để trống!");
                 request.getRequestDispatcher("/view/Route/RouteForm.jsp").forward(request, response);
                 return;
             }
-            // Kiểm tra trùng tên trước khi cập nhật (trừ chính tuyến đang chỉnh sửa)
+
+            int frequency;
+            try {
+                frequency = Integer.parseInt(freqStr);
+                if (frequency <= 0) {
+                    throw new NumberFormatException();
+                }
+            } catch (NumberFormatException e) {
+                request.setAttribute("errorMessage", "⚠️ Tần suất phải là số nguyên dương!");
+                request.getRequestDispatcher("/view/Route/RouteForm.jsp").forward(request, response);
+                return;
+            }
+
+            // Kiểm tra trùng tên (trừ chính tuyến đang cập nhật)
             if (routeServices.isRouteNameExistForOtherId(name.trim(), id)) {
                 request.setAttribute("errorMessage", "❌ Tuyến \"" + name.trim() + "\" đã tồn tại trong hệ thống!");
                 request.getRequestDispatcher("/view/Route/RouteForm.jsp").forward(request, response);
                 return;
             }
 
+            // ===== CẬP NHẬT =====
             Route route = new Route(id, name.trim(), type, frequency);
             boolean updated = routeServices.updateRoute(route);
 
             if (updated) {
-                request.getSession().setAttribute("message", "✅ Cập nhật tuyến \"" + name + "\" thành công!");
+                // Thông báo thành công dùng session vì redirect
+                request.getSession().setAttribute("message", "✅ Cập nhật tuyến \"" + name.trim() + "\" thành công!");
+                response.sendRedirect("RouteServlet?action=list");
             } else {
-                request.getSession().setAttribute("errorMessage", "⚠️ Không thể cập nhật. Tuyến không tồn tại hoặc dữ liệu trùng!");
+                // Nếu update thất bại, hiện lỗi ngay trên form
+                request.setAttribute("errorMessage", "⚠️ Không thể cập nhật. Tuyến không tồn tại hoặc dữ liệu trùng!");
+                request.getRequestDispatcher("/view/Route/RouteForm.jsp").forward(request, response);
             }
-            response.sendRedirect("RouteServlet?action=list");
 
         } catch (NumberFormatException e) {
-            request.setAttribute("errorMessage", "⚠️ Dữ liệu nhập vào không hợp lệ!");
+            request.setAttribute("errorMessage", "⚠️ ID tuyến không hợp lệ!");
             request.getRequestDispatcher("/view/Route/RouteForm.jsp").forward(request, response);
         }
     }
