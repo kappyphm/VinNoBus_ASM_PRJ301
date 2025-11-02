@@ -97,23 +97,34 @@
 
     <form action="TripServlet?action=add" method="post">
 
-        <label for="routeId">Mã tuyến:</label>
-        <input type="number" name="routeId" required>
+        <label for="routeId">Mã tuyến xe:</label>
+        <input type="number" id="routeId" name="routeId" required
+               value="<%= request.getParameter("routeId") != null ? request.getParameter("routeId") : "" %>">
 
         <label for="busId">Mã xe buýt:</label>
-        <input type="number" name="busId" required>
+        <input type="number" name="busId" required
+               value="<%= request.getParameter("busId") != null ? request.getParameter("busId") : "" %>">
+
 
         <label for="driverId">Tài xế xe:</label>
-        <input type="text" name="driverId" placeholder="Nguyễn Văn A"required>
+        <input type="text" name="driverId" placeholder="Nguyễn Văn A"required
+               value="<%= request.getParameter("driverId") != null ? request.getParameter("driverId") : "" %>">
+
 
         <label for="conductorId">Phụ xe:</label>
-        <input type="text" name="conductorId" placeholder="Nguyễn Văn B"required>
+        <input type="text" name="conductorId" placeholder="Nguyễn Văn B"required
+               value="<%= request.getParameter("conductorId") != null ? request.getParameter("conductorId") : "" %>">
+
 
         <label for="departureTime">Giờ khởi hành:</label>
-        <input type="datetime-local" name="departureTime" >
+        <input type="datetime-local" name="departureTime" 
+               value="<%= request.getParameter("departureTime") != null ? request.getParameter("departureTime") : "" %>">
+
 
         <label for="arrivalTime">Giờ kết thúc:</label>
-        <input type="datetime-local" name="arrivalTime" >
+        <input type="datetime-local" name="arrivalTime" 
+               value="<%= request.getParameter("arrivalTime") != null ? request.getParameter("arrivalTime") : "" %>">
+
 
         <button type="submit" class="btn">Thêm chuyến</button>
         <a href="TripServlet?action=list" style="margin-left:10px; text-decoration:none; color:#0078d7;">← Quay lại danh sách</a>
