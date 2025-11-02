@@ -35,15 +35,17 @@
             </h2>
 
             <!-- ✅ Thông báo -->
-            <c:if test="${not empty message}">
+            <c:if test="${not empty sessionScope.message}">
                 <div class="bg-[#d4edda] text-[#155724] border-l-[5px] border-[#2ecc71] rounded-[8px] mb-[15px] p-[12px_16px] text-[15px] animate-[fadeSlideUp_0.7s_ease]">
-                    ${message}
+                    ${sessionScope.message}
                 </div>
+                <c:remove var="message" scope="session"/>
             </c:if>
-            <c:if test="${not empty errorMessage}">
+            <c:if test="${not empty sessionScope.errorMessage}">
                 <div class="bg-[#f8d7da] text-[#721c24] border-l-[5px] border-[#e74c3c] rounded-[8px] mb-[15px] p-[12px_16px] text-[15px] animate-[fadeSlideUp_0.7s_ease]">
-                    ${errorMessage}
+                    ${sessionScope.errorMessage}
                 </div>
+                <c:remove var="errorMessage" scope="session"/>
             </c:if>
 
             <!-- ✅ Thanh công cụ -->
@@ -68,8 +70,7 @@
                 </form>
             </div>
 
-            <!-- ✅ Bảng -->
-            <!-- Bảng dữ liệu tuyến xe buýt -->
+            <!-- ✅ Bảng dữ liệu tuyến xe buýt -->
             <div class="overflow-x-auto rounded-xl shadow-xl border border-gray-200 animate-[fadeSlideUp_0.9s_ease]">
                 <table class="w-full border-collapse text-center text-[15px]">
                     <thead>
@@ -101,7 +102,6 @@
                     </tbody>
                 </table>
             </div>
-
 
             <!-- Phân trang RouteList.jsp -->
             <div class="text-center mt-8 animate-[fadeSlideUp_1s_ease]">
