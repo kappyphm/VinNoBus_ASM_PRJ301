@@ -1,7 +1,8 @@
 
 package TripModule.model;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
+
 
 public class Trip {
 
@@ -10,14 +11,14 @@ public class Trip {
     private int busId;
     private String driverId;
     private String conductorId;
-    private LocalTime departureTime;
-    private LocalTime arrivalTime;
+    private LocalDateTime departureTime;
+    private LocalDateTime arrivalTime;
     private String status;
 
     public Trip() {
     }
 
-    public Trip(int tripId, int routeId, int busId, String driverId, String conductorId, LocalTime departureTime, LocalTime arrivalTime, String status) {
+    public Trip(int tripId, int routeId, int busId, String driverId, String conductorId, LocalDateTime departureTime, LocalDateTime arrivalTime, String status) {
         this.tripId = tripId;
         this.routeId = routeId;
         this.busId = busId;
@@ -68,19 +69,19 @@ public class Trip {
         this.conductorId = conductorId;
     }
 
-    public LocalTime getDepartureTime() {
+    public LocalDateTime getDepartureTime() {
         return departureTime;
     }
 
-    public void setDepartureTime(LocalTime departureTime) {
+    public void setDepartureTime(LocalDateTime departureTime) {
         this.departureTime = departureTime;
     }
 
-    public LocalTime getArrivalTime() {
+    public LocalDateTime getArrivalTime() {
         return arrivalTime;
     }
 
-    public void setArrivalTime(LocalTime arrivalTime) {
+    public void setArrivalTime(LocalDateTime arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 
@@ -92,4 +93,5 @@ public class Trip {
         this.status = status;
     }
 
+    
 }
