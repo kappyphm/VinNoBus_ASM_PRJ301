@@ -128,11 +128,11 @@ public class RouteDAO extends DBContext implements iRouteDAO {
     }
 
     @Override
-    public boolean isDuplicateRoute(Route route) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM Route WHERE route_name = ? AND type = ?";
+    public boolean isDuplicateRoute(String name, String type) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Route WHERE UPPER(LTRIM(RTRIM(route_name))) = UPPER(?) AND UPPER(LTRIM(RTRIM(type))) = UPPER(?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, route.getRouteName());
-            ps.setString(2, route.getType());
+            ps.setString(1, name.trim());
+            ps.setString(2, type.trim());
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;

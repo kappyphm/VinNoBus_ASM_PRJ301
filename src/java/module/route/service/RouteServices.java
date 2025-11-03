@@ -13,10 +13,9 @@ public class RouteServices {
         this.routeDAO = new RouteDAO();
     }
 
-    // Thêm tuyến đường mới
     public boolean addRoute(Route route) throws SQLException {
         // Kiểm tra trùng lặp trước khi thêm
-        if (routeDAO.isDuplicateRoute(route)) {
+        if (routeDAO.isDuplicateRoute(route.getRouteName(), route.getType())) {
             System.out.println("Tuyến đường đã tồn tại!");
             return false;
         }
@@ -66,4 +65,7 @@ public class RouteServices {
     public boolean isRouteNameExistForOtherId(String routeName, int id) throws SQLException {
         return routeDAO.isRouteNameExistForOtherId(routeName, id);
     }
+     public boolean isDuplicateRoute(String name, String type) throws SQLException{
+         return routeDAO.isDuplicateRoute(name, type);
+     }
 }
