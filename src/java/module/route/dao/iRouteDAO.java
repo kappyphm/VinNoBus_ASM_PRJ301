@@ -22,7 +22,7 @@ public interface iRouteDAO {
     public int countRoutes(String search, String type) throws SQLException;
 
     // ===== VALIDATION =====
-    public boolean isDuplicateRoute(Route route) throws SQLException;
+    public boolean isDuplicateRoute(String name, String type) throws SQLException ;
 
     // ===== ROUTE DETAILS =====
     public Route getRouteDetails(int routeId) throws SQLException;
