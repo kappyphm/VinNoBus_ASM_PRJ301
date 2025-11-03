@@ -174,7 +174,7 @@ public class TripServlet extends HttpServlet {
         if (driverId == null || driverId.trim().isBlank()) {
             errors.add("Mã tài xế không được để trống.");
         }
-// Kiểm tra tên phụ xe
+        // Kiểm tra tên phụ xe
         if (conductorId == null || conductorId.trim().isBlank()) {
             errors.add("Mã phụ xe không được để trống.");
         }
@@ -216,6 +216,7 @@ public class TripServlet extends HttpServlet {
         try {
             if (tripService.insertTrip(trip)) {
                 request.setAttribute("success", "✅ Thêm chuyến xe thành công!");
+//                request.getRequestDispatcher("/tripForm.jsp").forward(request, response);
             } else {
                 errors.add("❌ Không thể thêm chuyến xe. Có thể trùng dữ liệu.");
                 request.setAttribute("errors", errors);
