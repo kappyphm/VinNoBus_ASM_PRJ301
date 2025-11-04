@@ -1,108 +1,94 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
 <!DOCTYPE html>
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <title>Gán Trạm Cho Tuyến</title>
+        <title>Gán Trạm cho Tuyến</title>
         <script src="https://cdn.tailwindcss.com"></script>
     </head>
+    <body class="bg-gray-50 min-h-screen p-8">
 
-    <body class="min-h-screen flex justify-center items-center
-          bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100
-          font-[Segoe_UI] text-gray-800">
-
-        <div class="w-full max-w-5xl bg-white/80 backdrop-blur-md rounded-2xl shadow-lg p-8 border border-white/50 animate-fadeSlideUp">
-
-            <h2 class="text-3xl font-bold text-center bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600
-                text-transparent bg-clip-text mb-6 drop-shadow-sm">
-                🚌 Gán Trạm Cho Tuyến: <span class="text-gray-800">${route.routeName}</span>
+        <div class="max-w-6xl mx-auto bg-white p-8 rounded-2xl shadow-xl animate-fadeIn">
+            <h2 class="text-3xl font-bold mb-6 text-gray-800">
+                Gán trạm cho tuyến: <span class="text-blue-600">${route.routeName} (${route.type})</span>
             </h2>
 
-            <!-- ✅ Thông báo -->
-            <c:if test="${not empty sessionScope.message}">
-                <div class="bg-green-100 text-green-800 border-l-4 border-green-500 p-4 mb-5 rounded-lg shadow-sm flex items-center">
-                    <span class="text-xl mr-2">✅</span>
-                    <span>${sessionScope.message}</span>
-                </div>
-                <c:remove var="message" scope="session"/>
-            </c:if>
-
             <c:if test="${not empty errorMessage}">
-                <div class="bg-red-100 text-red-800 border-l-4 border-red-500 p-4 mb-5 rounded-lg shadow-sm flex items-center">
-                    <span class="text-xl mr-2">⚠️</span>
-                    <span>${errorMessage}</span>
+                <div class="bg-red-100 text-red-700 p-4 rounded-lg mb-6 shadow-inner animate-pulse">
+                    ${errorMessage}
                 </div>
             </c:if>
 
-            <!-- 🧭 Form gán trạm -->
-            <form action="RouteServlet?action=saveAssignedStations" method="post" class="space-y-6">
-                <input type="hidden" name="routeId" value="${route.routeId}" />
+            <form action="RouteServlet" method="post" class="space-y-6">
+                <input type="hidden" name="action" value="saveAssignedStations">
+                <input type="hidden" name="routeId" value="${route.routeId}">
 
-                <div class="overflow-hidden rounded-xl shadow-md border border-gray-300">
-                    <table class="min-w-full text-sm text-gray-800 border-collapse">
-                        <thead>
-                            <tr class="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white text-left">
-                                <th class="px-4 py-3 border border-gray-300">Chọn</th>
-                                <th class="px-4 py-3 border border-gray-300">Tên Trạm</th>
-                                <th class="px-4 py-3 border border-gray-300">Thứ Tự</th>
-                                <th class="px-4 py-3 border border-gray-300">Thời Gian Dự Kiến (phút)</th>
+                <div class="overflow-x-auto rounded-xl shadow-lg border border-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white">
+                            <tr>
+                                <th class="px-4 py-3 text-left">Chọn</th>
+                                <th class="px-4 py-3 text-left">Tên trạm</th>
+                                <th class="px-4 py-3 text-left">Thứ tự</th>
+                                <th class="px-4 py-3 text-left">Thời gian dự kiến (phút)</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <c:forEach var="station" items="${allStations}">
-                                <tr class="odd:bg-gradient-to-r odd:from-blue-50 odd:to-purple-50
-                                    even:bg-gradient-to-r even:from-pink-50 even:to-indigo-50
-                                    hover:bg-gradient-to-r hover:from-blue-100 hover:to-pink-100
-                                    transition-all duration-300 border-t border-gray-300">
-                                    <td class="px-4 py-2 border border-gray-300 text-center">
-                                        <input type="checkbox" name="stationIds" value="${station.stationId}" class="w-5 h-5 accent-blue-600" />
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <c:forEach var="station" items="${allStations}" varStatus="status">
+                                <tr class="transition-colors duration-300 hover:bg-blue-50">
+                                    <td class="px-4 py-2">
+                                        <input type="checkbox" name="stationIds" value="${station.stationId}" 
+                                               class="w-6 h-6 text-blue-600 accent-blue-500 hover:scale-110 transition-transform duration-200"
+                                               data-index="${status.index}">
+                                        <input type="hidden" name="index_of_${station.stationId}" value="${status.index}">
                                     </td>
-                                    <td class="px-4 py-2 border border-gray-300">${station.stationName}</td>
-                                    <td class="px-4 py-2 border border-gray-300">
-                                        <input type="number" name="stationOrder" min="1"
-                                               class="w-24 p-1 border border-gray-300 rounded-md text-center focus:ring-2 focus:ring-blue-400"/>
+                                    <td class="px-4 py-2 font-medium text-gray-700">${station.stationName}</td>
+                                    <td class="px-4 py-2">
+                                        <input type="number" name="stationOrder_${status.index}" min="1"
+                                               class="w-20 border border-gray-300 rounded-lg px-3 py-1 text-gray-700
+                                               focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200">
                                     </td>
-                                    <td class="px-4 py-2 border border-gray-300">
-                                        <input type="number" name="estimatedTime" min="0"
-                                               class="w-28 p-1 border border-gray-300 rounded-md text-center focus:ring-2 focus:ring-pink-400"/>
+                                    <td class="px-4 py-2">
+                                        <input type="number" name="estimatedTime_${status.index}" min="0"
+                                               class="w-24 border border-gray-300 rounded-lg px-3 py-1 text-gray-700
+                                               focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200">
                                     </td>
-
                                 </tr>
                             </c:forEach>
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Nút hành động -->
-                <div class="flex justify-center gap-4 mt-6">
-                    <a href="RouteServlet?action=list"
-                       class="px-5 py-2 rounded-lg bg-gradient-to-r from-gray-500 to-gray-600 text-white shadow-md hover:opacity-90 transition">
-                        ⬅ Quay lại
-                    </a>
-                    <button type="submit"
-                            class="px-6 py-2 rounded-lg bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white shadow-md hover:opacity-90 transition">
-                        💾 Lưu Danh Sách Trạm
+                <div class="flex items-center gap-4">
+                    <button type="submit" 
+                            class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-blue-700
+                            hover:scale-105 transition-transform duration-200">
+                        Lưu danh sách trạm
                     </button>
+                    <a href="RouteServlet?action=details&id=${route.routeId}" 
+                       class="text-gray-600 hover:text-blue-600 hover:underline transition-colors duration-200">
+                        Hủy / Quay lại chi tiết tuyến
+                    </a>
                 </div>
             </form>
         </div>
 
         <style>
-            @keyframes fadeSlideUp {
+            @keyframes fadeIn {
                 from {
                     opacity: 0;
-                    transform: translateY(20px);
+                    transform: translateY(-10px);
                 }
                 to {
                     opacity: 1;
                     transform: translateY(0);
                 }
             }
-            .animate-fadeSlideUp {
-                animation: fadeSlideUp 0.6s ease-out;
+            .animate-fadeIn {
+                animation: fadeIn 0.5s ease-out forwards;
             }
         </style>
+
     </body>
 </html>

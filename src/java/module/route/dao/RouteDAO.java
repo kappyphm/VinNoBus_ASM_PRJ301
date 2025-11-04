@@ -158,15 +158,15 @@ public class RouteDAO extends DBContext implements iRouteDAO {
     @Override
     public Route getRouteDetails(int routeId) throws SQLException {
         String sql = """
-    SELECT 
-        r.route_id, r.route_name, r.type, r.frequency,
-        s.station_id, s.station_name, s.location,
-        rs.estimated_time
-    FROM Route r
-    LEFT JOIN Route_Station rs ON r.route_id = rs.route_id
-    LEFT JOIN Station s ON rs.station_id = s.station_id
-    WHERE r.route_id = ?
-    ORDER BY rs.station_order
+        SELECT 
+            r.route_id, r.route_name, r.type, r.frequency,
+            s.station_id, s.station_name, s.location,
+            rs.estimated_time
+        FROM Route r
+        LEFT JOIN Route_Station rs ON r.route_id = rs.route_id
+        LEFT JOIN Station s ON rs.station_id = s.station_id
+        WHERE r.route_id = ?
+        ORDER BY rs.station_order
     """;
 
         Route route = null;
@@ -186,7 +186,7 @@ public class RouteDAO extends DBContext implements iRouteDAO {
                         );
                     }
                     int stationId = rs.getInt("station_id");
-                    if (stationId != 0) {
+                    if (!rs.wasNull()) {
                         Station station = new Station(
                                 stationId,
                                 rs.getString("station_name"),
@@ -266,10 +266,10 @@ public class RouteDAO extends DBContext implements iRouteDAO {
         if (route == null) {
             return null;
         }
-
+        
         List<Station> stations = new ArrayList<>();
         int totalTime = 0;
-
+        
         String sql = """
         SELECT s.*, rs.station_order, rs.estimated_time
         FROM Route_Station rs
@@ -287,7 +287,7 @@ public class RouteDAO extends DBContext implements iRouteDAO {
                         rs.getString("station_name"),
                         rs.getString("location")
                 );
-                // dùng routeNames tạm lưu thông tin "stationOrder|estimatedTime"
+
                 station.setRouteNames(List.of(rs.getInt("station_order") + "|" + rs.getInt("estimated_time")));
                 stations.add(station);
                 totalTime += rs.getInt("estimated_time");

@@ -138,15 +138,29 @@ public class StationServlet extends HttpServlet {
                 page = 1;
             }
         }
-        List<Station> stations = stationServices.getStationsByPage(page, pageSize);
-        int totalStations = stationServices.getTotalStations();
+        String search = request.getParameter("search");
+        List<Station> stations;
+        int totalStations;
+
+        if (search != null && !search.trim().isEmpty()) {
+            stations = stationServices.searchStationsByNameFuzzy(search.trim());
+            totalStations = stations.size();
+        } else {
+            stations = stationServices.getStationsByPage(page, pageSize);
+            totalStations = stationServices.getTotalStations();
+        }
+
         int totalPages = (int) Math.ceil((double) totalStations / pageSize);
+
         request.setAttribute("stations", stations);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);
+        request.setAttribute("search", search);
+
         if (stations == null || stations.isEmpty()) {
-            request.setAttribute("message", "📭 Hiện chưa có trạm xe nào trong hệ thống.");
+            request.setAttribute("message", "📭 Không tìm thấy trạm phù hợp.");
         }
+
         request.getRequestDispatcher("/view/Station/StationList.jsp").forward(request, response);
     }
 
@@ -231,12 +245,25 @@ public class StationServlet extends HttpServlet {
         try {
             String name = request.getParameter("stationName");
             String location = request.getParameter("location");
-            if (name == null || name.isEmpty()) {
+            String estTimeStr = request.getParameter("estimatedTime");
+
+            if (name == null || name.trim().isEmpty()) {
                 request.setAttribute("error", "Tên trạm không được để trống.");
                 request.getRequestDispatcher("/view/Station/StationAdd.jsp").forward(request, response);
                 return;
             }
-            Station newStation = new Station(0, name, location, null);
+            int estimatedTime = 0;
+            if (estTimeStr != null && !estTimeStr.isEmpty()) {
+                try {
+                    estimatedTime = Integer.parseInt(estTimeStr);
+                    if (estimatedTime < 0) {
+                        estimatedTime = 0; // tránh số âm
+                    }
+                } catch (NumberFormatException e) {
+                    estimatedTime = 0;
+                }
+            }
+            Station newStation = new Station(0, name.trim(), location, null);
             boolean created = stationServices.createStation(newStation);
             if (!created) {
                 request.setAttribute("error", "Không thể thêm trạm mới. Vui lòng thử lại.");
@@ -256,19 +283,37 @@ public class StationServlet extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("stationId"));
             String name = request.getParameter("stationName");
             String location = request.getParameter("location");
-            if (name == null || name.isEmpty()) {
+            String estTimeStr = request.getParameter("estimatedTime");
+
+            if (name == null || name.trim().isEmpty()) {
                 request.setAttribute("error", "Tên trạm không được để trống.");
                 request.getRequestDispatcher("/view/Station/StationEdit.jsp").forward(request, response);
                 return;
             }
-            Station updated = new Station(id, name, location, null);
+
+            int estimatedTime = 0;
+            if (estTimeStr != null && !estTimeStr.isEmpty()) {
+                try {
+                    estimatedTime = Integer.parseInt(estTimeStr);
+                    if (estimatedTime < 0) {
+                        estimatedTime = 0;
+                    }
+                } catch (NumberFormatException e) {
+                    estimatedTime = 0;
+                }
+            }
+
+            Station updated = new Station(id, name.trim(), location, null);
             boolean success = stationServices.updateStation(updated);
+
             if (!success) {
                 request.setAttribute("error", "Không thể cập nhật trạm (ID: " + id + ").");
                 request.getRequestDispatcher("/view/Station/StationEdit.jsp").forward(request, response);
                 return;
             }
+
             response.sendRedirect("StationServlet?action=list");
+
         } catch (NumberFormatException e) {
             request.setAttribute("error", "ID trạm không hợp lệ.");
             request.getRequestDispatcher("/view/Station/StationEdit.jsp").forward(request, response);

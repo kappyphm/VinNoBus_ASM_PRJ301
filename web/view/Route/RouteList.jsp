@@ -41,9 +41,9 @@
                 </div>
                 <c:remove var="message" scope="session"/>
             </c:if>
-            <c:if test="${not empty sessionScope.errorMessage}">
+            <c:if test="${not empty errorMessage}">
                 <div class="bg-[#f8d7da] text-[#721c24] border-l-[5px] border-[#e74c3c] rounded-[8px] mb-[15px] p-[12px_16px] text-[15px] animate-[fadeSlideUp_0.7s_ease]">
-                    ${sessionScope.errorMessage}
+                    ${errorMessage}
                 </div>
                 <c:remove var="errorMessage" scope="session"/>
             </c:if>
