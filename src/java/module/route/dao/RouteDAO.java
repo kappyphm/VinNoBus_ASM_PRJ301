@@ -64,29 +64,41 @@ public class RouteDAO extends DBContext implements iRouteDAO {
     public List<Route> getAllRoutes(String search, String type, String sortColumn, String sortOrder, int page, int pageSize) throws SQLException {
         List<Route> list = new ArrayList<>();
         StringBuilder sql = new StringBuilder("SELECT * FROM Route WHERE 1=1");
+
         if (search != null && !search.isEmpty()) {
+            // Chuyển search thành dạng %A%B%C% để tìm từng ký tự
+            StringBuilder fuzzy = new StringBuilder("%");
+            for (char c : search.toCharArray()) {
+                fuzzy.append(c).append("%");
+            }
             sql.append(" AND route_name LIKE ?");
+            search = fuzzy.toString();
         }
+
         if (type != null && !type.isEmpty()) {
             sql.append(" AND type = ?");
         }
+
         if (sortColumn != null && !sortColumn.isEmpty()) {
             sql.append(" ORDER BY ").append(sortColumn).append(" ");
             sql.append(sortOrder != null && !sortOrder.isEmpty() ? sortOrder : "ASC");
         } else {
             sql.append(" ORDER BY route_id ASC");
         }
+
         sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             int index = 1;
             if (search != null && !search.isEmpty()) {
-                ps.setString(index++, "%" + search + "%");
+                ps.setString(index++, search);
             }
             if (type != null && !type.isEmpty()) {
                 ps.setString(index++, type);
             }
             ps.setInt(index++, (page - 1) * pageSize);
             ps.setInt(index, pageSize);
+
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(new Route(
@@ -98,6 +110,7 @@ public class RouteDAO extends DBContext implements iRouteDAO {
                 }
             }
         }
+
         return list;
     }
 
