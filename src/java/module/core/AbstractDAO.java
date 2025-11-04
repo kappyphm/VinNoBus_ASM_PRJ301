@@ -66,7 +66,8 @@ public abstract class AbstractDAO<T, ID> implements GenericRepository<T, ID> {
         try {
             for (Map.Entry<String, Field> e : columns.entrySet()) {
                 Column c = e.getValue().getAnnotation(Column.class);
-                if (!c.id()) {
+                
+                if (!c.autoId()) {
                     cols.append(c.name()).append(",");
                     vals.append("?").append(",");
                     params.add(e.getValue().get(entity));

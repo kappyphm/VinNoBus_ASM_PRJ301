@@ -9,4 +9,6 @@ public @interface Column {
     String name();
 
     boolean id() default false;
+    
+    boolean autoId() default true;
 }
