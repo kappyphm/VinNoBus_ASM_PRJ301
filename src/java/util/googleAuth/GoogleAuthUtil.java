@@ -14,7 +14,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import module.auth.model.entity.GoogleUserProfile;
 
 /**
  * Utility class for authenticating users via Google OAuth 2.0. Loads client
@@ -133,41 +132,41 @@ public final class GoogleAuthUtil {
      *
      * @throws GoogleAuthException if verification fails.
      */
-    public static GoogleUserProfile verifyAndExtractUserProfile(String idToken) throws GoogleAuthException {
-        if (idToken == null || idToken.isEmpty()) {
-            throw new GoogleAuthException("id_token is null or empty.");
-        }
-
-        try {
-            URL verifyUrl = new URL(TOKEN_INFO_ENDPOINT + "?id_token=" + URLEncoder.encode(idToken, StandardCharsets.UTF_8));
-
-            try (InputStream is = verifyUrl.openStream(); JsonReader reader = Json.createReader(is)) {
-
-                JsonObject info = reader.readObject();
-
-                String aud = info.getString("aud", "");
-                String iss = info.getString("iss", "");
-
-                if (!CLIENT_ID.equals(aud)
-                        || !(iss.equals("https://accounts.google.com") || iss.equals("accounts.google.com"))) {
-                    LOGGER.log(Level.WARNING, "Invalid token: wrong aud or iss. aud={0}, iss={1}", new Object[]{aud, iss});
-                    throw new GoogleAuthException("Invalid token: aud/iss mismatch.");
-                }
-
-                String sub = info.getString("sub", null);
-                String email = info.getString("email", null);
-                String name = info.getString("name", "User");
-                String picture = info.getString("picture", null);
-                String givenName = info.getString("given_name", null);
-                String familyName = info.getString("family_name", null);
-                String locale = info.getString("locale", null);
-
-                return new GoogleUserProfile(sub, email, name, picture, givenName, familyName, locale);
-            }
-
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error verifying id_token with Google", e);
-            throw new GoogleAuthException("Failed to verify id_token with Google.", e);
-        }
-    }
+//    public static GoogleUserProfile verifyAndExtractUserProfile(String idToken) throws GoogleAuthException {
+//        if (idToken == null || idToken.isEmpty()) {
+//            throw new GoogleAuthException("id_token is null or empty.");
+//        }
+//
+//        try {
+//            URL verifyUrl = new URL(TOKEN_INFO_ENDPOINT + "?id_token=" + URLEncoder.encode(idToken, StandardCharsets.UTF_8));
+//
+//            try (InputStream is = verifyUrl.openStream(); JsonReader reader = Json.createReader(is)) {
+//
+//                JsonObject info = reader.readObject();
+//
+//                String aud = info.getString("aud", "");
+//                String iss = info.getString("iss", "");
+//
+//                if (!CLIENT_ID.equals(aud)
+//                        || !(iss.equals("https://accounts.google.com") || iss.equals("accounts.google.com"))) {
+//                    LOGGER.log(Level.WARNING, "Invalid token: wrong aud or iss. aud={0}, iss={1}", new Object[]{aud, iss});
+//                    throw new GoogleAuthException("Invalid token: aud/iss mismatch.");
+//                }
+//
+//                String sub = info.getString("sub", null);
+//                String email = info.getString("email", null);
+//                String name = info.getString("name", "User");
+//                String picture = info.getString("picture", null);
+//                String givenName = info.getString("given_name", null);
+//                String familyName = info.getString("family_name", null);
+//                String locale = info.getString("locale", null);
+//
+//                return new GoogleUserProfile(sub, email, name, picture, givenName, familyName, locale);
+//            }
+//
+//        } catch (IOException e) {
+//            LOGGER.log(Level.SEVERE, "Error verifying id_token with Google", e);
+//            throw new GoogleAuthException("Failed to verify id_token with Google.", e);
+//        }
+//    }
 }
