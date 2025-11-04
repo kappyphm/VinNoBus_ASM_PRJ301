@@ -49,4 +49,8 @@ public class StationServices {
     public int getTotalStations() {
         return stationDAO.getTotalStations();
     }
+
+    public List<Station> searchStationsByNameFuzzy(String name) {
+        return stationDAO.searchStationsByNameFuzzy(name);
+    }
 }
