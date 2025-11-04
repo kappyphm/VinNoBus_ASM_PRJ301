@@ -13,8 +13,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
 import java.util.List;
+import module.route.dao.RouteDAO;
 import module.route.model.entity.Route;
 import module.route.service.RouteServices;
+import module.station.dao.StationDAO;
 import module.station.model.entity.Station;
 import module.station.service.StationServices;
 
@@ -77,6 +79,10 @@ public class RouteServlet extends HttpServlet {
             action = "list"; // mặc định
         }
         try {
+            StationDAO stationDAO = new StationDAO();
+            List<Station> stations = stationDAO.getAll();
+            request.setAttribute("stations", stations);
+
             switch (action) {
                 case "list":
                     listRoutes(request, response);
@@ -96,15 +102,18 @@ public class RouteServlet extends HttpServlet {
                 case "assign":
                     showAssignForm(request, response);
                     break;
+                case "search":
+                    searchRoutesByStations(request, response);
+                    break;
                 default:
                     response.sendError(404, "Page not found");
             }
         } catch (SQLException e) {
             request.setAttribute("errorMessage", "❌ Lỗi cơ sở dữ liệu: " + e.getMessage());
-            request.getRequestDispatcher("/view/Route/RouteList.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/route/list.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("errorMessage", "⚠️ Đã xảy ra lỗi không mong muốn: " + e.getMessage());
-            request.getRequestDispatcher("/view/Route/RouteList.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/route/list.jsp").forward(request, response);
         }
     }
 
@@ -137,10 +146,10 @@ public class RouteServlet extends HttpServlet {
             }
         } catch (SQLException e) {
             request.setAttribute("errorMessage", "❌ Lỗi thao tác với cơ sở dữ liệu: " + e.getMessage());
-            request.getRequestDispatcher("/view/Route/RouteList.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/route/list.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("errorMessage", "⚠️ Lỗi không xác định: " + e.getMessage());
-            request.getRequestDispatcher("/view/Route/RouteList.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/route/list.jsp").forward(request, response);
         }
     }
 
@@ -189,13 +198,13 @@ public class RouteServlet extends HttpServlet {
         request.setAttribute("sortOrder", sortOrder);
 
         // ✅ Đảm bảo đường dẫn đúng cấu trúc /view/Route/
-        request.getRequestDispatcher("/view/Route/RouteList.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/route/list.jsp").forward(request, response);
     }
 
     private void showDetails(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
         try {
-            int id = Integer.parseInt(request.getParameter("id"));
+            int id = Integer.parseInt(request.getParameter("routeId"));
 
             // Lấy tuyến kèm trạm
             Route route = routeServices.getRouteWithStations(id);
@@ -212,7 +221,7 @@ public class RouteServlet extends HttpServlet {
         } catch (SQLException e) {
             request.setAttribute("errorMessage", "❌ Lỗi cơ sở dữ liệu: " + e.getMessage());
         }
-        request.getRequestDispatcher("/view/Route/RouteDetails.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/route/detail.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
@@ -235,12 +244,12 @@ public class RouteServlet extends HttpServlet {
         } catch (SQLException e) {
             request.setAttribute("errorMessage", "❌ Lỗi cơ sở dữ liệu: " + e.getMessage());
         }
-        request.getRequestDispatcher("/view/Route/RouteForm.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/route/edit.jsp").forward(request, response);
     }
 
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/route/add.jsp").forward(request, response);
     }
 
     private void addRoute(HttpServletRequest request, HttpServletResponse response)
@@ -254,7 +263,7 @@ public class RouteServlet extends HttpServlet {
             // ===== VALIDATION =====
             if (name == null || name.trim().isEmpty()) {
                 request.setAttribute("errorMessage", "⚠️ Tên tuyến không được để trống!");
-                request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/route/add.jsp").forward(request, response);
                 return;
             }
 
@@ -264,7 +273,7 @@ public class RouteServlet extends HttpServlet {
             // Kiểm tra trùng tên tuyến
             if (routeServices.isDuplicateRoute(name, type)) {
                 request.setAttribute("errorMessage", "❌ Tuyến \"" + name + "\" (" + type + ") đã tồn tại trong hệ thống!");
-                request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/route/add.jsp").forward(request, response);
                 return;
             }
 
@@ -277,7 +286,7 @@ public class RouteServlet extends HttpServlet {
                 }
             } catch (NumberFormatException e) {
                 request.setAttribute("errorMessage", "⚠️ Tần suất phải là số nguyên dương!");
-                request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/route/add.jsp").forward(request, response);
                 return;
             }
 
@@ -300,12 +309,12 @@ public class RouteServlet extends HttpServlet {
                 response.sendRedirect("RouteServlet?action=list");
             } else {
                 request.setAttribute("errorMessage", "❌ Thêm thất bại! Có thể tuyến đã tồn tại.");
-                request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/route/add.jsp").forward(request, response);
             }
 
         } catch (Exception e) {
             request.setAttribute("errorMessage", "⚠️ Có lỗi xảy ra, vui lòng thử lại.");
-            request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/route/add.jsp").forward(request, response);
         }
     }
 
@@ -321,7 +330,7 @@ public class RouteServlet extends HttpServlet {
             // ===== VALIDATION =====
             if (name == null || name.trim().isEmpty()) {
                 request.setAttribute("errorMessage", "⚠️ Tên tuyến không được để trống!");
-                request.getRequestDispatcher("/view/Route/RouteForm.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/route/edit.jsp").forward(request, response);
                 return;
             }
 
@@ -337,14 +346,14 @@ public class RouteServlet extends HttpServlet {
                 }
             } catch (NumberFormatException e) {
                 request.setAttribute("errorMessage", "⚠️ Tần suất phải là số nguyên dương!");
-                request.getRequestDispatcher("/view/Route/RouteForm.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/route/edit.jsp").forward(request, response);
                 return;
             }
 
             // Kiểm tra trùng tên (trừ chính tuyến đang cập nhật)
             if (routeServices.isRouteNameExistForOtherId(name, routeId)) {
                 request.setAttribute("errorMessage", "❌ Tuyến \"" + name + "\" đã tồn tại trong hệ thống!");
-                request.getRequestDispatcher("/view/Route/RouteForm.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/route/edit.jsp").forward(request, response);
                 return;
             }
 
@@ -368,12 +377,12 @@ public class RouteServlet extends HttpServlet {
                 response.sendRedirect("RouteServlet?action=list");
             } else {
                 request.setAttribute("errorMessage", "⚠️ Không thể cập nhật. Tuyến không tồn tại hoặc dữ liệu trùng!");
-                request.getRequestDispatcher("/view/Route/RouteForm.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/route/edit.jsp").forward(request, response);
             }
 
         } catch (NumberFormatException e) {
             request.setAttribute("errorMessage", "⚠️ ID tuyến không hợp lệ!");
-            request.getRequestDispatcher("/view/Route/RouteForm.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/route/edit.jsp").forward(request, response);
         }
     }
 
@@ -408,10 +417,10 @@ public class RouteServlet extends HttpServlet {
             List<Station> allStations = stationServices.getAllStations();
             request.setAttribute("route", route);
             request.setAttribute("allStations", allStations);
-            request.getRequestDispatcher("/view/Route/AssignStationForRoute.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/route/assign.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             request.setAttribute("errorMessage", "⚠️ ID tuyến không hợp lệ!");
-            request.getRequestDispatcher("/view/Route/RouteList.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/route/list.jsp").forward(request, response);
         }
     }
 
@@ -443,5 +452,32 @@ public class RouteServlet extends HttpServlet {
 
         request.getSession().setAttribute("message", "✅ Cập nhật danh sách trạm cho tuyến thành công!");
         response.sendRedirect("RouteServlet?action=details&id=" + routeId);
+    }
+
+    private void searchRoutesByStations(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, SQLException {
+
+        int stationA = 0, stationB = 0;
+        if (request.getParameter("a") != null && !request.getParameter("a").isEmpty()) {
+            stationA = Integer.parseInt(request.getParameter("a"));
+        }
+        if (request.getParameter("b") != null && !request.getParameter("b").isEmpty()) {
+            stationB = Integer.parseInt(request.getParameter("b"));
+        }
+
+        // 🔹 Luôn nạp danh sách trạm
+        StationDAO stationDAO = new StationDAO();
+        List<Station> stations = stationDAO.getAll();
+        request.setAttribute("stations", stations);
+
+        // 🔹 Nếu có chọn cả 2 trạm → tìm tuyến
+        if (stationA > 0 && stationB > 0) {
+            RouteDAO routeDAO = new RouteDAO();
+            List<Route> routes = routeDAO.getRoutesByTwoStations(stationA, stationB);
+            request.setAttribute("routes", routes);
+        }
+
+        // 🔹 Gửi dữ liệu tới trang JSP
+        request.getRequestDispatcher("/view/route/search.jsp").forward(request, response);
     }
 }

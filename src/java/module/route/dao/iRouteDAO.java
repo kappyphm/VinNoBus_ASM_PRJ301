@@ -40,4 +40,6 @@ public interface iRouteDAO {
     public Route getRouteWithStations(int routeId) throws SQLException;
 
     public boolean deleteAllStationsFromRoute(int routeId) throws SQLException;
+
+public List<Route> getRoutesByTwoStations(int stationA, int stationB) throws SQLException;
 }

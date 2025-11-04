@@ -156,7 +156,7 @@ public class RouteDAO extends DBContext implements iRouteDAO {
     }
 
     @Override
-    public Route getRouteDetails(int routeId) throws SQLException {
+    public Route getRouteDetails(int route_id) throws SQLException {
         String sql = """
         SELECT 
             r.route_id, r.route_name, r.type, r.frequency,
@@ -174,7 +174,7 @@ public class RouteDAO extends DBContext implements iRouteDAO {
         int totalTime = 0;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, routeId);
+            ps.setInt(1, route_id);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     if (route == null) {
@@ -206,10 +206,10 @@ public class RouteDAO extends DBContext implements iRouteDAO {
     }
 
     @Override
-    public int getEstimatedDuration(int routeId) throws SQLException {
+    public int getEstimatedDuration(int route_id) throws SQLException {
         String sql = "SELECT frequency FROM Route WHERE route_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, routeId);
+            ps.setInt(1, route_id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("frequency");
@@ -220,10 +220,10 @@ public class RouteDAO extends DBContext implements iRouteDAO {
     }
 
     @Override
-    public boolean isRouteNameExist(String routeName) throws SQLException {
+    public boolean isRouteNameExist(String route_name) throws SQLException {
         String sql = "SELECT COUNT(*) FROM Route WHERE UPPER(LTRIM(RTRIM(route_name))) = UPPER(?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, routeName.trim().toUpperCase());
+            ps.setString(1, route_name.trim().toUpperCase());
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1) > 0;
@@ -234,10 +234,10 @@ public class RouteDAO extends DBContext implements iRouteDAO {
     }
 
     @Override
-    public boolean isRouteNameExistForOtherId(String routeName, int id) throws SQLException {
+    public boolean isRouteNameExistForOtherId(String route_name, int id) throws SQLException {
         String sql = "SELECT COUNT(*) FROM Route WHERE route_name = ? AND route_id <> ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, routeName);
+            ps.setString(1, route_name);
             ps.setInt(2, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -249,10 +249,10 @@ public class RouteDAO extends DBContext implements iRouteDAO {
     }
 
     @Override
-    public boolean addStationToRoute(int routeId, int stationId, int stationOrder, int estimatedTime) throws SQLException {
+    public boolean addStationToRoute(int route_id, int stationId, int stationOrder, int estimatedTime) throws SQLException {
         String sql = "INSERT INTO Route_Station(route_id, station_id, station_order, estimated_time) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, routeId);
+            ps.setInt(1, route_id);
             ps.setInt(2, stationId);
             ps.setInt(3, stationOrder);
             ps.setInt(4, estimatedTime);
@@ -261,15 +261,15 @@ public class RouteDAO extends DBContext implements iRouteDAO {
     }
 
     @Override
-    public Route getRouteWithStations(int routeId) throws SQLException {
-        Route route = getRouteById(routeId);
+    public Route getRouteWithStations(int route_id) throws SQLException {
+        Route route = getRouteById(route_id);
         if (route == null) {
             return null;
         }
-        
+
         List<Station> stations = new ArrayList<>();
         int totalTime = 0;
-        
+
         String sql = """
         SELECT s.*, rs.station_order, rs.estimated_time
         FROM Route_Station rs
@@ -279,7 +279,7 @@ public class RouteDAO extends DBContext implements iRouteDAO {
     """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, routeId);
+            ps.setInt(1, route_id);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 Station station = new Station(
@@ -300,10 +300,10 @@ public class RouteDAO extends DBContext implements iRouteDAO {
     }
 
     @Override
-    public boolean deleteAllStationsFromRoute(int routeId) throws SQLException {
+    public boolean deleteAllStationsFromRoute(int route_id) throws SQLException {
         String sql = "DELETE FROM Route_Station WHERE route_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, routeId);
+            ps.setInt(1, route_id);
             int affectedRows = ps.executeUpdate();
             return affectedRows >= 0; // >=0 vì có thể không có trạm nào nhưng vẫn thành công
         } catch (SQLException e) {
@@ -312,4 +312,31 @@ public class RouteDAO extends DBContext implements iRouteDAO {
         }
     }
 
+    @Override
+    public List<Route> getRoutesByTwoStations(int stationA, int stationB) throws SQLException {
+        List<Route> routes = new ArrayList<>();
+        String sql = """
+        SELECT DISTINCT r.route_id, r.route_name, r.type, r.frequency
+        FROM Route r
+        JOIN Route_Station rs1 ON r.route_id = rs1.route_id AND rs1.station_id = ?
+        JOIN Route_Station rs2 ON r.route_id = rs2.route_id AND rs2.station_id = ?
+        """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setInt(1, stationA);
+            ps.setInt(2, stationB);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Route r = new Route();
+                r.setRouteId(rs.getInt("route_id"));
+                r.setRouteName(rs.getString("route_name"));
+                r.setType(rs.getString("type"));
+                r.setFrequency(rs.getInt("frequency"));
+                routes.add(r);
+            }
+        }
+
+        return routes;
+    }
 }

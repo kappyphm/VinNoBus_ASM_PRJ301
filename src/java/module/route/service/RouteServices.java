@@ -82,4 +82,7 @@ public class RouteServices {
         return routeDAO.deleteAllStationsFromRoute(routeId);
     }
 
+    public List<Route> getRoutesByTwoStations(int stationA, int stationB) throws SQLException {
+        return routeDAO.getRoutesByTwoStations(stationA, stationB);
+    }
 }
