@@ -51,11 +51,27 @@
 
             <!-- Toolbar -->
             <div class="flex flex-wrap justify-between items-center mb-6 fade-up">
+
+                <form method="get" class="flex items-center gap-2">
+                    <input 
+                        type="text" 
+                        name="search" 
+                        value="${param.search}" 
+                        placeholder="Tìm kiếm trạm..." 
+                        class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    <button type="submit" 
+                            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-all duration-200">
+                        Tìm
+                    </button>
+                </form>
+
                 <a href="StationServlet?action=new"
-                   class="bg-gradient-to-r from-blue-500 to-green-400 text-white px-5 py-2 rounded-lg shadow-md text-sm font-medium hover:-translate-y-1 hover:shadow-lg hover:brightness-110 transition-all duration-200">
-                    <i class="fa fa-plus"></i> Thêm trạm mới
+                   class="inline-flex items-center bg-gradient-to-r from-blue-500 to-green-400 text-white px-5 py-2 rounded-lg shadow-md text-sm font-medium hover:-translate-y-1 hover:shadow-lg hover:brightness-110 transition-all duration-200">
+                    <span class="mr-2">+</span> Thêm trạm mới
                 </a>
             </div>
+
 
             <!-- Table -->
             <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-lg fade-up">
