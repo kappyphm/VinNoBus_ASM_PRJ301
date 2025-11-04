@@ -1,6 +1,6 @@
-package TripModule.service;
+package module.trip.service;
 
-import TripModule.model.Trip;
+import module.trip.model.entity.Trip;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;

@@ -1,8 +1,8 @@
-package TripModule.controller;
+package module.trip.controller;
 
-import TripModule.model.Trip;
-import TripModule.service.ITripService;
-import TripModule.service.TripService;
+import module.trip.model.entity.Trip;
+import module.trip.service.ITripService;
+import module.trip.service.TripService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

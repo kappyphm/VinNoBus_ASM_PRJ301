@@ -1,5 +1,5 @@
 
-package TripModule.dto;
+package module.trip.model.dto;
 
 import java.time.LocalDateTime;
 public class TripDTO {

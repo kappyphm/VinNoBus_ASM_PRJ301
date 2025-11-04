@@ -1,7 +1,7 @@
 
-package TripModule.dao;
+package module.trip.dao;
 
-import TripModule.model.Trip;
+import module.trip.model.entity.Trip;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.List;

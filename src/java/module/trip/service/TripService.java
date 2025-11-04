@@ -1,8 +1,8 @@
-package TripModule.service;
+package module.trip.service;
 
-import TripModule.dao.ITripDAO;
-import TripModule.dao.TripDAO;
-import TripModule.model.Trip;
+import module.trip.dao.ITripDAO;
+import module.trip.dao.TripDAO;
+import module.trip.model.entity.Trip;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;

@@ -1,5 +1,5 @@
 
-package TripModule.model;
+package module.trip.model.entity;
 
 import java.time.LocalDateTime;
 
