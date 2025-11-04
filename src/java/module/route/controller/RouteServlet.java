@@ -240,8 +240,8 @@ public class RouteServlet extends HttpServlet {
             type = type != null ? type.trim() : "";
 
             // Kiểm tra trùng tên tuyến
-            if (routeServices.isRouteNameExist(name)) {
-                request.setAttribute("errorMessage", "❌ Tuyến \"" + name + "\" đã tồn tại trong hệ thống!");
+            if (routeServices.isDuplicateRoute(name, type)) {
+                request.setAttribute("errorMessage", "❌ Tuyến \"" + name + "\" (" + type + ") đã tồn tại trong hệ thống!");
                 request.getRequestDispatcher("/view/Route/RouteAdd.jsp").forward(request, response);
                 return;
             }

@@ -132,12 +132,6 @@ public class BusDAO extends DBContext implements iBusDAO {
     }
 
     @Override
-    public boolean assignBusToTrip(int busId, int tripId) throws SQLException {
-        // Bảng Bus không có quan hệ Trip nên có thể bỏ trống hoặc return false
-        return false;
-    }
-
-    @Override
     public boolean isPlateNumberExists(String plateNumber) throws SQLException {
         String sql = "SELECT 1 FROM Bus WHERE plate_number = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

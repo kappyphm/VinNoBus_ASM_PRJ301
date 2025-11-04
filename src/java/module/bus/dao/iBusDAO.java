@@ -20,8 +20,6 @@ public interface iBusDAO {
 
     public int countAll() throws SQLException;
 
-    public boolean assignBusToTrip(int busId, int tripId) throws SQLException;
-
     public boolean isPlateNumberExists(String plateNumber) throws SQLException;
 
     public List<Bus> searchBusByPlate(String keyword) throws SQLException;

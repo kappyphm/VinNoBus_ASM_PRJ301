@@ -127,11 +127,6 @@
                                         >🗑️ Delete</a
                                     >
                                     <a
-                                        href="BusServlet?action=assign&id=${bus.busId}"
-                                        class="bg-gradient-to-r from-[#2ecc71] to-[#27ae60] text-white px-3 py-1.5 rounded-md hover:opacity-90 transition"
-                                        >👤 Assign</a
-                                    >
-                                    <a
                                         href="BusServlet?action=detail&id=${bus.busId}"
                                         class="bg-gradient-to-r from-[#3498db] to-[#2980b9] text-white px-3 py-1.5 rounded-md hover:opacity-90 transition"
                                         >🚍 Details</a

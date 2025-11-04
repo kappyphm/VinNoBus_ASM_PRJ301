@@ -80,8 +80,4 @@ public class BusServices {
     public boolean isPlateNumberExists(String plateNumber) throws SQLException {
         return busDAO.isPlateNumberExists(plateNumber);
     }
-
-    public boolean assignBusToTrip(int busId, int tripId) throws SQLException {
-        return busDAO.assignBusToTrip(busId, tripId);
-    }
 }
