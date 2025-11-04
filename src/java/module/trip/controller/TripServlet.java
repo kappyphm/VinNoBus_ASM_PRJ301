@@ -1,20 +1,18 @@
 package module.trip.controller;
 
-import module.trip.model.entity.Trip;
-import module.trip.service.ITripService;
-import module.trip.service.TripService;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import module.trip.model.entity.Trip;
+import module.trip.service.ITripService;
+import module.trip.service.TripService;
 
 @WebServlet("/TripServlet")
 public class TripServlet extends HttpServlet {
@@ -109,17 +107,17 @@ public class TripServlet extends HttpServlet {
 
             request.setAttribute("trips", trips);
             request.setAttribute("total", total);
-            request.getRequestDispatcher("/tripList.jsp").forward(request, response);
+            request.getRequestDispatcher("/Trip/tripList.jsp").forward(request, response);
 
         } catch (SQLException e) {
             request.setAttribute("errorMessage", "❌ Không thể tải danh sách chuyến xe: " + e.getMessage());
-            request.getRequestDispatcher("/tripList.jsp").forward(request, response);
+            request.getRequestDispatcher("/Trip/tripList.jsp").forward(request, response);
         }
     }
 
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/tripForm.jsp").forward(request, response);
+        request.getRequestDispatcher("/Trip/tripForm.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
@@ -128,7 +126,7 @@ public class TripServlet extends HttpServlet {
             int tripId = Integer.parseInt(request.getParameter("tripId"));
             Trip trip = tripService.findTripById(tripId);
             request.setAttribute("trip", trip);
-            request.getRequestDispatcher("/tripEditForm.jsp").forward(request, response);
+            request.getRequestDispatcher("/Trip/tripEditForm.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("errorMessage", "❌ Không thể tải thông tin chuyến xe để chỉnh sửa: " + e.getMessage());
             listTrips(request, response);
@@ -220,11 +218,11 @@ public class TripServlet extends HttpServlet {
                 errors.add("❌ Không thể thêm chuyến xe. Có thể trùng dữ liệu.");
                 request.setAttribute("errors", errors);
             }
-            request.getRequestDispatcher("/tripForm.jsp").forward(request, response);
+            request.getRequestDispatcher("/Trip/tripForm.jsp").forward(request, response);
         } catch (SQLException e) {
             errors.add("Lỗi cơ sở dữ liệu: " + e.getMessage());
             request.setAttribute("errors", errors);
-            request.getRequestDispatcher("/tripForm.jsp").forward(request, response);
+            request.getRequestDispatcher("/Trip/tripForm.jsp").forward(request, response);
         }
     }
 
@@ -283,7 +281,7 @@ public class TripServlet extends HttpServlet {
             int tripId = Integer.parseInt(request.getParameter("tripId"));
             Trip trip = tripService.getTripDetail(tripId);
             request.setAttribute("trip", trip);
-            request.getRequestDispatcher("/tripDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("/Trip/tripDetail.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("errorMessage", "❌ Không thể tải chi tiết chuyến xe: " + e.getMessage());
             listTrips(request, response);
