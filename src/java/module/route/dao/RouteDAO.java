@@ -235,4 +235,70 @@ public class RouteDAO extends DBContext implements iRouteDAO {
         return false;
     }
 
+    @Override
+    public boolean addStationToRoute(int routeId, int stationId, int stationOrder, int estimatedTime) throws SQLException {
+        String sql = "INSERT INTO Route_Station(route_id, station_id, station_order, estimated_time) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, routeId);
+            ps.setInt(2, stationId);
+            ps.setInt(3, stationOrder);
+            ps.setInt(4, estimatedTime);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    @Override
+    public Route getRouteWithStations(int routeId) throws SQLException {
+        Route route = getRouteById(routeId);
+        if (route == null) {
+            return null;
+        }
+
+        List<Station> stations = new ArrayList<>();
+        int totalTime = 0;
+
+        String sql = """
+        SELECT s.*, rs.station_order, rs.estimated_time
+        FROM Route_Station rs
+        JOIN Station s ON rs.station_id = s.station_id
+        WHERE rs.route_id = ?
+        ORDER BY rs.station_order
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, routeId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Station station = new Station(
+                        rs.getInt("station_id"),
+                        rs.getString("station_name"),
+                        rs.getString("location"),
+                        rs.getString("openTime"),
+                        rs.getString("closeTime")
+                );
+                // dùng routeNames tạm lưu thông tin "stationOrder|estimatedTime"
+                station.setRouteNames(List.of(rs.getInt("station_order") + "|" + rs.getInt("estimated_time")));
+                stations.add(station);
+                totalTime += rs.getInt("estimated_time");
+            }
+        }
+
+        route.setStations(stations);
+        route.setEstimatedTime(totalTime);
+        return route;
+    }
+
+    @Override
+    public boolean deleteAllStationsFromRoute(int routeId) throws SQLException {
+        String sql = "DELETE FROM Route_Station WHERE route_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, routeId);
+            int affectedRows = ps.executeUpdate();
+            return affectedRows >= 0; // >=0 vì có thể không có trạm nào nhưng vẫn thành công
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 }

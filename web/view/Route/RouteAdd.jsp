@@ -1,9 +1,6 @@
-<%-- 
-    Document   : RouteAdd
-    Created on : Oct 18, 2025, 12:21:03 PM
-    Author     : Admin
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <html>
     <head>
         <title>Thêm Tuyến Mới</title>
@@ -32,24 +29,22 @@
                 ➕ Thêm Tuyến Mới
             </h2>
 
-            <% 
-                String message = (String) session.getAttribute("message");
-                String error = (String) request.getAttribute("errorMessage");
-                if (message != null) { 
-            %>
-            <div class="text-center bg-[#d4edda] text-[#155724] border-l-4 border-[#2ecc71] py-3 px-4 rounded-lg mb-4 fadeSlideUp">
-                <%= message %>
-            </div>
-            <% 
-                session.removeAttribute("message");
-                } 
-                if (error != null) { 
-            %>
-            <div class="text-center bg-[#f8d7da] text-[#721c24] border-l-4 border-[#e74c3c] py-3 px-4 rounded-lg mb-4 fadeSlideUp">
-                <%= error %>
-            </div>
-            <% } %>
+            <!-- ✅ Hiển thị thông báo thành công -->
+            <c:if test="${not empty sessionScope.message}">
+                <div class="text-center bg-[#d4edda] text-[#155724] border-l-4 border-[#2ecc71] py-3 px-4 rounded-lg mb-4 fadeSlideUp">
+                    ${sessionScope.message}
+                </div>
+            </c:if>
+            <c:remove var="message" scope="session"/>
 
+            <!-- ✅ Hiển thị thông báo lỗi -->
+            <c:if test="${not empty requestScope.errorMessage}">
+                <div class="text-center bg-[#f8d7da] text-[#721c24] border-l-4 border-[#e74c3c] py-3 px-4 rounded-lg mb-4 fadeSlideUp">
+                    ${requestScope.errorMessage}
+                </div>
+            </c:if>
+
+            <!-- ✅ Form nhập tuyến -->
             <form action="RouteServlet?action=add" method="post" class="flex flex-col gap-5 fadeSlideUp">
                 <label class="font-semibold text-gray-700">Tên tuyến:</label>
                 <input 
