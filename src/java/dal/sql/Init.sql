@@ -26,9 +26,6 @@ GO
 -- ==========================================================
 CREATE TABLE dbo.[user] (
     user_id VARCHAR(128) NOT NULL UNIQUE,
-    role VARCHAR(20) NOT NULL 
-        CHECK (role IN ('ADMIN', 'STAFF', 'CUSTOMER')) 
-        DEFAULT 'CUSTOMER',
     is_active BIT NOT NULL DEFAULT 1,
     created_at DATETIME NOT NULL DEFAULT GETDATE(),
     updated_at DATETIME NOT NULL DEFAULT GETDATE(),
