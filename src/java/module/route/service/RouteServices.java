@@ -65,7 +65,21 @@ public class RouteServices {
     public boolean isRouteNameExistForOtherId(String routeName, int id) throws SQLException {
         return routeDAO.isRouteNameExistForOtherId(routeName, id);
     }
-     public boolean isDuplicateRoute(String name, String type) throws SQLException{
-         return routeDAO.isDuplicateRoute(name, type);
-     }
+
+    public boolean isDuplicateRoute(String name, String type) throws SQLException {
+        return routeDAO.isDuplicateRoute(name, type);
+    }
+
+    public boolean addStationToRoute(int routeId, int stationId, int stationOrder, int estimatedTime) throws SQLException {
+        return routeDAO.addStationToRoute(routeId, stationId, stationOrder, estimatedTime);
+    }
+
+    public Route getRouteWithStations(int routeId) throws SQLException {
+        return routeDAO.getRouteWithStations(routeId);
+    }
+
+    public boolean deleteAllStationsFromRoute(int routeId) throws SQLException {
+        return routeDAO.deleteAllStationsFromRoute(routeId);
+    }
+
 }

@@ -96,6 +96,10 @@
                                        class="bg-gradient-to-r from-[#f39c12] to-[#f1c40f] text-white px-3 py-1.5 rounded-md hover:opacity-90 transition">✏️ Sửa</a>
                                     <a href="RouteServlet?action=delete&id=${r.routeId}" onclick="return confirm('Bạn có chắc muốn xóa tuyến này không?');"
                                        class="bg-gradient-to-r from-[#e74c3c] to-[#c0392b] text-white px-3 py-1.5 rounded-md hover:opacity-90 transition">🗑️ Xóa</a>
+                                    <a href="RouteServlet?action=assign&id=${r.routeId}"
+                                       class="bg-gradient-to-r from-[#2ecc71] to-[#27ae60] text-white px-3 py-1.5 rounded-md hover:opacity-90 transition">
+                                        🏁 Gán trạm
+                                    </a>
                                 </td>
                             </tr>
                         </c:forEach>

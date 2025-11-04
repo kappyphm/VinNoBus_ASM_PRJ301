@@ -22,7 +22,7 @@ public interface iRouteDAO {
     public int countRoutes(String search, String type) throws SQLException;
 
     // ===== VALIDATION =====
-    public boolean isDuplicateRoute(String name, String type) throws SQLException ;
+    public boolean isDuplicateRoute(String name, String type) throws SQLException;
 
     // ===== ROUTE DETAILS =====
     public Route getRouteDetails(int routeId) throws SQLException;
@@ -35,4 +35,9 @@ public interface iRouteDAO {
     public boolean isRouteNameExistForOtherId(String routeName, int id) throws SQLException;
     // kiểm tra trong DB có tên routeName tồn tại nhưng không phải ID hiện tại
 
+    public boolean addStationToRoute(int routeId, int stationId, int stationOrder, int estimatedTime) throws SQLException;
+
+    public Route getRouteWithStations(int routeId) throws SQLException;
+
+    public boolean deleteAllStationsFromRoute(int routeId) throws SQLException;
 }
