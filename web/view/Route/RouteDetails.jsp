@@ -62,8 +62,6 @@
                                     <th class="px-4 py-3 border border-gray-300">Mã trạm</th>
                                     <th class="px-4 py-3 border border-gray-300">Tên trạm</th>
                                     <th class="px-4 py-3 border border-gray-300">Vị trí</th>
-                                    <th class="px-4 py-3 border border-gray-300">Giờ mở cửa</th>
-                                    <th class="px-4 py-3 border border-gray-300">Giờ đóng cửa</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -75,8 +73,6 @@
                                         <td class="px-4 py-2 border border-gray-300"><c:out value="${s.stationId}" /></td>
                                         <td class="px-4 py-2 border border-gray-300"><c:out value="${s.stationName}" /></td>
                                         <td class="px-4 py-2 border border-gray-300"><c:out value="${s.location}" /></td>
-                                        <td class="px-4 py-2 border border-gray-300"><c:out value="${s.openTime}" /></td>
-                                        <td class="px-4 py-2 border border-gray-300"><c:out value="${s.closeTime}" /></td>
                                     </tr>
                                 </c:forEach>
                             </tbody>

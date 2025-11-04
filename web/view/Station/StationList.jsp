@@ -65,8 +65,6 @@
                             <th class="py-3 px-4 font-semibold border border-gray-300">ID</th>
                             <th class="py-3 px-4 font-semibold border border-gray-300">Tên trạm</th>
                             <th class="py-3 px-4 font-semibold border border-gray-300">Vị trí</th>
-                            <th class="py-3 px-4 font-semibold border border-gray-300">Giờ mở cửa</th>
-                            <th class="py-3 px-4 font-semibold border border-gray-300">Giờ đóng cửa</th>
                             <th class="py-3 px-4 font-semibold border border-gray-300">Tuyến đi qua</th>
                             <th class="py-3 px-4 font-semibold border border-gray-300">Thao tác</th>
                         </tr>
@@ -80,8 +78,6 @@
                                         <td class="py-3 px-2 border border-gray-300 text-center" style="width:6%;">${s.stationId}</td>
                                         <td class="py-3 px-2 border border-gray-300 text-center min-w-[120px]"><i class="fa fa-bus text-blue-500 mr-1"></i>${s.stationName}</td>
                                         <td class="py-3 px-2 border border-gray-300 text-center min-w-[120px]">${s.location}</td>
-                                        <td class="py-3 px-2 border border-gray-300 text-center min-w-[90px]"><i class="fa fa-clock text-gray-500 mr-1"></i>${s.openTime}</td>
-                                        <td class="py-3 px-2 border border-gray-300 text-center min-w-[90px]"><i class="fa fa-clock text-gray-500 mr-1"></i>${s.closeTime}</td>
                                         <td class="py-3 px-2 border border-gray-300 text-center min-w-[200px]">
                                             <c:if test="${not empty s.routeNames}">
                                                 <c:forEach var="r" items="${s.routeNames}" varStatus="loop">
@@ -89,27 +85,29 @@
                                                 </c:forEach>
                                             </c:if>
                                         </td>
-                                        <td class="py-3 px-2 border border-gray-300 text-center min-w-[150px] space-x-2">
-                                            <a href="StationServlet?action=view&id=${s.stationId}"
-                                               class="inline-block bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600 hover:shadow-md transition-all duration-150">
-                                                <i class="fa fa-eye"></i> Xem
-                                            </a>
-                                            <a href="StationServlet?action=edit&id=${s.stationId}"
-                                               class="inline-block bg-yellow-500 text-white px-3 py-1 rounded-md text-sm hover:bg-yellow-600 hover:shadow-md transition-all duration-150">
-                                                <i class="fa fa-pen"></i> Sửa
-                                            </a>
-                                            <a href="StationServlet?action=delete&id=${s.stationId}"
-                                               onclick="return confirm('Xóa trạm này?');"
-                                               class="inline-block bg-red-500 text-white px-3 py-1 rounded-md text-sm hover:bg-red-600 hover:shadow-md transition-all duration-150">
-                                                <i class="fa fa-trash"></i> Xóa
-                                            </a>
+                                        <td class="py-3 px-2 border border-gray-300 text-center">
+                                            <div class="flex justify-center gap-2">
+                                                <a href="StationServlet?action=view&id=${s.stationId}"
+                                                   class="bg-blue-500 text-white px-3 py-1 rounded-md text-sm hover:bg-blue-600 hover:shadow-md transition-all duration-150">
+                                                    <i class="fa fa-eye"></i> Xem
+                                                </a>
+                                                <a href="StationServlet?action=edit&id=${s.stationId}"
+                                                   class="bg-yellow-500 text-white px-3 py-1 rounded-md text-sm hover:bg-yellow-600 hover:shadow-md transition-all duration-150">
+                                                    <i class="fa fa-pen"></i> Sửa
+                                                </a>
+                                                <a href="StationServlet?action=delete&id=${s.stationId}"
+                                                   onclick="return confirm('Xóa trạm này?');"
+                                                   class="bg-red-500 text-white px-3 py-1 rounded-md text-sm hover:bg-red-600 hover:shadow-md transition-all duration-150">
+                                                    <i class="fa fa-trash"></i> Xóa
+                                                </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 </c:forEach>
                             </c:when>
                             <c:otherwise>
                                 <tr>
-                                    <td colspan="7" class="py-5 text-gray-500 italic border border-gray-300 text-center">Không có dữ liệu</td>
+                                    <td colspan="5" class="py-5 text-gray-500 italic border border-gray-300 text-center">Không có dữ liệu</td>
                                 </tr>
                             </c:otherwise>
                         </c:choose>

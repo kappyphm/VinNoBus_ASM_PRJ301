@@ -56,20 +56,6 @@
                            class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
                 </div>
 
-                <!-- Giờ mở cửa -->
-                <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 hover:shadow-md transition">
-                    <label class="block text-blue-800 font-medium mb-1">Giờ mở cửa</label>
-                    <input type="time" name="openTime"
-                           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
-                </div>
-
-                <!-- Giờ đóng cửa -->
-                <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 hover:shadow-md transition">
-                    <label class="block text-blue-800 font-medium mb-1">Giờ đóng cửa</label>
-                    <input type="time" name="closeTime"
-                           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
-                </div>
-
                 <!-- Nút hành động -->
                 <div class="flex justify-between items-center mt-6">
                     <button type="submit"

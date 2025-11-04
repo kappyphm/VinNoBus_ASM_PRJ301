@@ -13,12 +13,12 @@ public class StationDAO extends DBContext implements iStationDAO {
     public List<Station> getAll() {
         List<Station> list = new ArrayList<>();
         String sql = """
-           SELECT s.station_id, s.station_name, s.location, s.openTime, s.closeTime,
+           SELECT s.station_id, s.station_name, s.location,
                   STRING_AGG(r.route_name, ', ') AS route_names
            FROM Station s
            LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
            LEFT JOIN Route r ON r.route_id = rs.route_id
-           GROUP BY s.station_id, s.station_name, s.location, s.openTime, s.closeTime
+           GROUP BY s.station_id, s.station_name, s.location
         """;
         try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
@@ -26,8 +26,6 @@ public class StationDAO extends DBContext implements iStationDAO {
                 s.setStationId(rs.getInt("station_id"));
                 s.setStationName(rs.getString("station_name"));
                 s.setLocation(rs.getString("location"));
-                s.setOpenTime(rs.getString("openTime"));
-                s.setCloseTime(rs.getString("closeTime"));
 
                 String routes = rs.getString("route_names");
                 if (routes != null && !routes.isEmpty()) {
@@ -44,13 +42,13 @@ public class StationDAO extends DBContext implements iStationDAO {
     @Override
     public Station getById(int id) {
         String sql = """
-           SELECT s.station_id, s.station_name, s.location, s.openTime, s.closeTime,
+           SELECT s.station_id, s.station_name, s.location,
                   STRING_AGG(r.route_name, ', ') AS route_names
            FROM Station s
            LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
            LEFT JOIN Route r ON r.route_id = rs.route_id
            WHERE s.station_id = ?
-           GROUP BY s.station_id, s.station_name, s.location, s.openTime, s.closeTime
+           GROUP BY s.station_id, s.station_name, s.location
         """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -60,8 +58,7 @@ public class StationDAO extends DBContext implements iStationDAO {
                     s.setStationId(rs.getInt("station_id"));
                     s.setStationName(rs.getString("station_name"));
                     s.setLocation(rs.getString("location"));
-                    s.setOpenTime(rs.getString("openTime"));
-                    s.setCloseTime(rs.getString("closeTime"));
+
                     String routes = rs.getString("route_names");
                     if (routes != null && !routes.isEmpty()) {
                         s.setRouteNames(Arrays.asList(routes.split(",\\s*")));
@@ -79,13 +76,13 @@ public class StationDAO extends DBContext implements iStationDAO {
     public List<Station> getByName(String name) {
         List<Station> list = new ArrayList<>();
         String sql = """
-           SELECT s.station_id, s.station_name, s.location, s.openTime, s.closeTime,
+           SELECT s.station_id, s.station_name, s.location,
                   STRING_AGG(r.route_name, ', ') AS route_names
            FROM Station s
            LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
            LEFT JOIN Route r ON r.route_id = rs.route_id
            WHERE s.station_name LIKE ?
-           GROUP BY s.station_id, s.station_name, s.location, s.openTime, s.closeTime
+           GROUP BY s.station_id, s.station_name, s.location
         """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, "%" + name + "%");
@@ -95,8 +92,7 @@ public class StationDAO extends DBContext implements iStationDAO {
                     s.setStationId(rs.getInt("station_id"));
                     s.setStationName(rs.getString("station_name"));
                     s.setLocation(rs.getString("location"));
-                    s.setOpenTime(rs.getString("openTime"));
-                    s.setCloseTime(rs.getString("closeTime"));
+
                     String routes = rs.getString("route_names");
                     if (routes != null && !routes.isEmpty()) {
                         s.setRouteNames(Arrays.asList(routes.split(",\\s*")));
@@ -112,12 +108,10 @@ public class StationDAO extends DBContext implements iStationDAO {
 
     @Override
     public boolean create(Station s) {
-        String sql = "INSERT INTO Station (station_name, location, openTime, closeTime) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Station (station_name, location) VALUES (?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, s.getStationName());
             ps.setString(2, s.getLocation());
-            ps.setString(3, s.getOpenTime());
-            ps.setString(4, s.getCloseTime());
             int rows = ps.executeUpdate();
             return rows > 0;
         } catch (SQLException e) {
@@ -128,13 +122,11 @@ public class StationDAO extends DBContext implements iStationDAO {
 
     @Override
     public boolean update(Station s) {
-        String sql = "UPDATE Station SET station_name=?, location=?, openTime=?, closeTime=? WHERE station_id=?";
+        String sql = "UPDATE Station SET station_name=?, location=? WHERE station_id=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, s.getStationName());
             ps.setString(2, s.getLocation());
-            ps.setString(3, s.getOpenTime());
-            ps.setString(4, s.getCloseTime());
-            ps.setInt(5, s.getStationId());
+            ps.setInt(3, s.getStationId());
             int rows = ps.executeUpdate();
             return rows > 0;
         } catch (SQLException e) {
@@ -159,15 +151,15 @@ public class StationDAO extends DBContext implements iStationDAO {
     public List<Station> getStationsByPage(int page, int pageSize) {
         List<Station> list = new ArrayList<>();
         String sql = """
-        SELECT s.station_id, s.station_name, s.location, s.openTime, s.closeTime,
-               STRING_AGG(r.route_name, ', ') AS route_names
-        FROM Station s
-        LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
-        LEFT JOIN Route r ON r.route_id = rs.route_id
-        GROUP BY s.station_id, s.station_name, s.location, s.openTime, s.closeTime
-        ORDER BY s.station_id
-        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-    """;
+            SELECT s.station_id, s.station_name, s.location,
+                   STRING_AGG(r.route_name, ', ') AS route_names
+            FROM Station s
+            LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
+            LEFT JOIN Route r ON r.route_id = rs.route_id
+            GROUP BY s.station_id, s.station_name, s.location
+            ORDER BY s.station_id
+            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+        """;
 
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, (page - 1) * pageSize);
@@ -178,8 +170,6 @@ public class StationDAO extends DBContext implements iStationDAO {
                     s.setStationId(rs.getInt("station_id"));
                     s.setStationName(rs.getString("station_name"));
                     s.setLocation(rs.getString("location"));
-                    s.setOpenTime(rs.getString("openTime"));
-                    s.setCloseTime(rs.getString("closeTime"));
 
                     String routes = rs.getString("route_names");
                     if (routes != null && !routes.isEmpty()) {

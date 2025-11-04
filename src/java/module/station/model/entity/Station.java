@@ -7,34 +7,26 @@ public class Station {
     private int stationId;
     private String stationName;
     private String location;
-    private String openTime;
-    private String closeTime;
     private List<String> routeNames;
 
     public Station() {
     }
 
-    public Station(String stationName, String location, String openTime, String closeTime) {
+    public Station(String stationName, String location) {
         this.stationName = stationName;
         this.location = location;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
     }
 
-    public Station(int stationId, String stationName, String location, String openTime, String closeTime) {
+    public Station(int stationId, String stationName, String location) {
         this.stationId = stationId;
         this.stationName = stationName;
         this.location = location;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
     }
 
-    public Station(int stationId, String stationName, String location, String openTime, String closeTime, List<String> routeNames) {
+    public Station(int stationId, String stationName, String location, List<String> routeNames) {
         this.stationId = stationId;
         this.stationName = stationName;
         this.location = location;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
         this.routeNames = routeNames;
     }
 
@@ -60,22 +52,6 @@ public class Station {
 
     public void setLocation(String location) {
         this.location = location;
-    }
-
-    public String getOpenTime() {
-        return openTime;
-    }
-
-    public void setOpenTime(String openTime) {
-        this.openTime = openTime;
-    }
-
-    public String getCloseTime() {
-        return closeTime;
-    }
-
-    public void setCloseTime(String closeTime) {
-        this.closeTime = closeTime;
     }
 
     public List<String> getRouteNames() {

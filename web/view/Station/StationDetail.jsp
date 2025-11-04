@@ -58,20 +58,14 @@
                         <span class="font-semibold text-gray-700">Vị trí:</span>
                         <span class="text-gray-800">${station.location}</span>
                     </div>
-                    <div class="py-2 flex justify-between">
-                        <span class="font-semibold text-gray-700">Giờ mở cửa:</span>
-                        <span class="text-gray-800">${station.openTime}</span>
-                    </div>
-                    <div class="py-2 flex justify-between">
-                        <span class="font-semibold text-gray-700">Giờ đóng cửa:</span>
-                        <span class="text-gray-800">${station.closeTime}</span>
-                    </div>
                     <div class="py-2 flex justify-between items-start">
                         <span class="font-semibold text-gray-700">Tuyến đi qua:</span>
                         <span class="text-gray-800 text-right">
                             <c:choose>
                                 <c:when test="${not empty station.routeNames}">
-                                    ${fn:join(station.routeNames, ', ')}
+                                    <c:forEach var="name" items="${station.routeNames}" varStatus="loop">
+                                        ${name}<c:if test="${!loop.last}">, </c:if>
+                                    </c:forEach>
                                 </c:when>
                                 <c:otherwise>Không có</c:otherwise>
                             </c:choose>

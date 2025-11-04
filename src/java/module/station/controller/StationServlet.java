@@ -231,14 +231,12 @@ public class StationServlet extends HttpServlet {
         try {
             String name = request.getParameter("stationName");
             String location = request.getParameter("location");
-            String openTime = request.getParameter("openTime");
-            String closeTime = request.getParameter("closeTime");
             if (name == null || name.isEmpty()) {
                 request.setAttribute("error", "Tên trạm không được để trống.");
                 request.getRequestDispatcher("/view/Station/StationAdd.jsp").forward(request, response);
                 return;
             }
-            Station newStation = new Station(0, name, location, openTime, closeTime, null);
+            Station newStation = new Station(0, name, location, null);
             boolean created = stationServices.createStation(newStation);
             if (!created) {
                 request.setAttribute("error", "Không thể thêm trạm mới. Vui lòng thử lại.");
@@ -258,14 +256,12 @@ public class StationServlet extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("stationId"));
             String name = request.getParameter("stationName");
             String location = request.getParameter("location");
-            String openTime = request.getParameter("openTime");
-            String closeTime = request.getParameter("closeTime");
             if (name == null || name.isEmpty()) {
                 request.setAttribute("error", "Tên trạm không được để trống.");
                 request.getRequestDispatcher("/view/Station/StationEdit.jsp").forward(request, response);
                 return;
             }
-            Station updated = new Station(id, name, location, openTime, closeTime, null);
+            Station updated = new Station(id, name, location, null);
             boolean success = stationServices.updateStation(updated);
             if (!success) {
                 request.setAttribute("error", "Không thể cập nhật trạm (ID: " + id + ").");

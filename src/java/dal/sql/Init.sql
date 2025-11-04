@@ -182,8 +182,6 @@ CREATE TABLE Station (
     station_id INT IDENTITY(1,1) PRIMARY KEY,
     station_name VARCHAR(150) NOT NULL,
     location VARCHAR(255),       -- TODO: có th? thay b?ng t?a ?? GPS
-    openTime VARCHAR(10),
-    closeTime VARCHAR(10)
 );
 
 -- ==============================================
