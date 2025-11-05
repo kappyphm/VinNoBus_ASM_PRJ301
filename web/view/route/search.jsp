@@ -72,7 +72,7 @@
                     <select name="b" required class="w-full rounded-xl border border-slate-200 px-3 py-2 bg-white">
                         <option value="">-- Chọn trạm --</option>
                         <c:forEach var="s" items="${stations}">
-                            <option value="${s.stationId}" ${param.a == s.stationId ? 'selected' : ''}>${s.stationName}</option>
+                            <option value="${s.stationId}" ${param.b == s.stationId ? 'selected' : ''}>${s.stationName}</option>
                         </c:forEach>
                     </select>
                 </div>
@@ -107,12 +107,12 @@
                                                 <td class="py-2 pr-4 font-medium">${r.routeId}</td>
                                                 <td class="py-2 pr-4">${r.routeName}</td>
                                                 <td class="py-2 pr-4">${r.type}</td>
-                                                    <c:choose>
-                                                        <c:when test="${not empty r.stations}">
-                                                            ${fn:length(r.stations)}
-                                                        </c:when>
-                                                        <c:otherwise>0</c:otherwise>
-                                                    </c:choose>
+                                                <c:choose>
+                                                    <c:when test="${not empty r.stations}">
+                                                        ${fn:length(r.stations)}
+                                                    </c:when>
+                                                    <c:otherwise>0</c:otherwise>
+                                                </c:choose>
                                                 </td>
                                                 <td class="py-2 pr-4">
                                                     <a href="${pageContext.request.contextPath}/RouteServlet?action=details&id=${r.routeId}"
