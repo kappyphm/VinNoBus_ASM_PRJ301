@@ -38,6 +38,11 @@
         <main class="max-w-6xl mx-auto px-5 py-8">
             <h1 class="text-2xl font-semibold">Tìm tuyến xe đi qua 2 trạm</h1>
             <p class="text-sm text-slate-600 mt-1">Chọn hai trạm, hệ thống sẽ trả về các tuyến đi qua cả hai trạm đó.</p>
+            <c:if test="${not empty param.errorMessage}">
+                <div class="mt-4 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 shadow-soft">
+                    ⚠️ <c:out value="${param.errorMessage}" />
+                </div>
+            </c:if>
 
             <!-- Mock stations if none supplied -->
             <c:if test="${empty stations}">
@@ -93,10 +98,6 @@
                                             <th class="py-2 pr-4">Mã tuyến</th>
                                             <th class="py-2 pr-4">Tên tuyến</th>
                                             <th class="py-2 pr-4">Loại tuyến</th>
-                                            <th class="py-2 pr-4">Tần suất</th>
-                                            <th class="py-2 pr-4">Thời gian ước tính (phút)</th>
-                                            <th class="py-2 pr-4">Số trạm</th>
-                                            <th class="py-2 pr-4">Thao tác</th>
                                         </tr>
                                     </thead>
 
@@ -106,9 +107,6 @@
                                                 <td class="py-2 pr-4 font-medium">${r.routeId}</td>
                                                 <td class="py-2 pr-4">${r.routeName}</td>
                                                 <td class="py-2 pr-4">${r.type}</td>
-                                                <td class="py-2 pr-4">${r.frequency}</td>
-                                                <td class="py-2 pr-4">${r.estimatedTime}</td>
-                                                <td class="py-2 pr-4">
                                                     <c:choose>
                                                         <c:when test="${not empty r.stations}">
                                                             ${fn:length(r.stations)}
