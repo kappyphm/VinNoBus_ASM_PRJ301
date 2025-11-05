@@ -204,7 +204,7 @@ public class RouteServlet extends HttpServlet {
     private void showDetails(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
         try {
-            int id = Integer.parseInt(request.getParameter("routeId"));
+            int id = Integer.parseInt(request.getParameter("id"));
 
             // Lấy tuyến kèm trạm
             Route route = routeServices.getRouteWithStations(id);
