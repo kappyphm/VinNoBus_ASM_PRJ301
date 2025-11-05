@@ -475,9 +475,28 @@ public class RouteServlet extends HttpServlet {
             RouteDAO routeDAO = new RouteDAO();
             List<Route> routes = routeDAO.getRoutesByTwoStations(stationA, stationB);
             request.setAttribute("routes", routes);
+
+            // ✅ Lấy tên 2 trạm đã chọn để hiển thị trong thông báo
+            String stationAName = null;
+            String stationBName = null;
+            for (Station s : stations) {
+                if (s.getStationId() == stationA) {
+                    stationAName = s.getStationName();
+                }
+                if (s.getStationId() == stationB) {
+                    stationBName = s.getStationName();
+                }
+            }
+
+            // ✅ Nếu không có tuyến nào
+            if (routes == null || routes.isEmpty()) {
+                String message = "Không có tuyến nào đi qua 2 trạm: " + stationAName + " và " + stationBName + ".";
+                request.setAttribute("errorMessage", message);
+            }
         }
 
         // 🔹 Gửi dữ liệu tới trang JSP
         request.getRequestDispatcher("/view/route/search.jsp").forward(request, response);
     }
+
 }
