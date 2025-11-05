@@ -426,30 +426,25 @@ public class RouteServlet extends HttpServlet {
 
     private void saveAssignedStations(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
-        int routeId = Integer.parseInt(request.getParameter("routeId"));
+        int routeId = Integer.parseInt(request.getParameter("id")); // 🔹 đổi routeId -> id
         String[] stationIds = request.getParameterValues("stationIds");
-
         if (stationIds != null) {
-            // Xóa hết trạm cũ
             routeServices.deleteAllStationsFromRoute(routeId);
-
             for (String sid : stationIds) {
                 try {
-                    // Lấy index tương ứng
                     int index = Integer.parseInt(request.getParameter("index_of_" + sid));
 
-                    // Lấy thứ tự và thời gian dự kiến từ input tương ứng index
                     int order = Integer.parseInt(request.getParameter("stationOrder_" + index));
                     int time = Integer.parseInt(request.getParameter("estimatedTime_" + index));
 
                     routeServices.addStationToRoute(routeId, Integer.parseInt(sid), order, time);
                 } catch (NumberFormatException e) {
-                    // bỏ qua nếu có lỗi số
                 }
             }
         }
-
-        request.getSession().setAttribute("message", "✅ Cập nhật danh sách trạm cho tuyến thành công!");
+        Route route = routeServices.getRouteById(routeId);
+        String routeName = (route != null) ? route.getRouteName() : "ID " + routeId;
+        request.getSession().setAttribute("message", "✅ Cập nhật danh sách trạm cho tuyến " + routeName + " thành công!");
         response.sendRedirect("RouteServlet?action=details&id=" + routeId);
     }
 
