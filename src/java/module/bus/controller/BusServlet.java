@@ -164,12 +164,12 @@ public class BusServlet extends HttpServlet {
         if (list == null || list.isEmpty()) {
             request.setAttribute("message", "Không có xe nào trong hệ thống!");
         }
-        request.getRequestDispatcher("/view/Bus/BusList.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/bus/list.jsp").forward(request, response);
     }
 
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/view/Bus/BusAdd.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/bus/add.jsp").forward(request, response);
     }
 
     private void insertBus(HttpServletRequest request, HttpServletResponse response)
@@ -181,14 +181,14 @@ public class BusServlet extends HttpServlet {
 
         if (plate == null || plate.trim().isEmpty()) {
             request.setAttribute("error", "Biển số xe không được để trống.");
-            request.getRequestDispatcher("/view/Bus/BusAdd.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/bus/add.jsp").forward(request, response);
             return;
         }
 
         String platePattern = "^(29B|30B)-\\d{3}\\.\\d{2}$";
         if (!plate.trim().matches(platePattern)) {
             request.setAttribute("error", "❌ Biển số không hợp lệ. Hãy nhập theo định dạng: 29B-xxx.xx hoặc 30B-xxx.xx (ví dụ: 29B-101.01).");
-            request.getRequestDispatcher("/view/Bus/BusAdd.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/bus/add.jsp").forward(request, response);
             return;
         }
 
@@ -200,7 +200,7 @@ public class BusServlet extends HttpServlet {
             }
         } catch (NumberFormatException e) {
             request.setAttribute("error", "Sức chứa phải là số nguyên lớn hơn 0.");
-            request.getRequestDispatcher("/view/Bus/BusAdd.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/bus/add.jsp").forward(request, response);
             return;
         }
         Bus bus = new Bus(0, plate.trim(), capacity, currentStatus.trim());
@@ -211,7 +211,7 @@ public class BusServlet extends HttpServlet {
             listBus(request, response);
         } else {
             request.setAttribute("error", "❌ Thêm xe bus thất bại (có thể trùng biển số).");
-            request.getRequestDispatcher("/view/Bus/BusAdd.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/bus/add.jsp").forward(request, response);
         }
     }
 
@@ -228,7 +228,7 @@ public class BusServlet extends HttpServlet {
         }
 
         request.setAttribute("bus", bus);
-        request.getRequestDispatcher("/view/Bus/BusEditForm.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/bus/edit.jsp").forward(request, response);
     }
 
     private void updateBus(HttpServletRequest request, HttpServletResponse response)
@@ -284,7 +284,7 @@ public class BusServlet extends HttpServlet {
         }
 
         if (hasError) {
-            request.getRequestDispatcher("/view/Bus/BusEditForm.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/bus/edit.jsp").forward(request, response);
             return;
         }
 
@@ -297,7 +297,7 @@ public class BusServlet extends HttpServlet {
                 listBus(request, response);
             } else {
                 request.setAttribute("error_general", "❌ Cập nhật thất bại, vui lòng thử lại.");
-                request.getRequestDispatcher("/view/Bus/BusEditForm.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/bus/edit.jsp").forward(request, response);
             }
         } catch (SQLException e) {
             String msg = e.getMessage().toLowerCase();
@@ -306,7 +306,7 @@ public class BusServlet extends HttpServlet {
             } else {
                 request.setAttribute("error_general", "⚠️ Lỗi hệ thống: " + msg);
             }
-            request.getRequestDispatcher("/view/Bus/BusEditForm.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/bus/edit.jsp").forward(request, response);
         }
     }
 
@@ -337,7 +337,7 @@ public class BusServlet extends HttpServlet {
         } else {
             request.setAttribute("message", "🔍 Tìm thấy " + list.size() + " xe bus phù hợp.");
         }
-        request.getRequestDispatcher("/view/Bus/BusList.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/bus/list.jsp").forward(request, response);
     }
 
     private void showDetail(HttpServletRequest request, HttpServletResponse response)
@@ -353,6 +353,6 @@ public class BusServlet extends HttpServlet {
         }
 
         request.setAttribute("bus", bus);
-        request.getRequestDispatcher("/view/Bus/BusDetail.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/bus/detail.jsp").forward(request, response);
     }
 }
