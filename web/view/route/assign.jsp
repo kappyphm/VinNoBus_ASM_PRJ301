@@ -22,7 +22,7 @@
 
             <form action="RouteServlet" method="post" class="space-y-6">
                 <input type="hidden" name="action" value="saveAssignedStations">
-                <input type="hidden" name="routeId" value="${route.routeId}">
+                <input type="hidden" name="id" value="${route.routeId}">
 
                 <div class="overflow-x-auto rounded-xl shadow-lg border border-gray-200">
                     <table class="min-w-full divide-y divide-gray-200">

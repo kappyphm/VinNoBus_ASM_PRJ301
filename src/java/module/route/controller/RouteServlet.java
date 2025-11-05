@@ -426,7 +426,6 @@ public class RouteServlet extends HttpServlet {
 
     private void saveAssignedStations(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
-
         int routeId = Integer.parseInt(request.getParameter("routeId"));
         String[] stationIds = request.getParameterValues("stationIds");
 
