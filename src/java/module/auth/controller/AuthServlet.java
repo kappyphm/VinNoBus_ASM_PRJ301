@@ -119,7 +119,7 @@ public class AuthServlet extends HttpServlet {
                 }
             } else {
                 req.setAttribute("googleUser", googleUser);
-                req.setAttribute("action", "POST");
+                req.setAttribute("action", "create");
                 req.getRequestDispatcher("/view/user/update.jsp").forward(req, resp);
 
               //  resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Cannot find user in system");

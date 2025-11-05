@@ -41,14 +41,14 @@
             <p class="text-sm text-slate-600 mt-1">Chi tiết hồ sơ và trạng thái tài khoản.</p>
 
             <!-- Avatar + Basic -->
-            <div class="mt-6 grid grid-cols-1 md:grid-cols-[160px_1fr] gap-6">
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-[180px_1fr] gap-6">
                 <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft flex flex-col items-center">
                     <img src="${empty userDetail.avatarUrl ? 'https://ui-avatars.com/api/?name=' += (empty userDetail.name ? 'U' : userDetail.name) : userDetail.avatarUrl}" alt="avatar"
                          class="w-28 h-28 rounded-2xl object-cover border border-slate-200"/>
                     <div class="mt-3 text-sm text-slate-500">User ID</div>
-                    <div class="font-medium">${empty userDetail.userId ? '—' : userDetail.userId}</div>
+                    <div class="font-medium text-sm ">${empty userDetail.userId ? '—' : userDetail.userId}</div>
                     <div class="mt-2 text-xs ${userDetail.active ? 'text-emerald-600' : 'text-slate-500'}">
-                        ${userDetail.active ? 'Đang hoạt động' : 'Tạm khóa'}
+                        ${userDetail.active ? 'Đang hoạt động' : 'Chờ duyệt'}
                     </div>
                 </div>
 

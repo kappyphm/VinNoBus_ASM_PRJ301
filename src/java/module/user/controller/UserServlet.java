@@ -20,7 +20,7 @@ import module.user.service.UserService;
  *
  * @author kappyphm
  */
-@WebServlet(name = "UserServlet", urlPatterns = {"/user", "/user/detail", "/user/update"})
+@WebServlet(name = "UserServlet", urlPatterns = {"/user", "/user/detail", "/user/update", "/user/create"})
 public class UserServlet extends HttpServlet {
 
     private final UserService userService = new UserService();
@@ -57,37 +57,9 @@ public class UserServlet extends HttpServlet {
         Optional<UserDetailDTO> userDetail = userService.getUserDetail(currentSessionUser.getUserId());
 
         req.setAttribute("userDetail", userDetail.get());
-        req.setAttribute("action", "PUT");
+        req.setAttribute("action", "update");
         req.getRequestDispatcher("/view/user/update.jsp").forward(req, resp);
 
-    }
-
-    // </editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="POST Methods">
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String path = req.getServletPath();
-        switch (path) {
-            case "/user/update" ->
-                updateProfile(req, resp);
-            default ->
-                resp.sendError(404, "Page not found");
-        }
-    }
-
-    private void updateProfile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String userId = req.getParameter("userId");
-        String name = req.getParameter("name");
-        String email = req.getParameter("email");
-        String phone = req.getParameter("phone");
-        String avatarUrl = req.getParameter("avatarUrl");
-        String address = req.getParameter("address");
-        boolean active = req.getParameter("active") != null;
-        Date dob = Date.valueOf(req.getParameter("dob"));
-
-        UserDetailDTO userDetail = new UserDetailDTO(userId, active, name, email, phone, avatarUrl, dob, address);
-        userService.saveUserDetail(userDetail);
-        resp.sendRedirect(req.getContextPath() + "/user/detail");
     }
 
 // </editor-fold>
@@ -95,8 +67,10 @@ public class UserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getServletPath();
         switch (path) {
-            case "/user/update" ->
+            case "/user/create" ->
                 createProfile(req, resp);
+            case "/user/update" ->
+                updateProfile(req, resp);
             default ->
                 resp.sendError(404, "Page not found");
         }
@@ -115,6 +89,21 @@ public class UserServlet extends HttpServlet {
         UserDetailDTO userDetail = new UserDetailDTO(userId, active, name, email, phone, avatarUrl, dob, address);
         User u = userService.createUserDetail(userDetail);
         req.getSession().setAttribute("user", u);
+        resp.sendRedirect(req.getContextPath() + "/user/detail");
+    }
+
+    private void updateProfile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String userId = req.getParameter("userId");
+        String name = req.getParameter("name");
+        String email = req.getParameter("email");
+        String phone = req.getParameter("phone");
+        String avatarUrl = req.getParameter("avatarUrl");
+        String address = req.getParameter("address");
+        boolean active = req.getParameter("active") != null;
+        Date dob = Date.valueOf(req.getParameter("dob"));
+
+        UserDetailDTO userDetail = new UserDetailDTO(userId, active, name, email, phone, avatarUrl, dob, address);
+        userService.saveUserDetail(userDetail);
         resp.sendRedirect(req.getContextPath() + "/user/detail");
     }
 }

@@ -12,7 +12,7 @@
     <body>
         <h2>Update User Information</h2>
 
-        <form action="${ctx}/user/update" method="${action}">
+        <form action="${ctx}/user/${action}" method="POST">
             <table>
                 <tbody>
                     <tr>
