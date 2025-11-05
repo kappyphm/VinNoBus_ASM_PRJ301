@@ -52,6 +52,13 @@
             <!-- Toolbar -->
             <div class="flex flex-wrap justify-between items-center mb-6 fade-up">
 
+                <!-- Nút Thêm trạm mới lên bên trái -->
+                <a href="StationServlet?action=new"
+                   class="inline-flex items-center bg-gradient-to-r from-blue-500 to-green-400 text-white px-5 py-2 rounded-lg shadow-md text-sm font-medium hover:-translate-y-1 hover:shadow-lg hover:brightness-110 transition-all duration-200">
+                    <span class="mr-2">+</span> Thêm trạm mới
+                </a>
+
+                <!-- Form tìm kiếm ra bên phải -->
                 <form method="get" class="flex items-center gap-2">
                     <input 
                         type="text" 
@@ -65,13 +72,7 @@
                         Tìm
                     </button>
                 </form>
-
-                <a href="StationServlet?action=new"
-                   class="inline-flex items-center bg-gradient-to-r from-blue-500 to-green-400 text-white px-5 py-2 rounded-lg shadow-md text-sm font-medium hover:-translate-y-1 hover:shadow-lg hover:brightness-110 transition-all duration-200">
-                    <span class="mr-2">+</span> Thêm trạm mới
-                </a>
             </div>
-
 
             <!-- Table -->
             <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-lg fade-up">
