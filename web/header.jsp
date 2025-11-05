@@ -106,7 +106,7 @@
     }
 </style>
 <header>
-    <div class="logo" onclick="window.location.href = 'index.html';" style="cursor: pointer;">
+    <div class="logo" onclick="window.location.href = 'index.jsp';" style="cursor: pointer;">
         🚌 <span>Bus Management System</span>
     </div>
     <nav>
