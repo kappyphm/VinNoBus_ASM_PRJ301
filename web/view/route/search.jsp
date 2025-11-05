@@ -101,6 +101,11 @@
                         </div>
                     </c:otherwise>
                 </c:choose>
+                <c:if test="${not empty errorMessage}">
+                    <div class="bg-red-100 text-red-700 border-l-4 border-red-500 p-4 mb-4 rounded-md text-center shadow">
+                        ${errorMessage}
+                    </div>
+                </c:if>
             </section>
         </main>
     </body>
