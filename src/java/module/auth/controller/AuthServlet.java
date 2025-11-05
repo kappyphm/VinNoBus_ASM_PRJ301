@@ -54,7 +54,7 @@ public class AuthServlet extends HttpServlet {
             return;
         }
         
-        String refer = req.getParameter("redirect");
+        String refer = req.getHeader("Refers");
         req.getSession().setAttribute("loginRedirect", refer);
 
         // Random "state" to prevent CSRF attacks
@@ -120,7 +120,7 @@ public class AuthServlet extends HttpServlet {
             } else {
                 req.setAttribute("googleUser", googleUser);
                 req.setAttribute("action", "create");
-                req.getRequestDispatcher("/view/user/update.jsp").forward(req, resp);
+                req.getRequestDispatcher("/view/user/form.jsp").forward(req, resp);
 
               //  resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Cannot find user in system");
             }

@@ -58,7 +58,7 @@ public class UserServlet extends HttpServlet {
 
         req.setAttribute("userDetail", userDetail.get());
         req.setAttribute("action", "update");
-        req.getRequestDispatcher("/view/user/update.jsp").forward(req, resp);
+        req.getRequestDispatcher("/view/user/form.jsp").forward(req, resp);
 
     }
 
