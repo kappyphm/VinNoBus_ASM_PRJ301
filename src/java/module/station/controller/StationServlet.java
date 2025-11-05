@@ -16,7 +16,7 @@ import module.station.model.entity.Station;
 import module.station.service.StationServices;
 
 /**
- *
+ *`
  * @author Admin
  */
 @WebServlet(name = "StationServlet", urlPatterns = {"/StationServlet"})
@@ -161,7 +161,7 @@ public class StationServlet extends HttpServlet {
             request.setAttribute("message", "📭 Không tìm thấy trạm phù hợp.");
         }
 
-        request.getRequestDispatcher("/view/Station/StationList.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/station/list.jsp").forward(request, response);
     }
 
     private void viewStation(HttpServletRequest request, HttpServletResponse response)
@@ -181,7 +181,7 @@ public class StationServlet extends HttpServlet {
                 return;
             }
             request.setAttribute("station", station);
-            request.getRequestDispatcher("/view/Station/StationDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/station/StationDetail.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             request.setAttribute("error", "❌ Mã trạm phải là một số hợp lệ. Bạn đã nhập: " + idStr);
             listStations(request, response);
@@ -190,7 +190,7 @@ public class StationServlet extends HttpServlet {
 
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/view/Station/StationAdd.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/station/add.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
@@ -210,7 +210,7 @@ public class StationServlet extends HttpServlet {
                 return;
             }
             request.setAttribute("station", station);
-            request.getRequestDispatcher("/view/Station/StationEdit.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/station/editdit.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             request.setAttribute("error", "❌ ID trạm phải là số. Bạn đã nhập: " + idStr);
             listStations(request, response);
@@ -222,7 +222,7 @@ public class StationServlet extends HttpServlet {
         String idStr = request.getParameter("id");
         if (idStr == null || idStr.isEmpty()) {
             request.setAttribute("error", "Thiếu mã trạm để xóa.");
-            request.getRequestDispatcher("/view/Station/StationList.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/station/list.jsp").forward(request, response);
             return;
         }
         try {
@@ -230,13 +230,13 @@ public class StationServlet extends HttpServlet {
             boolean success = stationServices.deleteStation(id);
             if (!success) {
                 request.setAttribute("error", "Không thể xóa trạm (ID: " + id + "). Có thể trạm không tồn tại.");
-                request.getRequestDispatcher("/view/Station/StationList.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/station/list.jsp").forward(request, response);
                 return;
             }
             response.sendRedirect("StationServlet?action=list");
         } catch (NumberFormatException e) {
             request.setAttribute("error", "ID trạm phải là số hợp lệ.");
-            request.getRequestDispatcher("/view/Station/StationList.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/station/list.jsp").forward(request, response);
         }
     }
 
@@ -249,7 +249,7 @@ public class StationServlet extends HttpServlet {
 
             if (name == null || name.trim().isEmpty()) {
                 request.setAttribute("error", "Tên trạm không được để trống.");
-                request.getRequestDispatcher("/view/Station/StationAdd.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/station/add.jsp").forward(request, response);
                 return;
             }
             int estimatedTime = 0;
@@ -267,13 +267,13 @@ public class StationServlet extends HttpServlet {
             boolean created = stationServices.createStation(newStation);
             if (!created) {
                 request.setAttribute("error", "Không thể thêm trạm mới. Vui lòng thử lại.");
-                request.getRequestDispatcher("/view/Station/StationAdd.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/station/add.jsp").forward(request, response);
                 return;
             }
             response.sendRedirect("StationServlet?action=list");
         } catch (Exception e) {
             request.setAttribute("error", "Đã xảy ra lỗi khi thêm trạm: " + e.getMessage());
-            request.getRequestDispatcher("/view/Station/StationAdd.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/station/add.jsp").forward(request, response);
         }
     }
 
@@ -287,7 +287,7 @@ public class StationServlet extends HttpServlet {
 
             if (name == null || name.trim().isEmpty()) {
                 request.setAttribute("error", "Tên trạm không được để trống.");
-                request.getRequestDispatcher("/view/Station/StationEdit.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/station/editdit.jsp").forward(request, response);
                 return;
             }
 
@@ -308,7 +308,7 @@ public class StationServlet extends HttpServlet {
 
             if (!success) {
                 request.setAttribute("error", "Không thể cập nhật trạm (ID: " + id + ").");
-                request.getRequestDispatcher("/view/Station/StationEdit.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/station/editdit.jsp").forward(request, response);
                 return;
             }
 
@@ -316,10 +316,10 @@ public class StationServlet extends HttpServlet {
 
         } catch (NumberFormatException e) {
             request.setAttribute("error", "ID trạm không hợp lệ.");
-            request.getRequestDispatcher("/view/Station/StationEdit.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/station/editdit.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Đã xảy ra lỗi khi cập nhật trạm: " + e.getMessage());
-            request.getRequestDispatcher("/view/Station/StationEdit.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/station/editdit.jsp").forward(request, response);
         }
     }
 
