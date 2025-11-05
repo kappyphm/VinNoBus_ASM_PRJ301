@@ -5,6 +5,7 @@
 package module.user.model.entity;
 
 import module.core.annotation.Column;
+import module.core.annotation.PK;
 import module.core.annotation.Table;
 
 /**
@@ -14,7 +15,8 @@ import module.core.annotation.Table;
 @Table(name = "[user]")
 public class User {
 
-    @Column(id = true, name = "user_id", autoId = false)
+    @PK
+    @Column( name = "user_id")
     private String userId;
 
     @Column(name = "is_active")

@@ -39,9 +39,10 @@ public abstract class AbstractDAO<T, ID> implements GenericRepository<T, ID> {
         for (Field f : entityClass.getDeclaredFields()) {
             f.setAccessible(true);
             Column c = f.getAnnotation(Column.class);
+            PK pk = f.getAnnotation(PK.class);
             if (c != null) {
                 columns.put(c.name(), f);
-                if (c.id()) {
+                if (pk != null) {
                     idField = f;
                 }
             }
@@ -66,8 +67,13 @@ public abstract class AbstractDAO<T, ID> implements GenericRepository<T, ID> {
         try {
             for (Map.Entry<String, Field> e : columns.entrySet()) {
                 Column c = e.getValue().getAnnotation(Column.class);
-                
-                if (!c.autoId()) {
+                PK pk = e.getValue().getAnnotation(PK.class);
+
+                if (pk == null) {
+                    cols.append(c.name()).append(",");
+                    vals.append("?").append(",");
+                    params.add(e.getValue().get(entity));
+                } else if (!pk.auto()) {
                     cols.append(c.name()).append(",");
                     vals.append("?").append(",");
                     params.add(e.getValue().get(entity));
@@ -103,7 +109,11 @@ public abstract class AbstractDAO<T, ID> implements GenericRepository<T, ID> {
         try {
             for (Map.Entry<String, Field> e : columns.entrySet()) {
                 Column c = e.getValue().getAnnotation(Column.class);
-                if (!c.id()) {
+                PK pk = e.getValue().getAnnotation(PK.class);
+                if (pk == null) {
+                    set.append(c.name()).append(" = ?,");
+                    params.add(e.getValue().get(entity));
+                } else if (!pk.auto()) {
                     set.append(c.name()).append(" = ?,");
                     params.add(e.getValue().get(entity));
                 }

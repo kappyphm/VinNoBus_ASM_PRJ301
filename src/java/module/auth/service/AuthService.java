@@ -5,7 +5,6 @@
 package module.auth.service;
 
 import exception.AuthException;
-import exception.DataAccessException;
 import java.sql.SQLException;
 import java.util.Optional;
 import module.auth.model.dto.GoogleUserDTO;
@@ -27,13 +26,6 @@ public class AuthService extends BaseService {
     public Optional<User> handleLogin(GoogleUserDTO googleUser) throws AuthException {
         try {
 
-            if (!userDao.isExist(googleUser.getSub())) {
-                User newUser = new User();
-                newUser.setUserId(googleUser.getSub());
-                newUser.setActive(false);
-                userDao.insert(newUser);
-            }
-
             return userDao.findById(googleUser.getSub());
 
         } catch (SQLException e) {
@@ -42,12 +34,5 @@ public class AuthService extends BaseService {
 
     }
 
-    public boolean checkProfile(String userId) {
-        try {
-            return profileDao.isExist(userId);
-        } catch (SQLException ex) {
-            throw new DataAccessException("Cannot access profile DAO");
-        }
-    }
 
 }

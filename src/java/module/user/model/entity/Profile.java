@@ -6,6 +6,7 @@ package module.user.model.entity;
 
 import java.sql.*;
 import module.core.annotation.Column;
+import module.core.annotation.PK;
 import module.core.annotation.Table;
 import module.core.annotation.Unique;
 
@@ -16,7 +17,8 @@ import module.core.annotation.Unique;
 @Table(name = "profile")
 public class Profile {
 
-    @Column(id = true, name = "user_id")
+    @PK
+    @Column(name = "user_id")
     private String userId;
 
     @Column(name = "full_name")

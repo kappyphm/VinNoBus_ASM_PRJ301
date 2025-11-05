@@ -4,7 +4,7 @@
  */
 package module.user.model.dto;
 
-import java.sql.*;
+import java.util.Date;
 
 /**
  *
