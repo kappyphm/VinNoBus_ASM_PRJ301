@@ -180,8 +180,8 @@ CREATE TABLE BusLog (
 -- ==============================================
 CREATE TABLE Station (
     station_id INT IDENTITY(1,1) PRIMARY KEY,
-    station_name VARCHAR(150) NOT NULL,
-    location VARCHAR(255),       -- TODO: có th? thay b?ng t?a ?? GPS
+    station_name NVARCHAR(150) NOT NULL,
+    location NVARCHAR(255),       -- TODO: có th? thay b?ng t?a ?? GPS
 );
 
 -- ==============================================
@@ -191,8 +191,8 @@ CREATE TABLE Station (
 -- ==============================================
 CREATE TABLE Route (
     route_id INT IDENTITY(1,1) PRIMARY KEY,
-    route_name VARCHAR(150) NOT NULL,
-	type NVARCHAR(10) CHECK (type in ('ROUND_TRIP', 'CIRCULAR')),
+    route_name NVARCHAR(150) NOT NULL,
+	type VARCHAR(10) CHECK (type in ('ROUND_TRIP', 'CIRCULAR')),
     frequency INT CHECK (frequency >= 0)
 );
 
