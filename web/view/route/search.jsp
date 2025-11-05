@@ -31,7 +31,7 @@
                     <div class="w-8 h-8 rounded-xl bg-brand-600 text-white grid place-items-center font-semibold">V</div>
                     <span class="font-semibold">VinNoBus</span>
                 </a>
-                <a href="admin.jsp" class="text-sm text-brand-700 hover:underline">Trang quản trị</a>
+                <a href="view/admin/admin.jsp" class="text-sm text-brand-700 hover:underline">Trang quản trị</a>
             </div>
         </header>
 
