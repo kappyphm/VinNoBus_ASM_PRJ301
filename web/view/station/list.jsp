@@ -1,52 +1,11 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page contentType="text/html;charset=UTF-8" %>
-<!DOCTYPE html>
-<html lang="vi">
-    <head>
-        <meta charset="UTF-8">
-        <title>Danh sách trạm</title>
-        <script src="https://cdn.tailwindcss.com"></script>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="ui" tagdir="/WEB-INF/tags" %>
 
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        fontFamily: {
-                            mono: ['"Roboto Mono"', 'ui-monospace', 'SFMono-Regular']
-                        },
-                        colors: {
-                            brand: {
-                                50: '#eff6ff',
-                                100: '#dbeafe',
-                                200: '#bfdbfe',
-                                300: '#93c5fd',
-                                400: '#60a5fa',
-                                500: '#3b82f6',
-                                600: '#2563eb',
-                                700: '#1d4ed8'
-                            }
-                        },
-                        boxShadow: {
-                            soft: '0 8px 20px rgba(0,0,0,0.04)'
-                        }
-                    }
-                }
-            }
-        </script>
+<ui:layout>
+    <jsp:attribute name="title">Danh sách trạm</jsp:attribute>
 
-        <style>
-            body {
-                font-family: "Roboto Mono", ui-monospace, monospace;
-            }
-        </style>
-    </head>
-
-    <body class="bg-brand-50 min-h-screen text-slate-800">
-
-        <!-- Header -->
-        <jsp:include page="/header.jsp" />
-
-        <!-- Main Container -->
+    <jsp:body>
         <main class="max-w-7xl mx-auto px-6 py-10">
 
             <!-- Page Title -->
@@ -61,7 +20,6 @@
                     ${error}
                 </div>
             </c:if>
-
             <c:if test="${not empty message}">
                 <div class="p-4 mb-4 rounded-xl bg-green-50 text-green-700 border border-green-200 shadow-soft">
                     ${message}
@@ -70,20 +28,14 @@
 
             <!-- Toolbar -->
             <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
-
-                <!-- Add Button -->
                 <a href="StationServlet?action=new"
                    class="px-4 py-2 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 shadow-soft transition">
                     + Thêm trạm mới
                 </a>
-
-                <!-- Search -->
                 <form method="get" class="flex items-center gap-2">
-                    <input
-                        type="text" name="search" value="${param.search}"
-                        placeholder="Tìm kiếm trạm..."
-                        class="rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-400"
-                        />
+                    <input type="text" name="search" value="${param.search}"
+                           placeholder="Tìm kiếm trạm..."
+                           class="rounded-xl border border-slate-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-400">
                     <button type="submit"
                             class="px-4 py-2 rounded-xl bg-brand-600 text-white text-sm hover:bg-brand-700 shadow-soft">
                         Tìm
@@ -92,7 +44,7 @@
             </div>
 
             <!-- Table -->
-            <div class="overflow-x-auto bg-white border border-slate-200">
+            <div class="overflow-x-auto bg-white border border-slate-200 rounded-xl shadow-soft">
                 <table class="min-w-full text-sm">
                     <thead class="bg-slate-100 text-slate-600">
                         <tr>
@@ -103,7 +55,6 @@
                             <th class="py-3 px-4 text-left font-medium border-b border-slate-200">Thao tác</th>
                         </tr>
                     </thead>
-
                     <tbody class="divide-y divide-slate-100">
                         <c:choose>
                             <c:when test="${not empty stations}">
@@ -113,11 +64,9 @@
                                         <td class="py-3 px-4">${s.stationName}</td>
                                         <td class="py-3 px-4">${s.location}</td>
                                         <td class="py-3 px-4">
-                                            <c:if test="${not empty s.routeNames}">
-                                                <c:forEach var="r" items="${s.routeNames}" varStatus="loop">
-                                                    ${r}<c:if test="${!loop.last}">, </c:if>
-                                                </c:forEach>
-                                            </c:if>
+                                            <c:forEach var="r" items="${s.routeNames}" varStatus="loop">
+                                                ${r}<c:if test="${!loop.last}">, </c:if>
+                                            </c:forEach>
                                         </td>
                                         <td class="py-3 px-4">
                                             <div class="flex gap-2">
@@ -139,7 +88,6 @@
                                     </tr>
                                 </c:forEach>
                             </c:when>
-
                             <c:otherwise>
                                 <tr>
                                     <td colspan="5" class="py-5 text-center text-slate-500 italic">
@@ -170,7 +118,5 @@
             </div>
 
         </main>
-
-        <jsp:include page="/footer.jsp" />
-    </body>
-</html>
+    </jsp:body>
+</ui:layout>
