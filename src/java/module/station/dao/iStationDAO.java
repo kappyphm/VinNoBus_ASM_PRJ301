@@ -19,4 +19,12 @@ public interface iStationDAO {
     public boolean delete(int stationId);   // DELETE /stations/{id}
 
     public List<Station> searchStationsByNameFuzzy(String name);
+
+    public List<Station> getStationsByPageWithRoutes(int page, int pageSize);
+
+    public List<Station> getAllStationsWithRoutes();
+
+    public List<Station> getStationsByPage(int page, int pageSize);
+
+    public int getTotalStations();
 }
