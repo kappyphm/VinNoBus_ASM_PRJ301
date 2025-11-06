@@ -208,15 +208,15 @@ public class StationDAO extends DBContext implements iStationDAO {
         }
 
         String sql = """
-       SELECT s.station_id, s.station_name, s.location,
-              STRING_AGG(r.route_name, ', ') AS route_names
-       FROM Station s
-       LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
-       LEFT JOIN Route r ON r.route_id = rs.route_id
-       WHERE s.station_name LIKE ?
-       GROUP BY s.station_id, s.station_name, s.location
-    """;
-
+   SELECT s.station_id, s.station_name, s.location,
+          STRING_AGG(r.route_name, ', ') AS route_names
+   FROM Station s
+   LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
+   LEFT JOIN Route r ON r.route_id = rs.route_id
+   WHERE s.station_name LIKE ?
+   GROUP BY s.station_id, s.station_name, s.location
+   ORDER BY s.station_id ASC
+""";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, fuzzy.toString());
             try (ResultSet rs = ps.executeQuery()) {
@@ -237,6 +237,78 @@ public class StationDAO extends DBContext implements iStationDAO {
             System.out.println("Lỗi khi tìm trạm theo tên fuzzy: " + e.getMessage());
         }
 
+        return list;
+    }
+
+    public List<Station> getAllStationsWithRoutes() {
+        List<Station> list = new ArrayList<>();
+        String sql = """
+    SELECT s.station_id, s.station_name, s.location,
+           STRING_AGG(r.route_name, ',') AS route_names
+    FROM Station s
+    LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
+    LEFT JOIN Route r ON rs.route_id = r.route_id
+    GROUP BY s.station_id, s.station_name, s.location
+    ORDER BY s.station_id ASC
+""";
+        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("station_id");
+                String name = rs.getString("station_name");
+                String location = rs.getString("location");
+                String routeNamesStr = rs.getString("route_names");
+
+                List<String> routeNames = new ArrayList<>();
+                if (routeNamesStr != null) {
+                    for (String r : routeNamesStr.split(",")) {
+                        routeNames.add(r.trim());
+                    }
+                }
+
+                list.add(new Station(id, name, location, routeNames));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public List<Station> getStationsByPageWithRoutes(int page, int pageSize) {
+        List<Station> list = new ArrayList<>();
+        String sql = """
+    SELECT s.station_id, s.station_name, s.location,
+           STRING_AGG(r.route_name, ',') AS route_names
+    FROM Station s
+    LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
+    LEFT JOIN Route r ON rs.route_id = r.route_id
+    GROUP BY s.station_id, s.station_name, s.location
+    ORDER BY s.station_id ASC
+    OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+""";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, (page - 1) * pageSize);
+            ps.setInt(2, pageSize);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("station_id");
+                String name = rs.getString("station_name");
+                String location = rs.getString("location");
+                String routeNamesStr = rs.getString("route_names");
+                List<String> routeNames = new ArrayList<>();
+                if (routeNamesStr != null) {
+                    for (String r : routeNamesStr.split(",")) {
+                        routeNames.add(r.trim());
+                    }
+                }
+                list.add(new Station(id, name, location, routeNames));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return list;
     }
 

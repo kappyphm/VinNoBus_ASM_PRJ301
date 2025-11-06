@@ -16,7 +16,8 @@ import module.station.model.entity.Station;
 import module.station.service.StationServices;
 
 /**
- *`
+ * `
+ *
  * @author Admin
  */
 @WebServlet(name = "StationServlet", urlPatterns = {"/StationServlet"})
@@ -143,10 +144,10 @@ public class StationServlet extends HttpServlet {
         int totalStations;
 
         if (search != null && !search.trim().isEmpty()) {
-            stations = stationServices.searchStationsByNameFuzzy(search.trim());
+            stations = stationServices.getStationsByPageWithRoutes(page, pageSize);
             totalStations = stations.size();
         } else {
-            stations = stationServices.getStationsByPage(page, pageSize);
+            stations = stationServices.getStationsByPageWithRoutes(page, pageSize);
             totalStations = stationServices.getTotalStations();
         }
 
