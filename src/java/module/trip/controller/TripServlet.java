@@ -175,13 +175,23 @@ public class TripServlet extends HttpServlet {
             errors.add("Mã phụ xe không được để trống.");
         }
         try {
-            departureTime = Timestamp.valueOf(departureStr);
-            arrivalTime = Timestamp.valueOf(arrivalStr);
-            if (departureTime.after(arrivalTime)) {
-                errors.add("Giờ khởi hành phải trước giờ kết thúc.");
+
+            if (departureStr == null || departureStr.isEmpty() || arrivalStr == null || arrivalStr.isEmpty()) {
+                errors.add("Giờ khởi hành và kết thúc không được để trống.");
+            } else {
+
+                String departureSQL = departureStr.replace("T", " ") + ":00";
+                String arrivalSQL = arrivalStr.replace("T", " ") + ":00";
+
+                departureTime = Timestamp.valueOf(departureSQL);
+                arrivalTime = Timestamp.valueOf(arrivalSQL);
+
+                if (departureTime.after(arrivalTime)) {
+                    errors.add("Giờ khởi hành phải trước giờ kết thúc.");
+                }
             }
-        } catch (Exception e) {
-            errors.add("Định dạng giờ không hợp lệ (đúng định dạng HH:mm).");
+        } catch (IllegalArgumentException e) {
+            errors.add("Định dạng ngày giờ không hợp lệ.");
         }
 
         // Nếu có lỗi → trả về form cùng dữ liệu cũ
@@ -230,7 +240,6 @@ public class TripServlet extends HttpServlet {
     private void updateTrip(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         List<String> errors = new ArrayList<>();
-
         try {
             int tripId = Integer.parseInt(request.getParameter("tripId"));
             int routeId = Integer.parseInt(request.getParameter("routeId"));
@@ -241,9 +250,8 @@ public class TripServlet extends HttpServlet {
             String arrivalStr = request.getParameter("arrivalTime").replace("T", " ") + ":00";
             Timestamp departureTime = Timestamp.valueOf(departureStr);
             Timestamp arrivalTime = Timestamp.valueOf(arrivalStr);
-
             String status = request.getParameter("status");
-
+            
             Trip updatedTrip = new Trip(
                     tripId, routeId, busId, driverId, conductorId, departureTime, arrivalTime, status
             );

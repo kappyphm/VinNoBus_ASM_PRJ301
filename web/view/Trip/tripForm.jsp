@@ -120,12 +120,11 @@
 
         <label for="departureTime">Giờ khởi hành:</label>
         <input type="datetime-local" name="departureTime"
-               value="<fmt:formatDate value='${trip.departureTime}' pattern='yyyy-MM-dd\'T\'HH:mm'/>"
+               value="${departureTime}"
                required />
-
         <label for="arrivalTime">Giờ kết thúc:</label>
         <input type="datetime-local" name="arrivalTime"
-               value="<fmt:formatDate value='${trip.arrivalTime}' pattern='yyyy-MM-dd\'T\'HH:mm'/>"
+               value="${arrivalTime}"
                required />
 
         <button type="submit" class="btn">Thêm chuyến</button>

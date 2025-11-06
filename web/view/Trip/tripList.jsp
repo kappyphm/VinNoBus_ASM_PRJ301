@@ -261,8 +261,8 @@
                         <td data-label="Mã xe buýt">${t.busId}</td>
                         <td data-label="Tài xế">${t.driverId}</td>
                         <td data-label="Phụ xe">${t.conductorId}</td>
-                        <td data-label="Giờ khởi hành"><fmt:formatDate value="${t.departureTime}" pattern="HH:mm:ss dd-MM-yyyy"/></td>
-                        <td data-label="Giờ kết thúc"><fmt:formatDate value="${t.arrivalTime}" pattern="HH:mm:ss dd-MM-yyyy"/></td>
+                        <td data-label="Giờ khởi hành"><fmt:formatDate value="${t.departureTime}" pattern="HH:mm dd-MM-yyyy"/></td>
+                        <td data-label="Giờ kết thúc"><fmt:formatDate value="${t.arrivalTime}" pattern="HH:mm dd-MM-yyyy"/></td>
                         <td data-label="Trạng thái">
                             <c:choose>
                                 <c:when test="${t.status eq 'NOT_STARTED'}"><span style="color:#e69138;font-weight:600;">Chưa bắt đầu</span></c:when>
