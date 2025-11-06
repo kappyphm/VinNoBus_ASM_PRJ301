@@ -19,7 +19,7 @@ public interface ITripService {
     // Danh sách & tìm kiếm
     List<Trip> findTrips() throws SQLException;
 
-    List<Trip> findTrips(String search, String filter, String sort, int page, int pageSize) throws SQLException;
+    List<Trip> findTrips(String search, String filter, String sortCol, String sortDir, int page, int pageSize) throws SQLException;
 
     int countTrips(String search, String filter) throws SQLException;
 
