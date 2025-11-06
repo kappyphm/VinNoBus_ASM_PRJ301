@@ -181,7 +181,7 @@ public class StationServlet extends HttpServlet {
                 return;
             }
             request.setAttribute("station", station);
-            request.getRequestDispatcher("/view/station/StationDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/station/detail.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             request.setAttribute("error", "❌ Mã trạm phải là một số hợp lệ. Bạn đã nhập: " + idStr);
             listStations(request, response);
@@ -210,7 +210,7 @@ public class StationServlet extends HttpServlet {
                 return;
             }
             request.setAttribute("station", station);
-            request.getRequestDispatcher("/view/station/editdit.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/station/edit.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             request.setAttribute("error", "❌ ID trạm phải là số. Bạn đã nhập: " + idStr);
             listStations(request, response);
@@ -287,7 +287,7 @@ public class StationServlet extends HttpServlet {
 
             if (name == null || name.trim().isEmpty()) {
                 request.setAttribute("error", "Tên trạm không được để trống.");
-                request.getRequestDispatcher("/view/station/editdit.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/station/edit.jsp").forward(request, response);
                 return;
             }
 
@@ -308,7 +308,7 @@ public class StationServlet extends HttpServlet {
 
             if (!success) {
                 request.setAttribute("error", "Không thể cập nhật trạm (ID: " + id + ").");
-                request.getRequestDispatcher("/view/station/editdit.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/station/edit.jsp").forward(request, response);
                 return;
             }
 
@@ -316,10 +316,10 @@ public class StationServlet extends HttpServlet {
 
         } catch (NumberFormatException e) {
             request.setAttribute("error", "ID trạm không hợp lệ.");
-            request.getRequestDispatcher("/view/station/editdit.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/station/edit.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Đã xảy ra lỗi khi cập nhật trạm: " + e.getMessage());
-            request.getRequestDispatcher("/view/station/editdit.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/station/edit.jsp").forward(request, response);
         }
     }
 
