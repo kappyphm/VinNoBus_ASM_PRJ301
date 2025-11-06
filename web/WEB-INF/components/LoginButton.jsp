@@ -1,12 +1,7 @@
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%-- 
-    Document   : LoginComp
-    Created on : Nov 6, 2025, 10:33:21 AM
-    Author     : kappyphm
---%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<c:set var="ctx" value="${pageContext.request.contextPath}" />
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 
 <c:choose>
     <c:when test="${empty sessionScope.user}">
