@@ -80,4 +80,8 @@ public class BusServices {
     public boolean isPlateNumberExists(String plateNumber) throws SQLException {
         return busDAO.isPlateNumberExists(plateNumber);
     }
+
+    public int countBySearch(String keyword) throws SQLException {
+        return busDAO.countBySearch(keyword);
+    }
 }

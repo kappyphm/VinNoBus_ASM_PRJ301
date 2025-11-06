@@ -161,4 +161,19 @@ public class BusDAO extends DBContext implements iBusDAO {
         }
         return list;
     }
+
+    @Override
+    public int countBySearch(String keyword) throws SQLException {
+        String sql = "SELECT COUNT(*) AS total FROM Bus WHERE plate_number LIKE ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, "%" + keyword.trim() + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+        }
+        return 0;
+    }
+
 }

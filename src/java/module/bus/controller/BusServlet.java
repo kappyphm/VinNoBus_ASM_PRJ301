@@ -173,7 +173,7 @@ public class BusServlet extends HttpServlet {
             // Không set totalPages hay currentPage -> JSP sẽ không hiện phân trang
         } else {
             // Chỉ tính pagination nếu có dữ liệu
-            int total = busServices.countAllBuses();
+            int total = busServices.countBySearch(search);
             int totalPages = (int) Math.ceil((double) total / pageSize);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("currentPage", page);
