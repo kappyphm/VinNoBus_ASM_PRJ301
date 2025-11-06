@@ -6,6 +6,7 @@ import dal.DBContext;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import module.station.model.dto.StationOnRouteDTO;
 
 public class RouteDAO extends DBContext implements iRouteDAO {
 
@@ -183,9 +184,18 @@ public class RouteDAO extends DBContext implements iRouteDAO {
     public Route getRouteDetails(int route_id) throws SQLException {
         String sql = """
         SELECT 
-            r.route_id, r.route_name, r.type, r.frequency,
-            s.station_id, s.station_name, s.location,
+            r.route_id, 
+            r.route_name, 
+            r.type, 
+            r.frequency,
+            
+            s.station_id, 
+            s.station_name, 
+            s.location,
+            
+            rs.station_order,
             rs.estimated_time
+                      
         FROM Route r
         LEFT JOIN Route_Station rs ON r.route_id = rs.route_id
         LEFT JOIN Station s ON rs.station_id = s.station_id
@@ -194,13 +204,13 @@ public class RouteDAO extends DBContext implements iRouteDAO {
     """;
 
         Route route = null;
-        List<Station> stations = new ArrayList<>();
+        List<StationOnRouteDTO> stations = new ArrayList<>();
         int totalTime = 0;
-
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, route_id);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
+                    // ✅ Tạo Route 1 lần duy nhất
                     if (route == null) {
                         route = new Route(
                                 rs.getInt("route_id"),
@@ -210,18 +220,21 @@ public class RouteDAO extends DBContext implements iRouteDAO {
                         );
                     }
                     int stationId = rs.getInt("station_id");
+                    // ✅ NULL-check — tránh dòng không có trạm
                     if (!rs.wasNull()) {
-                        Station station = new Station(
-                                stationId,
-                                rs.getString("station_name"),
-                                rs.getString("location")
-                        );
-                        stations.add(station);
+                        StationOnRouteDTO dto = new StationOnRouteDTO();
+                        dto.setStationId(stationId);
+                        dto.setStationName(rs.getString("station_name"));
+                        dto.setLocation(rs.getString("location"));
+                        dto.setStationOrder(rs.getInt("station_order"));
+                        dto.setEstimatedTime(rs.getInt("estimated_time"));
+                        stations.add(dto);
                         totalTime += rs.getInt("estimated_time");
                     }
                 }
             }
         }
+        // ✅ Gán vào Route
         if (route != null) {
             route.setStations(stations);
             route.setEstimatedTime(totalTime);
@@ -291,11 +304,16 @@ public class RouteDAO extends DBContext implements iRouteDAO {
             return null;
         }
 
-        List<Station> stations = new ArrayList<>();
+        List<StationOnRouteDTO> stations = new ArrayList<>();
         int totalTime = 0;
 
         String sql = """
-        SELECT s.*, rs.station_order, rs.estimated_time
+        SELECT 
+            s.station_id, 
+            s.station_name, 
+            s.location,
+            rs.station_order, 
+            rs.estimated_time
         FROM Route_Station rs
         JOIN Station s ON rs.station_id = s.station_id
         WHERE rs.route_id = ?
@@ -305,21 +323,23 @@ public class RouteDAO extends DBContext implements iRouteDAO {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, route_id);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Station station = new Station(
-                        rs.getInt("station_id"),
-                        rs.getString("station_name"),
-                        rs.getString("location")
-                );
 
-                station.setRouteNames(List.of(rs.getInt("station_order") + "|" + rs.getInt("estimated_time")));
-                stations.add(station);
+            while (rs.next()) {
+                StationOnRouteDTO dto = new StationOnRouteDTO();
+                dto.setStationId(rs.getInt("station_id"));
+                dto.setStationName(rs.getString("station_name"));
+                dto.setLocation(rs.getString("location"));
+                dto.setStationOrder(rs.getInt("station_order"));
+                dto.setEstimatedTime(rs.getInt("estimated_time"));
+
+                stations.add(dto);
                 totalTime += rs.getInt("estimated_time");
             }
         }
 
         route.setStations(stations);
         route.setEstimatedTime(totalTime);
+
         return route;
     }
 

@@ -59,32 +59,54 @@
                         <table class="min-w-full border-collapse text-sm text-gray-800">
                             <thead>
                                 <tr class="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white text-left">
+                                    <th class="px-4 py-3 border border-gray-300">Thứ tự</th>
                                     <th class="px-4 py-3 border border-gray-300">Mã trạm</th>
                                     <th class="px-4 py-3 border border-gray-300">Tên trạm</th>
                                     <th class="px-4 py-3 border border-gray-300">Vị trí</th>
+                                    <th class="px-4 py-3 border border-gray-300">Thời gian dự kiến (phút)</th>
                                 </tr>
                             </thead>
+
                             <tbody>
                                 <c:forEach var="s" items="${route.stations}">
                                     <tr class="odd:bg-gradient-to-r odd:from-blue-50 odd:to-purple-50
                                         even:bg-gradient-to-r even:from-pink-50 even:to-indigo-50
                                         hover:bg-gradient-to-r hover:from-blue-100 hover:to-pink-100
                                         transition-all duration-300 border-t border-gray-300">
-                                        <td class="px-4 py-2 border border-gray-300"><c:out value="${s.stationId}" /></td>
-                                        <td class="px-4 py-2 border border-gray-300"><c:out value="${s.stationName}" /></td>
-                                        <td class="px-4 py-2 border border-gray-300"><c:out value="${s.location}" /></td>
+
+                                        <td class="px-4 py-2 border border-gray-300 text-center">
+                                            <c:out value="${s.stationOrder}" />
+                                        </td>
+
+                                        <td class="px-4 py-2 border border-gray-300">
+                                            <c:out value="${s.stationId}" />
+                                        </td>
+
+                                        <td class="px-4 py-2 border border-gray-300">
+                                            <c:out value="${s.stationName}" />
+                                        </td>
+
+                                        <td class="px-4 py-2 border border-gray-300">
+                                            <c:out value="${s.location}" />
+                                        </td>
+
+                                        <td class="px-4 py-2 border border-gray-300 text-center">
+                                            <c:out value="${s.estimatedTime}" /> phút
+                                        </td>
                                     </tr>
                                 </c:forEach>
                             </tbody>
                         </table>
                     </div>
                 </c:when>
+
                 <c:otherwise>
                     <p class="text-center text-gray-600 italic mt-3">
                         Không có trạm nào thuộc tuyến này.
                     </p>
                 </c:otherwise>
             </c:choose>
+
 
             <!-- Nút hành động -->
             <div class="flex justify-center gap-4 mt-8">
