@@ -145,14 +145,14 @@ public class BusDAO extends DBContext implements iBusDAO {
     @Override
     public List<Bus> searchBusByPlate(String keyword) throws SQLException {
         List<Bus> list = new ArrayList<>();
-        String sql = "SELECT * FROM Bus WHERE plate_number LIKE ?";
+        String sql = "SELECT * FROM Bus WHERE TRIM(plate_number) LIKE ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, "%" + keyword + "%");
+            ps.setString(1, "%" + keyword + "%"); // trim đã thực hiện ở Servlet/Service
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(new Bus(
                             rs.getInt("bus_id"),
-                            rs.getString("plate_number"),
+                            rs.getString("plate_number").trim(),
                             rs.getInt("capacity"),
                             rs.getString("current_status")
                     ));

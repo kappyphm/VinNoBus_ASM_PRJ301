@@ -72,9 +72,9 @@ public class BusServices {
 
     public List<Bus> searchBusByPlate(String keyword) throws SQLException {
         if (keyword == null || keyword.isBlank()) {
-            return busDAO.findAll();
+            return busDAO.findAll(); // Nếu rỗng thì trả về tất cả
         }
-        return busDAO.searchBusByPlate(keyword);
+        return busDAO.searchBusByPlate(keyword.trim());
     }
 
     public boolean isPlateNumberExists(String plateNumber) throws SQLException {

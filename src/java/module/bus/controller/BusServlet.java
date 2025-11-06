@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import module.bus.model.entity.Bus;
 import module.bus.service.BusServices;
@@ -68,6 +69,7 @@ public class BusServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
         if (action == null) {
             action = "list";
@@ -146,23 +148,35 @@ public class BusServlet extends HttpServlet {
     private void listBus(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
         String search = request.getParameter("search");
+        if (search != null) {
+            search = search.trim();
+        } else {
+            search = "";
+        }
         String sort = request.getParameter("sort");
         int page = 1;
         int pageSize = 10;
-
         if (request.getParameter("page") != null) {
-            page = Integer.parseInt(request.getParameter("page"));
+            try {
+                page = Integer.parseInt(request.getParameter("page"));
+            } catch (NumberFormatException e) {
+                page = 1;
+            }
         }
-
         List<Bus> list = busServices.getAllBuses(search, sort, page, pageSize);
-        int total = busServices.countAllBuses();
-        int totalPages = (int) Math.ceil((double) total / pageSize);
 
         request.setAttribute("busList", list);
-        request.setAttribute("totalPages", totalPages);
-        request.setAttribute("currentPage", page);
+        request.setAttribute("search", search);
+
         if (list == null || list.isEmpty()) {
-            request.setAttribute("message", "Không có xe nào trong hệ thống!");
+            request.setAttribute("message", "Không tìm thấy xe nào phù hợp với từ khóa: " + search);
+            // Không set totalPages hay currentPage -> JSP sẽ không hiện phân trang
+        } else {
+            // Chỉ tính pagination nếu có dữ liệu
+            int total = busServices.countAllBuses();
+            int totalPages = (int) Math.ceil((double) total / pageSize);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("currentPage", page);
         }
         request.getRequestDispatcher("/view/bus/list.jsp").forward(request, response);
     }
@@ -329,14 +343,31 @@ public class BusServlet extends HttpServlet {
             throws SQLException, ServletException, IOException {
 
         String keyword = request.getParameter("search");
-        List<Bus> list = busServices.searchBusByPlate(keyword);
-        request.setAttribute("busList", list);
 
-        if (list.isEmpty()) {
-            request.setAttribute("error", "Không tìm thấy xe bus nào phù hợp với từ khóa: " + keyword);
+        if (keyword != null) {
+            keyword = keyword.trim(); // loại bỏ khoảng trắng đầu/cuối
         } else {
-            request.setAttribute("message", "🔍 Tìm thấy " + list.size() + " xe bus phù hợp.");
+            keyword = "";
         }
+
+        // Regex kiểm tra định dạng biển số xe
+        String platePattern = "^(29B|30B)-\\d{3}\\.\\d{2}$";
+
+        List<Bus> list;
+        if (!keyword.isEmpty() && !keyword.matches(platePattern)) {
+            // Nếu không hợp lệ
+            list = new ArrayList<>();
+            request.setAttribute("error", "Biển số xe không hợp lệ: " + keyword);
+        } else {
+            list = busServices.searchBusByPlate(keyword);
+            if (list.isEmpty()) {
+                request.setAttribute("error", "Không tìm thấy xe bus nào phù hợp với từ khóa: " + keyword);
+            } else {
+                request.setAttribute("message", "🔍 Tìm thấy " + list.size() + " xe bus phù hợp.");
+            }
+        }
+
+        request.setAttribute("busList", list);
         request.getRequestDispatcher("/view/bus/list.jsp").forward(request, response);
     }
 
