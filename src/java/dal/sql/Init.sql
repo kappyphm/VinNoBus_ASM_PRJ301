@@ -222,16 +222,16 @@ CREATE TABLE Trip (
     trip_id INT IDENTITY(1,1) PRIMARY KEY,
     route_id INT NOT NULL,
     bus_id INT NOT NULL,
-    driver_id VARCHAR(128) NOT NULL UNIQUE,
-    conductor_id VARCHAR(128) NOT NULL UNIQUE,
-    departure_time TIME NOT NULL,
-    arrival_time TIME NOT NULL,
+    driver_id VARCHAR(128) NOT NULL ,
+    conductor_id VARCHAR(128) NOT NULL ,
+    departure_time DATETIME NOT NULL,
+    arrival_time DATETIME NOT NULL,
     status VARCHAR(20) DEFAULT 'NOT_STARTED' CHECK (status IN ('NOT_STARTED','IN_PROCESS','FINISHED','CANCELLED')),
 
-    CONSTRAINT FK_Trip_Route FOREIGN KEY (route_id) REFERENCES Route(route_id),
-    CONSTRAINT FK_Trip_Bus FOREIGN KEY (bus_id) REFERENCES Bus(bus_id),
-    CONSTRAINT FK_Trip_Driver FOREIGN KEY (driver_id) REFERENCES [User](user_id),
-    CONSTRAINT FK_Trip_Conductor FOREIGN KEY (conductor_id) REFERENCES [User](user_id)
+    --CONSTRAINT FK_Trip_Route FOREIGN KEY (route_id) REFERENCES Route(route_id),
+    --CONSTRAINT FK_Trip_Bus FOREIGN KEY (bus_id) REFERENCES Bus(bus_id),
+    --CONSTRAINT FK_Trip_Driver FOREIGN KEY (driver_id) REFERENCES [User](user_id),
+    --CONSTRAINT FK_Trip_Conductor FOREIGN KEY (conductor_id) REFERENCES [User](user_id)
 );
 
 -- ==============================================
