@@ -1,109 +1,121 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
+<!DOCTYPE html>
 <html lang="vi">
     <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Chỉnh sửa Xe Bus</title>
+        <meta charset="UTF-8">
+        <title>Chỉnh sửa Xe Bus • VinNoBus</title>
+
+        <!-- Font + Tailwind -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
         <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {mono: ['Roboto Mono', 'ui-monospace']},
+                        colors: {
+                            brand: {
+                                50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+                                400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8',
+                                800: '#1e40af', 900: '#1e3a8a'
+                            }
+                        },
+                        boxShadow: {soft: "0 8px 24px rgba(2,6,23,.06)"}
+                    }
+                }
+            }
+        </script>
+
         <style>
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                    transform: translateY(-10px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
+            html {
+                font-family: 'Roboto Mono', ui-monospace;
             }
         </style>
     </head>
 
-    <body
-        class="font-[Segoe_UI] bg-gradient-to-br from-[#74b9ff] to-[#a29bfe] flex justify-center items-center min-h-screen"
-        >
-        <div
-            class="bg-white p-10 rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.15)] w-[400px] text-center animate-[fadeIn_0.5s_ease]"
-            >
-            <h2 class="text-[#2d3436] text-2xl font-semibold mb-5">
-                Chỉnh sửa Xe Bus
-            </h2>
+    <body class="bg-brand-50 min-h-screen text-slate-800 flex items-center justify-center px-4">
 
+        <div class="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-soft p-6">
+
+            <!-- Title -->
+            <h1 class="text-xl font-semibold mb-2">Chỉnh sửa Xe Bus</h1>
+            <p class="text-sm text-slate-600">Cập nhật thông tin xe bus trong hệ thống VinNoBus.</p>
+
+            <!-- Messages -->
             <c:if test="${not empty message}">
-                <div class="text-[#27ae60] font-semibold mb-4">${message}</div>
+                <div class="mt-4 p-3 rounded-xl bg-green-50 border border-green-200 text-green-700 shadow-soft">
+                    ✅ ${message}
+                </div>
             </c:if>
 
-            <form action="BusServlet" method="post" class="text-left">
+            <!-- Form -->
+            <form action="BusServlet" method="post" class="mt-5 space-y-4">
                 <input type="hidden" name="action" value="update" />
-                <input
-                    type="hidden"
-                    name="bus_id"
-                    value="${bus_id != null ? bus_id : bus.busId}"
-                    />
+                <input type="hidden" name="bus_id"
+                       value="${bus_id != null ? bus_id : bus.busId}" />
 
-                <label class="block font-semibold text-[#555] mt-4 mb-1"
-                       >Biển số xe:</label
-                >
-                <input
-                    type="text"
-                    name="plate_number"
-                    value="${plate_number != null ? plate_number : bus.plateNumber}"
-                    placeholder="VD: 29B-123.45"
-                    class="w-full px-3 py-2 border border-[#dcdde1] rounded-lg text-[15px] transition-all duration-300 focus:border-[#0984e3] focus:shadow-[0_0_8px_rgba(9,132,227,0.4)] outline-none"
-                    />
-                <c:if test="${not empty error_plate}">
-                    <div class="text-[#d63031] font-semibold mt-1 text-sm">
-                        ${error_plate}
-                    </div>
-                </c:if>
+                <!-- Plate -->
+                <div>
+                    <label class="block text-sm mb-1 font-medium">Biển số xe</label>
+                    <input type="text" name="plate_number"
+                           value="${plate_number != null ? plate_number : bus.plateNumber}"
+                           placeholder="VD: 29B-123.45"
+                           class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                    <c:if test="${not empty error_plate}">
+                        <div class="text-red-600 text-xs mt-1">${error_plate}</div>
+                    </c:if>
+                </div>
 
-                <label class="block font-semibold text-[#555] mt-4 mb-1">Sức chứa:</label>
-                <input
-                    type="number"
-                    name="capacity"
-                    value="${capacity != null ? capacity : bus.capacity}"
-                    min="1"
-                    class="w-full px-3 py-2 border border-[#dcdde1] rounded-lg text-[15px] transition-all duration-300 focus:border-[#0984e3] focus:shadow-[0_0_8px_rgba(9,132,227,0.4)] outline-none"
-                    />
-                <c:if test="${not empty error_capacity}">
-                    <div class="text-[#d63031] font-semibold mt-1 text-sm">
-                        ${error_capacity}
-                    </div>
-                </c:if>
+                <!-- Capacity -->
+                <div>
+                    <label class="block text-sm mb-1 font-medium">Sức chứa</label>
+                    <input type="number" name="capacity"
+                           value="${capacity != null ? capacity : bus.capacity}"
+                           min="1"
+                           class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                    <c:if test="${not empty error_capacity}">
+                        <div class="text-red-600 text-xs mt-1">${error_capacity}</div>
+                    </c:if>
+                </div>
 
-                <label class="block font-semibold text-[#555] mt-4 mb-1">Trạng thái:</label>
-                <select name="current_status" class="w-full px-3 py-2 border rounded-lg text-[15px] transition-all duration-300 focus:border-[#0984e3] focus:shadow-[0_0_8px_rgba(9,132,227,0.4)] outline-none">
-                    <option value="AVAILABLE" ${bus.currentStatus == 'AVAILABLE' ? 'selected' : ''}>AVAILABLE</option>
-                    <option value="IN_USE" ${bus.currentStatus == 'IN_USE' ? 'selected' : ''}>IN_USE</option>
-                    <option value="MAINTENANCE" ${bus.currentStatus == 'MAINTENANCE' ? 'selected' : ''}>MAINTENANCE</option>
-                    <option value="BROKEN" ${bus.currentStatus == 'BROKEN' ? 'selected' : ''}>BROKEN</option>
-                    <option value="REPAIRING" ${bus.currentStatus == 'REPAIRING' ? 'selected' : ''}>REPAIRING</option>
-                    <option value="RESERVED" ${bus.currentStatus == 'RESERVED' ? 'selected' : ''}>RESERVED</option>
-                </select>
+                <!-- Status -->
+                <div>
+                    <label class="block text-sm mb-1 font-medium">Trạng thái</label>
+                    <select name="current_status"
+                            class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                        <option value="AVAILABLE"   ${bus.currentStatus == 'AVAILABLE' ? 'selected' : ''}>AVAILABLE</option>
+                        <option value="IN_USE"      ${bus.currentStatus == 'IN_USE' ? 'selected' : ''}>IN_USE</option>
+                        <option value="MAINTENANCE" ${bus.currentStatus == 'MAINTENANCE' ? 'selected' : ''}>MAINTENANCE</option>
+                        <option value="BROKEN"      ${bus.currentStatus == 'BROKEN' ? 'selected' : ''}>BROKEN</option>
+                        <option value="REPAIRING"   ${bus.currentStatus == 'REPAIRING' ? 'selected' : ''}>REPAIRING</option>
+                        <option value="RESERVED"    ${bus.currentStatus == 'RESERVED' ? 'selected' : ''}>RESERVED</option>
+                    </select>
+                </div>
 
                 <c:if test="${not empty error_general}">
-                    <div class="text-[#d63031] font-semibold mt-2 text-sm">
-                        ${error_general}
-                    </div>
+                    <div class="text-red-600 text-xs mt-1">${error_general}</div>
                 </c:if>
 
-                <div class="flex justify-between mt-6">
-                    <a
-                        href="BusServlet?action=list"
-                        class="px-5 py-3 border border-[#ccc] rounded-lg bg-[#f8f9fa] text-[#333] font-medium hover:bg-[#e2e6ea] hover:-translate-y-[1px] transition-all duration-300"
-                        >
+                <!-- Buttons -->
+                <div class="flex justify-between pt-3">
+                    <a href="BusServlet?action=list"
+                       class="px-4 py-2 rounded-xl border border-slate-300 bg-white text-sm hover:bg-slate-100">
                         ← Quay lại
                     </a>
-                    <button
-                        type="submit"
-                        class="px-5 py-3 bg-[#0984e3] text-white rounded-lg font-semibold hover:bg-[#74b9ff] hover:-translate-y-[2px] hover:shadow-[0_4px_12px_rgba(0,0,0,0.2)] transition-all duration-300"
-                        >
+
+                    <button type="submit"
+                            class="px-4 py-2 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 shadow-soft">
                         Cập nhật
                     </button>
                 </div>
+
             </form>
         </div>
+
     </body>
 </html>

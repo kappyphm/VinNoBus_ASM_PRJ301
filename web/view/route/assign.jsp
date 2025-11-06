@@ -1,94 +1,129 @@
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <!DOCTYPE html>
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <title>Gán Trạm cho Tuyến</title>
+        <title>Gán Trạm cho Tuyến • VinNoBus</title>
+
+        <!-- Font + Tailwind -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
         <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {mono: ['Roboto Mono', 'ui-monospace']},
+                        colors: {
+                            brand: {
+                                50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+                                400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8',
+                                800: '#1e40af', 900: '#1e3a8a'
+                            }
+                        },
+                        boxShadow: {soft: "0 8px 24px rgba(2,6,23,.06)"}
+                    }
+                }
+            }
+        </script>
+
+        <style>
+            html {
+                font-family: 'Roboto Mono', ui-monospace;
+            }
+        </style>
+
     </head>
-    <body class="bg-gray-50 min-h-screen p-8">
 
-        <div class="max-w-6xl mx-auto bg-white p-8 rounded-2xl shadow-xl animate-fadeIn">
-            <h2 class="text-3xl font-bold mb-6 text-gray-800">
-                Gán trạm cho tuyến: <span class="text-blue-600">${route.routeName} (${route.type})</span>
-            </h2>
+    <body class="bg-brand-50 min-h-screen p-8 text-slate-800">
 
+        <div class="max-w-6xl mx-auto bg-white p-8 border border-slate-200 rounded-2xl shadow-soft">
+
+            <h1 class="text-2xl font-semibold">
+                Gán trạm cho tuyến:
+                <span class="text-brand-700">${route.routeName} (${route.type})</span>
+            </h1>
+
+            <!-- ✅ Lỗi -->
             <c:if test="${not empty errorMessage}">
-                <div class="bg-red-100 text-red-700 p-4 rounded-lg mb-6 shadow-inner animate-pulse">
-                    ${errorMessage}
+                <div class="mt-4 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 shadow-soft">
+                    ⚠️ ${errorMessage}
                 </div>
             </c:if>
 
-            <form action="RouteServlet" method="post" class="space-y-6">
+            <form action="RouteServlet" method="post" class="mt-6 space-y-6">
                 <input type="hidden" name="action" value="saveAssignedStations">
                 <input type="hidden" name="id" value="${route.routeId}">
 
-                <div class="overflow-x-auto rounded-xl shadow-lg border border-gray-200">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white">
+                <!-- ✅ Bảng chọn trạm -->
+                <div class="overflow-x-auto bg-white border border-slate-200 rounded-2xl shadow-soft">
+                    <table class="min-w-full text-sm">
+                        <thead class="border-b border-slate-200 text-slate-500">
                             <tr>
-                                <th class="px-4 py-3 text-left">Chọn</th>
-                                <th class="px-4 py-3 text-left">Tên trạm</th>
-                                <th class="px-4 py-3 text-left">Thứ tự</th>
-                                <th class="px-4 py-3 text-left">Thời gian dự kiến (phút)</th>
+                                <th class="py-2 px-4 text-left">Chọn</th>
+                                <th class="py-2 px-4 text-left">Tên trạm</th>
+                                <th class="py-2 px-4 text-left">Thứ tự</th>
+                                <th class="py-2 px-4 text-left">Thời gian (phút)</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+
+                        <tbody class="divide-y divide-slate-100 bg-white">
                             <c:forEach var="station" items="${allStations}" varStatus="status">
-                                <tr class="transition-colors duration-300 hover:bg-blue-50">
-                                    <td class="px-4 py-2">
-                                        <input type="checkbox" name="stationIds" value="${station.stationId}" 
-                                               class="w-6 h-6 text-blue-600 accent-blue-500 hover:scale-110 transition-transform duration-200"
+                                <tr class="hover:bg-brand-50 transition">
+                                    <!-- Checkbox -->
+                                    <td class="py-2 px-4">
+                                        <input type="checkbox"
+                                               name="stationIds"
+                                               value="${station.stationId}"
+                                               class="w-5 h-5 text-brand-600 rounded border-slate-300 focus:ring-brand-500"
                                                data-index="${status.index}">
                                         <input type="hidden" name="index_of_${station.stationId}" value="${status.index}">
                                     </td>
-                                    <td class="px-4 py-2 font-medium text-gray-700">${station.stationName}</td>
-                                    <td class="px-4 py-2">
-                                        <input type="number" name="stationOrder_${status.index}" min="1"
-                                               class="w-20 border border-gray-300 rounded-lg px-3 py-1 text-gray-700
-                                               focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200">
+
+                                    <!-- Tên trạm -->
+                                    <td class="py-2 px-4 font-medium">${station.stationName}</td>
+
+                                    <!-- Thứ tự -->
+                                    <td class="py-2 px-4">
+                                        <input type="number"
+                                               name="stationOrder_${status.index}"
+                                               min="1"
+                                               class="w-20 px-2 py-1 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
                                     </td>
-                                    <td class="px-4 py-2">
-                                        <input type="number" name="estimatedTime_${status.index}" min="0"
-                                               class="w-24 border border-gray-300 rounded-lg px-3 py-1 text-gray-700
-                                               focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200">
+
+                                    <!-- Thời gian -->
+                                    <td class="py-2 px-4">
+                                        <input type="number"
+                                               name="estimatedTime_${status.index}"
+                                               min="0"
+                                               class="w-24 px-2 py-1 rounded-lg border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 outline-none">
                                     </td>
                                 </tr>
                             </c:forEach>
                         </tbody>
+
                     </table>
                 </div>
 
-                <div class="flex items-center gap-4">
-                    <button type="submit" 
-                            class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-blue-700
-                            hover:scale-105 transition-transform duration-200">
-                        Lưu danh sách trạm
+                <!-- ✅ Buttons -->
+                <div class="flex items-center gap-4 pt-3">
+                    <button type="submit"
+                            class="px-5 py-2 rounded-xl bg-brand-600 text-white text-sm font-medium shadow-soft hover:bg-brand-700 transition">
+                        💾 Lưu danh sách trạm
                     </button>
-                    <a href="RouteServlet?action=details&id=${route.routeId}" 
-                       class="text-gray-600 hover:text-blue-600 hover:underline transition-colors duration-200">
-                        Hủy / Quay lại chi tiết tuyến
+
+                    <a href="RouteServlet?action=details&id=${route.routeId}"
+                       class="text-sm text-slate-600 hover:text-brand-700 hover:underline transition">
+                        ← Hủy / Quay lại chi tiết tuyến
                     </a>
                 </div>
+
             </form>
         </div>
-
-        <style>
-            @keyframes fadeIn {
-                from {
-                    opacity: 0;
-                    transform: translateY(-10px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-            .animate-fadeIn {
-                animation: fadeIn 0.5s ease-out forwards;
-            }
-        </style>
 
     </body>
 </html>

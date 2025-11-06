@@ -4,84 +4,124 @@
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <title>Cập nhật trạm</title>
+        <title>Cập nhật trạm • VinNoBus</title>
+
+        <!-- Font + Tailwind -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
         <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {mono: ['Roboto Mono', 'ui-monospace']},
+                        colors: {
+                            brand: {
+                                50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+                                400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8',
+                                800: '#1e40af', 900: '#1e3a8a'
+                            }
+                        },
+                        boxShadow: {soft: "0 8px 24px rgba(2,6,23,.06)"}
+                    }
+                }
+            };
+        </script>
+
         <style>
-            body {
-                font-family: 'Inter', sans-serif;
+            html {
+                font-family: 'Roboto Mono', ui-monospace;
             }
             @keyframes fadeIn {
-                0% {
+                from {
                     opacity: 0;
-                    transform: translateY(15px);
+                    transform: translateY(10px);
                 }
-                100% {
+                to   {
                     opacity: 1;
                     transform: translateY(0);
                 }
             }
             .animate-fadeIn {
-                animation: fadeIn 0.6s ease-out forwards;
+                animation: fadeIn 0.35s ease-out;
             }
         </style>
+
     </head>
 
-    <body class="bg-gradient-to-br from-blue-100 via-indigo-100 to-blue-200 min-h-screen flex items-center justify-center p-6">
+    <body class="bg-brand-50 min-h-screen flex items-center justify-center p-6">
 
-        <div class="bg-white shadow-2xl rounded-2xl w-full max-w-md p-8 border-t-4 border-blue-500 animate-fadeIn">
-            <h2 class="text-3xl font-bold mb-6 text-center text-blue-700">Cập nhật thông tin trạm</h2>
+        <div class="bg-white w-full max-w-lg p-8 border border-slate-200 rounded-2xl shadow-soft animate-fadeIn">
 
-            <!-- Hiển thị lỗi nếu có -->
+            <h2 class="text-xl font-semibold text-center mb-6">
+                Cập nhật thông tin trạm
+            </h2>
+
+            <!-- Lỗi -->
             <c:if test="${not empty error}">
-                <p class="text-red-600 font-semibold mb-4 text-center animate-pulse">${error}</p>
+                <div class="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm mb-4 text-center shadow-soft">
+                    ${error}
+                </div>
             </c:if>
 
-            <!-- Nếu có dữ liệu trạm -->
+            <!-- Nội dung -->
             <c:choose>
+
                 <c:when test="${not empty station}">
-                    <form action="StationServlet" method="post" class="space-y-5">
+                    <form action="StationServlet" method="post" class="space-y-6">
                         <input type="hidden" name="action" value="update">
                         <input type="hidden" name="stationId" value="${station.stationId}">
 
                         <!-- Tên trạm -->
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 hover:shadow-md transition">
-                            <label class="block text-blue-800 font-medium mb-1">Tên trạm</label>
+                        <div>
+                            <label class="block text-sm mb-1 text-slate-600">Tên trạm</label>
                             <input type="text" name="stationName" value="${station.stationName}" required
-                                   class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
+                                   class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white
+                                   focus:ring-2 focus:ring-brand-400 focus:border-brand-400 transition">
                         </div>
 
                         <!-- Vị trí -->
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 hover:shadow-md transition">
-                            <label class="block text-blue-800 font-medium mb-1">Vị trí</label>
+                        <div>
+                            <label class="block text-sm mb-1 text-slate-600">Vị trí</label>
                             <input type="text" name="location" value="${station.location}" required
-                                   class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
+                                   class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white
+                                   focus:ring-2 focus:ring-brand-400 focus:border-brand-400 transition">
                         </div>
 
-                        <!-- Nút hành động -->
-                        <div class="flex justify-between items-center mt-6">
+                        <!-- Nút -->
+                        <div class="flex justify-between mt-4">
+                            <a href="StationServlet?action=list"
+                               class="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 text-sm font-medium
+                               hover:bg-slate-300 transition">
+                                ← Quay lại
+                            </a>
+
                             <button type="submit"
-                                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-300">
+                                    class="px-5 py-2 rounded-xl bg-brand-600 text-white text-sm font-semibold
+                                    shadow-soft hover:bg-brand-700 transition">
                                 Cập nhật
                             </button>
-                            <a href="StationServlet?action=list"
-                               class="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-300">
-                                Hủy
-                            </a>
                         </div>
                     </form>
                 </c:when>
 
                 <c:otherwise>
-                    <p class="text-red-600 font-semibold text-center mb-4">Không có dữ liệu để chỉnh sửa.</p>
+                    <div class="p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm mb-4 text-center shadow-soft">
+                        Không có dữ liệu để chỉnh sửa.
+                    </div>
                     <div class="text-center">
                         <a href="StationServlet?action=list"
-                           class="text-blue-600 hover:text-blue-800 underline transition-colors duration-300">
+                           class="text-brand-600 hover:text-brand-800 hover:underline text-sm transition">
                             ← Quay lại
                         </a>
                     </div>
                 </c:otherwise>
+
             </c:choose>
+
         </div>
 
     </body>

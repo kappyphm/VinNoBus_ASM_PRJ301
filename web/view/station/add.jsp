@@ -1,73 +1,113 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
+
 <!DOCTYPE html>
 <html lang="vi">
     <head>
         <meta charset="UTF-8">
-        <title>Thêm trạm mới</title>
+        <title>Thêm trạm mới • VinNoBus</title>
+
+        <!-- Font + Tailwind -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
         <script src="https://cdn.tailwindcss.com"></script>
-        <!-- Font đẹp, hỗ trợ tiếng Việt -->
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {mono: ['Roboto Mono', 'ui-monospace']},
+                        colors: {
+                            brand: {
+                                50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
+                                400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8',
+                                800: '#1e40af', 900: '#1e3a8a'
+                            }
+                        },
+                        boxShadow: {soft: "0 8px 24px rgba(2,6,23,.06)"}
+                    }
+                }
+            }
+        </script>
+
         <style>
-            body {
-                font-family: 'Inter', sans-serif;
+            html {
+                font-family: 'Roboto Mono', ui-monospace;
             }
+
             @keyframes fadeIn {
-                0% {
+                from {
                     opacity: 0;
-                    transform: scale(0.95);
+                    transform: translateY(10px);
                 }
-                100% {
+                to   {
                     opacity: 1;
-                    transform: scale(1);
+                    transform: translateY(0);
                 }
             }
+
             .animate-fadeIn {
-                animation: fadeIn 0.7s ease-out forwards;
+                animation: fadeIn 0.4s ease-out;
             }
         </style>
     </head>
 
-    <body class="bg-gradient-to-br from-blue-200 via-blue-100 to-blue-300 font-sans min-h-screen flex items-center justify-center p-6">
+    <body class="bg-brand-50 min-h-screen flex items-center justify-center p-6">
 
-        <!-- Khung chính -->
-        <div class="bg-white shadow-2xl rounded-2xl w-full max-w-md p-8 border-t-4 border-blue-500 animate-fadeIn">
-            <h2 class="text-3xl font-bold mb-6 text-center text-blue-700">Thêm trạm mới</h2>
+        <div class="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-soft p-8 animate-fadeIn">
 
-            <% if (request.getAttribute("error") != null) { %>
-            <p class="text-red-600 font-semibold mb-4 text-center animate-pulse">
-                <%= request.getAttribute("error") %>
+            <h1 class="text-xl font-semibold text-center mb-1">Thêm trạm mới</h1>
+            <p class="text-sm text-slate-600 text-center mb-5">
+                Tạo trạm mới trong hệ thống VinNoBus.
             </p>
+
+            <!-- ✅ Thông báo lỗi -->
+            <% if (request.getAttribute("error") != null) { %>
+            <div class="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm shadow-soft mb-4">
+                ⚠️ <%= request.getAttribute("error") %>
+            </div>
             <% } %>
 
-            <form action="StationServlet" method="post" class="space-y-5">
-                <input type="hidden" name="action" value="create">
+            <!-- ✅ Form nhập liệu -->
+            <form action="StationServlet" method="post" class="space-y-4">
+                <input type="hidden" name="action" value="create"/>
 
                 <!-- Tên trạm -->
-                <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 hover:shadow-md transition">
-                    <label class="block text-blue-800 font-medium mb-1">Tên trạm</label>
-                    <input type="text" name="stationName" required
-                           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
+                <div>
+                    <label class="text-sm font-medium mb-1 block">Tên trạm</label>
+                    <input type="text"
+                           name="stationName"
+                           required
+                           class="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-sm
+                           focus:ring-2 focus:ring-brand-500 outline-none">
                 </div>
 
                 <!-- Vị trí -->
-                <div class="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 hover:shadow-md transition">
-                    <label class="block text-blue-800 font-medium mb-1">Vị trí</label>
-                    <input type="text" name="location" required
-                           class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none transition">
+                <div>
+                    <label class="text-sm font-medium mb-1 block">Vị trí</label>
+                    <input type="text"
+                           name="location"
+                           required
+                           class="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 text-sm
+                           focus:ring-2 focus:ring-brand-500 outline-none">
                 </div>
 
-                <!-- Nút hành động -->
-                <div class="flex justify-between items-center mt-6">
-                    <button type="submit"
-                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full shadow-lg hover:shadow-xl transform hover:scale-105 transition duration-300">
-                        Thêm trạm
-                    </button>
+                <!-- Buttons -->
+                <div class="flex justify-between items-center pt-2">
                     <a href="StationServlet?action=list"
-                       class="text-blue-600 hover:text-blue-800 hover:underline transition-colors duration-300">
-                        Hủy
+                       class="text-sm text-slate-600 hover:text-brand-700 hover:underline transition">
+                        ← Quay lại
                     </a>
+
+                    <button type="submit"
+                            class="px-6 py-2 rounded-xl bg-brand-600 text-white text-sm font-medium shadow-soft
+                            hover:bg-brand-700 transition">
+                        ➕ Thêm trạm
+                    </button>
                 </div>
             </form>
+
         </div>
 
     </body>
