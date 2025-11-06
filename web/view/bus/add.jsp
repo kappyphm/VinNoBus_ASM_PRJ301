@@ -1,109 +1,74 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="ui" tagdir="/WEB-INF/tags" %>
 
-<!DOCTYPE html>
-<html lang="vi">
-    <head>
-        <meta charset="UTF-8">
-        <title>Thêm Xe Bus Mới • VinNoBus</title>
+<ui:layout>
+    <jsp:attribute name="title">Thêm Xe Bus Mới • VinNoBus</jsp:attribute>
 
-        <!-- Font + Tailwind -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <jsp:body>
+        <main class="min-h-screen flex items-center justify-center px-5 py-10">
 
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        fontFamily: {mono: ['Roboto Mono', 'ui-monospace']},
-                        colors: {
-                            brand: {
-                                50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
-                                400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8',
-                                800: '#1e40af', 900: '#1e3a8a'
-                            }
-                        },
-                        boxShadow: {soft: "0 8px 24px rgba(2,6,23,.06)"}
-                    }
-                }
-            }
-        </script>
+            <div class="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-soft p-6">
 
-        <style>
-            html {
-                font-family: 'Roboto Mono', ui-monospace;
-            }
-        </style>
-    </head>
+                <h1 class="text-xl font-semibold mb-1">Thêm Xe Bus Mới</h1>
+                <p class="text-sm text-slate-600 mb-4">Nhập thông tin xe bus vào hệ thống VinNoBus.</p>
 
-    <body class="bg-brand-50 min-h-screen flex items-center justify-center px-5">
+                <!-- Thông báo -->
+                <c:if test="${not empty message}">
+                    <div class="p-3 rounded-xl bg-green-50 border border-green-200 text-green-700 shadow-soft mb-3">
+                        ✅ ${message}
+                    </div>
+                </c:if>
 
-        <div class="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-soft p-6">
+                <c:if test="${not empty error}">
+                    <div class="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 shadow-soft mb-3">
+                        ⚠️ ${error}
+                    </div>
+                </c:if>
 
-            <h1 class="text-xl font-semibold mb-1">Thêm Xe Bus Mới</h1>
-            <p class="text-sm text-slate-600 mb-4">Nhập thông tin xe bus vào hệ thống VinNoBus.</p>
+                <form action="BusServlet" method="post" class="space-y-4">
+                    <input type="hidden" name="action" value="add"/>
 
-            <!-- Thông báo -->
-            <c:if test="${not empty message}">
-                <div class="p-3 rounded-xl bg-green-50 border border-green-200 text-green-700 shadow-soft mb-3">
-                    ✅ ${message}
-                </div>
-            </c:if>
+                    <!-- Plate -->
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Biển số xe</label>
+                        <input type="text" name="plate_number" placeholder="VD: 29B-123.45"
+                               class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white focus:ring-2 focus:ring-brand-500 outline-none"/>
+                    </div>
 
-            <c:if test="${not empty error}">
-                <div class="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 shadow-soft mb-3">
-                    ⚠️ ${error}
-                </div>
-            </c:if>
+                    <!-- Capacity -->
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Sức chứa</label>
+                        <input type="number" name="capacity" placeholder="VD: 40"
+                               class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white focus:ring-2 focus:ring-brand-500 outline-none"/>
+                    </div>
 
-            <form action="BusServlet" method="post" class="space-y-4">
-                <input type="hidden" name="action" value="add"/>
+                    <!-- Status -->
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Trạng thái</label>
+                        <select name="current_status"
+                                class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white focus:ring-2 focus:ring-brand-500 outline-none">
+                            <option value="AVAILABLE">AVAILABLE</option>
+                            <option value="IN_USE">IN_USE</option>
+                            <option value="MAINTENANCE">MAINTENANCE</option>
+                            <option value="BROKEN">BROKEN</option>
+                            <option value="REPAIRING">REPAIRING</option>
+                            <option value="RESERVED">RESERVED</option>
+                        </select>
+                    </div>
 
-                <!-- Plate -->
-                <div>
-                    <label class="block text-sm font-medium mb-1">Biển số xe</label>
-                    <input type="text"
-                           name="plate_number"
-                           placeholder="VD: 29B-123.45"
-                           class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white focus:ring-2 focus:ring-brand-500 outline-none"/>
-                </div>
+                    <button type="submit"
+                            class="w-full py-2.5 rounded-xl bg-brand-600 text-white text-sm font-medium shadow-soft hover:bg-brand-700 transition">
+                        ➕ Thêm Xe Bus
+                    </button>
 
-                <!-- Capacity -->
-                <div>
-                    <label class="block text-sm font-medium mb-1">Sức chứa</label>
-                    <input type="number"
-                           name="capacity"
-                           placeholder="VD: 40"
-                           class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white focus:ring-2 focus:ring-brand-500 outline-none"/>
-                </div>
+                    <a href="BusServlet?action=list"
+                       class="block text-center text-slate-600 text-sm hover:text-brand-700 hover:underline">
+                        ← Quay lại danh sách
+                    </a>
+                </form>
+            </div>
 
-                <!-- Status -->
-                <div>
-                    <label class="block text-sm font-medium mb-1">Trạng thái</label>
-                    <select name="current_status"
-                            class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white focus:ring-2 focus:ring-brand-500 outline-none">
-                        <option value="AVAILABLE">AVAILABLE</option>
-                        <option value="IN_USE">IN_USE</option>
-                        <option value="MAINTENANCE">MAINTENANCE</option>
-                        <option value="BROKEN">BROKEN</option>
-                        <option value="REPAIRING">REPAIRING</option>
-                        <option value="RESERVED">RESERVED</option>
-                    </select>
-                </div>
-
-                <button type="submit"
-                        class="w-full py-2.5 rounded-xl bg-brand-600 text-white text-sm font-medium shadow-soft hover:bg-brand-700 transition">
-                    ➕ Thêm Xe Bus
-                </button>
-
-                <a href="BusServlet?action=list"
-                   class="block text-center text-slate-600 text-sm hover:text-brand-700 hover:underline">
-                    ← Quay lại danh sách
-                </a>
-            </form>
-        </div>
-
-    </body>
-</html>
+        </main>
+    </jsp:body>
+</ui:layout>
