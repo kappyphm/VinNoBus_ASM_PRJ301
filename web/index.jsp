@@ -1,337 +1,88 @@
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
--->
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
-
-
 <!DOCTYPE html>
 <html lang="vi">
     <head>
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống Quản lý Tuyến Xe</title>
-    <style>
-        /* ===== Reset & Global ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
-        }
-
-        body {
-            font-family: "Segoe UI", Arial, sans-serif;
-            background: linear-gradient(135deg, #e6efff, #f8fbff);
-            color: #333;
-            min-height: 100vh;
-            animation: fadeIn 1s ease forwards;
-        }
-
-        /* ===== Header ===== */
-        header {
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            background: rgba(0, 98, 204, 0.9);
-            backdrop-filter: blur(10px);
-            color: white;
-            padding: 18px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        /* ===== Navigation ===== */
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 30px;
-        }
-
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            position: relative;
-            padding-bottom: 4px;
-        }
-
-        nav ul li a::after {
-            content: "";
-            position: absolute;
-            width: 0%;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background-color: #ffdd57;
-            transition: width 0.3s ease;
-        }
-
-        nav ul li a:hover::after {
-            width: 100%;
-        }
-
-        nav ul li a:hover {
-            color: #ffdd57;
-        }
-
-        /* ===== Main Section ===== */
-        main {
-            text-align: center;
-            padding: 90px 20px 60px;
-            animation: slideUp 1.2s ease forwards;
-        }
-
-        h1 {
-            font-size: 34px;
-            margin-bottom: 20px;
-            color: #004a99;
-        }
-
-        p {
-            font-size: 18px;
-            color: #555;
-        }
-
-        /* ===== Buttons Section ===== */
-        .menu-buttons {
-            margin-top: 50px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .menu-buttons a {
-            display: inline-block;
-            padding: 15px 25px;
-            background: linear-gradient(135deg, #0078d7, #005fa3);
-            color: white;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 600;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transform: translateY(0);
-        }
-
-        .menu-buttons a:hover {
-            background: linear-gradient(135deg, #005fa3, #004f88);
-            transform: translateY(-4px);
-            box-shadow: 0 8px 18px rgba(0,0,0,0.2);
-        }
-
-        /* ===== Footer ===== */
-        footer {
-            text-align: center;
-            padding: 25px;
-            background: #f5f5f5;
-            color: #666;
-            font-size: 14px;
-            border-top: 1px solid #ddd;
-        }
-
-        /* ===== Animations ===== */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>VinNoBus • Trang chủ</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {mono: ['Roboto Mono', 'ui-monospace', 'SFMono-Regular']},
+                        colors: {
+                            brand: {50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af', 900: '#1e3a8a'}
+                        },
+                        boxShadow: {soft: '0 8px 24px rgba(2,6,23,.06)'}
+                    }
+                }
             }
-            to {
-                opacity: 1;
-            }
-        }
+        </script>
+    </head>
+    <body class="bg-brand-50 font-mono text-slate-800 min-h-screen flex flex-col">
 
-        @keyframes slideUp {
-            from {
-                transform: translateY(40px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        /* ===== Responsive ===== */
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-            }
-
-            nav ul {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 15px;
-            }
-
-            .menu-buttons a {
-                width: 90%;
-                max-width: 300px;
-            }
-        }
-        .footer {
-            background: linear-gradient(135deg, #0d2b66, #005fa3);
-            color: #fff;
-            padding: 40px 20px 20px;
-            font-family: 'Segoe UI', sans-serif;
-            position: relative;
-            overflow: hidden;
-            animation: fadeInUp 1s ease forwards;
-        }
-        .footer-container {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer h3 {
-            margin-bottom: 10px;
-            font-size: 22px;
-            letter-spacing: 1px;
-        }
-
-        .footer h4 {
-            margin-bottom: 10px;
-            font-size: 18px;
-            color: #ffdd57;
-        }
-
-        .footer p {
-            margin-bottom: 8px;
-            font-size: 14px;
-            color: #d1d9ff;
-            line-height: 1.5;
-        }
-
-        /* Social icons */
-        .social-icons {
-            display: flex;
-            gap: 12px;
-            margin-top: 5px;
-        }
-
-        .social-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            background: rgba(255,255,255,0.15);
-            border-radius: 50%;
-            color: white;
-            font-size: 18px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .social-icon:hover {
-            background: #ffdd57;
-            color: #0d2b66;
-            transform: translateY(-3px) scale(1.1);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        /* Footer bottom */
-        .footer-bottom {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 13px;
-            color: #cfd8ff;
-            border-top: 1px solid rgba(255,255,255,0.2);
-            padding-top: 15px;
-        }
-
-        /* ===== Animations ===== */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ===== Responsive ===== */
-        @media (max-width: 768px) {
-            .footer-container {
-                flex-direction: column;
-                text-align: center;
-                gap: 20px;
-            }
-
-            .footer-right, .footer-center, .footer-left {
-                width: 100%;
-            }
-
-            .social-icons {
-                justify-content: center;
-            }
-        }
-    </style>
-</head>
-<body>
-
+        <!-- Header -->
         <jsp:include page="/header.jsp" />
 
-    <main>
-        <h1>Chào mừng đến với Hệ thống Quản lý Tuyến Xe</h1>
-        <p>Chọn mục ở menu trên hoặc sử dụng các nút dưới đây để bắt đầu quản lý.</p>
-        <div class="menu-buttons">
-            <a href="BusServlet?action=list">🚍 Quản lý Xe Bus</a>
-            <a href="RouteServlet?action=list">🛣️ Quản lý Tuyến</a>
-            <a href="TripServlet?action=list">🕒 Quản lý Chuyến</a>
-            <a href="StationServlet?action=list">🚏 Quản lý Trạm</a>
-            <a href="ReportServlet?action=overview">📊 Báo Cáo Tổng Hợp</a>
-        </div>
-    </main>
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-left">
-                <h3>Bus Management System</h3>
-                <p>Hệ thống quản lý tuyến xe thông minh và chuyên nghiệp</p>
+        <!-- Main content -->
+        <main class="flex-grow max-w-6xl mx-auto px-5 py-10">
+            <!-- Header dashboard -->
+            <div class="mb-10 text-center">
+                <h1 class="text-3xl font-bold text-brand-700 mb-2">Dashboard VinNoBus</h1>
+                <p class="text-slate-600">Quản lý các tuyến xe, chuyến đi, trạm và báo cáo trong một giao diện gọn gàng.</p>
             </div>
-            <div class="footer-center">
-                <h4>Liên hệ</h4>
-                <p>📍 123 Đường ABC, TP.HCM</p>
-                <p>✉️ support@busmanagement.com</p>
-                <p>📞 +84 123 456 789</p>
-            </div>
-            
-            <div class="footer-right">
-                <h4>Theo dõi chúng tôi</h4>
-                <div class="social-icons">
-                    <a href="#" class="social-icon">🌐</a>
-                    <a href="#" class="social-icon">🐦</a>
-                    <a href="#" class="social-icon">📘</a>
-                    <a href="#" class="social-icon">💼</a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            © 2025 Bus Management System - Designed by Ngô Quang Huy, Phạm Gia Khánh, Nguyễn Thị Thắm, Đinh Thị Thu Trang, Nguyễn Bá Quang Minh
-        </div>
-    </footer>
 
-</body>
-</html>                                    
+            <!-- Dashboard cards -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Xe Bus -->
+                <a href="users" class="bg-white rounded-2xl shadow-soft p-6 flex flex-col items-center hover:shadow-lg hover:scale-[1.02] transition">
+                    <div class="text-5xl mb-3 text-brand-500">😏</div>
+                    <div class="font-semibold text-lg text-slate-800 mb-1">Quản lý Người dùng</div>
+                    <p class="text-sm text-slate-500 text-center">Xem, thêm, chỉnh sửa và xóa thông tin Người dùng hệ thống.</p>
+                </a>
+                <!-- Xe Bus -->
+                <a href="BusServlet?action=list" class="bg-white rounded-2xl shadow-soft p-6 flex flex-col items-center hover:shadow-lg hover:scale-[1.02] transition">
+                    <div class="text-5xl mb-3 text-brand-500">🚍</div>
+                    <div class="font-semibold text-lg text-slate-800 mb-1">Quản lý Xe Bus</div>
+                    <p class="text-sm text-slate-500 text-center">Xem, thêm, chỉnh sửa và xóa thông tin các xe bus.</p>
+                </a>
+
+                <!-- Tuyến -->
+                <a href="RouteServlet?action=list" class="bg-white rounded-2xl shadow-soft p-6 flex flex-col items-center hover:shadow-lg hover:scale-[1.02] transition">
+                    <div class="text-5xl mb-3 text-brand-500">🛣️</div>
+                    <div class="font-semibold text-lg text-slate-800 mb-1">Quản lý Tuyến</div>
+                    <p class="text-sm text-slate-500 text-center">Tạo và quản lý các tuyến xe, cập nhật lộ trình dễ dàng.</p>
+                </a>
+
+                <!-- Chuyến -->
+                <a href="TripServlet?action=list" class="bg-white rounded-2xl shadow-soft p-6 flex flex-col items-center hover:shadow-lg hover:scale-[1.02] transition">
+                    <div class="text-5xl mb-3 text-brand-500">🕒</div>
+                    <div class="font-semibold text-lg text-slate-800 mb-1">Quản lý Chuyến</div>
+                    <p class="text-sm text-slate-500 text-center">Theo dõi, cập nhật và lập kế hoạch các chuyến đi.</p>
+                </a>
+
+                <!-- Trạm -->
+                <a href="StationServlet?action=list" class="bg-white rounded-2xl shadow-soft p-6 flex flex-col items-center hover:shadow-lg hover:scale-[1.02] transition">
+                    <div class="text-5xl mb-3 text-brand-500">🚏</div>
+                    <div class="font-semibold text-lg text-slate-800 mb-1">Quản lý Trạm</div>
+                    <p class="text-sm text-slate-500 text-center">Thêm, sửa, xóa các trạm dừng xe và quản lý vị trí.</p>
+                </a>
+
+                <!-- Báo cáo -->
+                <a href="ReportServlet?action=overview" class="bg-white rounded-2xl shadow-soft p-6 flex flex-col items-center hover:shadow-lg hover:scale-[1.02] transition">
+                    <div class="text-5xl mb-3 text-brand-500">📊</div>
+                    <div class="font-semibold text-lg text-slate-800 mb-1">Báo cáo</div>
+                    <p class="text-sm text-slate-500 text-center">Xem thống kê tổng quan, hiệu suất và KPI của hệ thống.</p>
+                </a>
+            </div>
+        </main>
+
+
+        <jsp:include page="/footer.jsp" />
+    </body>
+</html>

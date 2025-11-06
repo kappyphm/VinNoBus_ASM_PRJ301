@@ -26,15 +26,7 @@
             } </style>
     </head>
     <body class="bg-brand-50 text-slate-800 min-h-screen">
-        <header class="border-b border-slate-200 bg-white">
-            <div class="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
-                <a href="admin.jsp" class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-xl bg-brand-600 text-white grid place-items-center font-semibold">V</div>
-                    <span class="font-semibold">VinNoBus</span>
-                </a>
-                <a href="info.jsp" class="text-sm text-brand-700 hover:underline">Trang thông tin</a>
-            </div>
-        </header>
+
 
         <main class="max-w-5xl mx-auto px-5 py-8">
             <h1 class="text-2xl font-semibold">Thông tin người dùng</h1>
@@ -83,7 +75,7 @@
 
                     <div class="mt-6 flex flex-wrap gap-3">
                         <a href="${ctx}/user/update" class="px-3 py-2 rounded-xl bg-brand-600 text-white text-sm hover:bg-brand-700 shadow-soft">Chỉnh sửa</a>
-                        <a href="${ctx}/user" class="px-3 py-2 rounded-xl border border-brand-200 text-brand-700 text-sm hover:bg-brand-100">Danh sách user</a>
+                        <a href="${ctx}/auth/logout" class="px-3 py-2 rounded-xl border border-red-200 text-red-700 text-sm hover:bg-red-100">Đăng xuất</a>
                     </div>
                 </div>
             </div>

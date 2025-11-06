@@ -6,9 +6,8 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<!-- Dynamic Title -->
-<c:choose>
-    <!-- Dynamic Title -->
+
+
 <c:choose>
     <c:when test="${action == 'create'}">
         <h1 class="text-2xl font-semibold">Đăng ký thông tin người dùng</h1>
@@ -24,5 +23,5 @@
     </c:otherwise>
 </c:choose>
 
-        
-</c:choose>
+
+

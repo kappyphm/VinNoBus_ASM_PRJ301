@@ -119,7 +119,7 @@
                             class="px-4 py-2 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 shadow-soft">
                         Lưu thay đổi
                     </button>
-                    <a href="${ctx}/${action=='create'?'/':'/user/'}"
+                    <a href="${ctx}/${action=='create'?'/':'/user/detail'}"
                        class="px-4 py-2 rounded-xl border border-brand-200 text-brand-700 text-sm hover:bg-brand-100">
                         Hủy
                     </a>
