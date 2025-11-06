@@ -21,6 +21,8 @@ public class UserDetailDTO {
     private String avatarUrl;
     private Date dob;
     private String address;
+    
+    
 
     public UserDetailDTO() {
     }

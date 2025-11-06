@@ -9,9 +9,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 import module.auth.model.dto.GoogleUserDTO;
 import module.core.BaseService;
-import module.user.dao.ProfileDAO;
 import module.user.dao.UserDAO;
-import module.user.model.entity.Profile;
 import module.user.model.entity.User;
 
 /**
@@ -20,19 +18,15 @@ import module.user.model.entity.User;
  */
 public class AuthService extends BaseService {
 
-    private final UserDAO userDao = new UserDAO(connection, User.class);
-    private final ProfileDAO profileDao = new ProfileDAO(connection, Profile.class);
+    private final UserDAO userDao = new UserDAO(connection);
 
     public Optional<User> handleLogin(GoogleUserDTO googleUser) throws AuthException {
         try {
-
             return userDao.findById(googleUser.getSub());
-
         } catch (SQLException e) {
             throw new AuthException("SQL  ERROR: " + e.getMessage());
         }
 
     }
-
 
 }

@@ -14,8 +14,8 @@ import module.user.model.entity.User;
  */
 public class UserDAO extends AbstractDAO<User, String> {
 
-    public UserDAO(Connection connection, Class<User> entityClass) {
-        super(connection, entityClass);
+    public UserDAO(Connection connection) {
+        super(connection, User.class);
     }
 
 }

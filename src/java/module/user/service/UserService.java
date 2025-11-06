@@ -9,9 +9,12 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Optional;
 import module.core.BaseService;
+import module.user.dao.CustomerDAO;
 import module.user.dao.ProfileDAO;
+import module.user.dao.StaffDAO;
 import module.user.dao.UserDAO;
 import module.user.model.dto.UserDetailDTO;
+import module.user.model.entity.Customer;
 import module.user.model.entity.Profile;
 import module.user.model.entity.User;
 
@@ -21,8 +24,10 @@ import module.user.model.entity.User;
  */
 public class UserService extends BaseService {
 
-    private final ProfileDAO profileDao = new ProfileDAO(connection, Profile.class);
-    private final UserDAO userDao = new UserDAO(connection, User.class);
+    private final ProfileDAO profileDao = new ProfileDAO(connection);
+    private final UserDAO userDao = new UserDAO(connection);
+    private final StaffDAO staffDao = new StaffDAO(connection);
+    private final CustomerDAO customerDao = new CustomerDAO(connection);
 
     public Optional<UserDetailDTO> getUserDetail(String userId) {
         try {
@@ -95,6 +100,9 @@ public class UserService extends BaseService {
             profile.setUserId(userDetail.getUserId());
 
             profileDao.insert(profile);
+
+            Customer customer = new Customer(userDetail.getUserId(), "STANDARD", 0);
+            customerDao.insert(customer);
 
             commitTransaction();
             return userDao.findById(userDetail.getUserId()).get();
