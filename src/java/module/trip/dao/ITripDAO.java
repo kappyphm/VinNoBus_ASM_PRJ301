@@ -19,7 +19,7 @@ public interface ITripDAO {
     //List & Filter
     public List<Trip> findAllTrips() throws SQLException;
 
-    public List<Trip> findAllTrips(String search, String filter, String sort, int page, int pageSize) throws SQLException;
+    public List<Trip> findAllTrips(String search, String filter, String sortCol, String sortDir, int page, int pageSize) throws SQLException;
 
     public int countTrips(String search, String filter) throws SQLException;
 
