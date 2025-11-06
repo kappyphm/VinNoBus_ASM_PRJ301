@@ -34,10 +34,34 @@ public class RouteDAO extends DBContext implements iRouteDAO {
 
     @Override
     public boolean deleteRoute(int id) throws SQLException {
-        String sql = "DELETE FROM Route WHERE route_id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            return ps.executeUpdate() > 0;
+        String deleteRouteStationSQL = "DELETE FROM Route_Station WHERE route_id = ?";
+        String deleteRouteSQL = "DELETE FROM Route WHERE route_id = ?";
+
+        // Bắt đầu transaction để đảm bảo tính toàn vẹn dữ liệu
+        try {
+            connection.setAutoCommit(false);
+
+            // Xóa các bản ghi phụ trong Route_Station trước
+            try (PreparedStatement ps1 = connection.prepareStatement(deleteRouteStationSQL)) {
+                ps1.setInt(1, id);
+                ps1.executeUpdate();
+            }
+
+            // Sau đó xóa Route
+            int rowsAffected;
+            try (PreparedStatement ps2 = connection.prepareStatement(deleteRouteSQL)) {
+                ps2.setInt(1, id);
+                rowsAffected = ps2.executeUpdate();
+            }
+
+            connection.commit();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            connection.rollback(); // Nếu có lỗi thì rollback
+            throw e;
+        } finally {
+            connection.setAutoCommit(true);
         }
     }
 
