@@ -115,6 +115,7 @@
             <li><a href="RouteServlet?action=list">Tuyến Đường</a></li>
             <li><a href="TripServlet?action=list">Chuyến Xe</a></li>
             <li><a href="StationServlet?action=list">Trạm Xe</a></li>
+            <li><a href="TicketServlet?action=list">Vé</a></li>
             <li><a href="ReportServlet?action=overview">Báo Cáo</a></li>
             <li><%@include file="/components/AuthComp.jsp" %></li>
         </ul>

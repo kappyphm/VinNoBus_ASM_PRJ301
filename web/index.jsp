@@ -302,6 +302,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                 <a href="RouteServlet?action=list">🛣️ Quản lý Tuyến</a>
                 <a href="TripServlet?action=list">🕒 Quản lý Chuyến</a>
                 <a href="StationServlet?action=list">🚏 Quản lý Trạm</a>
+                <a href="TicketServlet?action=list">🎫 Quản lý Vé</a>
                 <a href="RouteServlet?action=search">Tìm kiếm(Admin)</a>
                 <a href="ReportServlet?action=overview">📊 Báo Cáo Tổng Hợp</a>
             </div>
