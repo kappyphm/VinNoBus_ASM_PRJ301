@@ -168,7 +168,7 @@ CREATE TABLE BusLog (
     bus_id INT NOT NULL,
     status VARCHAR(20) CHECK (status IN ('AVAILABLE','IN_USE','MAINTENANCE','BROKEN','REPAIRING','RESERVED')),
     note VARCHAR(255),
-    created_by VARCHAR(128) NOT NULL UNIQUE,
+    created_by VARCHAR(128) NOT NULL ,
     created_at DATETIME DEFAULT GETDATE(),
     CONSTRAINT FK_BusLog_Bus FOREIGN KEY (bus_id) REFERENCES Bus(bus_id),
     CONSTRAINT FK_BusLog_User FOREIGN KEY (created_by) REFERENCES [User](user_id)
@@ -245,7 +245,7 @@ CREATE TABLE Trip (
 CREATE TABLE WorkLog (
     worklog_id INT IDENTITY(1,1) PRIMARY KEY,
     trip_id INT NOT NULL,
-    user_id VARCHAR(128) NOT NULL UNIQUE,
+    user_id VARCHAR(128) NOT NULL ,
     role VARCHAR(20) NOT NULL,
     checkin_time DATETIME NULL,
     checkout_time DATETIME NULL,
@@ -283,7 +283,7 @@ CREATE TABLE Ticket (
     price DECIMAL(10,2) NOT NULL,
     issue_date DATE NOT NULL,
     expiry_date DATE NULL,
-    created_by VARCHAR(128) NOT NULL UNIQUE,
+    created_by VARCHAR(128) NOT NULL ,
     invoice_id INT NULL,
 
     CONSTRAINT FK_Ticket_Customer FOREIGN KEY (customer_id) REFERENCES [User](user_id),

@@ -82,15 +82,39 @@ public class TripDAO extends DBContext implements ITripDAO {
             params.add(id);
             params.add("%" + searchKey + "%");
         } catch (NumberFormatException e) {
-            sql.append("AND status LIKE ? ");
-            params.add("%" + searchKey + "%");
+            // === CẬP NHẬT: Sửa logic tìm kiếm status mặc định ===
+            // Dịch Tiếng Việt sang ENUM
+            String dbStatus = searchKey; // Fallback
+            if (searchKey.toLowerCase().contains("chưa")) dbStatus = "NOT_STARTED";
+            else if (searchKey.toLowerCase().contains("đang")) dbStatus = "IN_PROCESS";
+            else if (searchKey.toLowerCase().contains("hoàn")) dbStatus = "FINISHED";
+            else if (searchKey.toLowerCase().contains("hủy")) dbStatus = "CANCELLED";
+            
+            sql.append("AND status = ? ");
+            params.add(dbStatus);
         }
     }
+
+    // === CẬP NHẬT: Helper "dịch" status ===
+    private String translateStatusSearch(String searchKey) {
+        String key = searchKey.toLowerCase();
+        if (key.contains("chưa")) return "NOT_STARTED";
+        if (key.contains("đang")) return "IN_PROCESS";
+        if (key.contains("hoàn")) return "FINISHED";
+        if (key.contains("hủy")) return "CANCELLED";
+        // Nếu người dùng gõ thẳng ENUM (ví dụ: "NOT_STARTED")
+        if (key.equals("not_started") || key.equals("in_process") || key.equals("finished") || key.equals("cancelled")) {
+            return searchKey.toUpperCase();
+        }
+        return searchKey; // Trả về chính nó nếu không dịch được
+    }
+
 
     @Override
     public List<Trip> findAllTrips(String search, String filter, String sortCol, String sortDir, int page, int pageSize) throws SQLException {
         StringBuilder sql = new StringBuilder("SELECT * FROM Trip WHERE 1=1 ");
         List<Object> params = new ArrayList<>();
+
         if (search != null && !search.trim().isEmpty()) {
             String searchKey = search.trim();
             String columnToSearch = "";
@@ -111,23 +135,34 @@ public class TripDAO extends DBContext implements ITripDAO {
                 addDefaultSearch(sql, params, searchKey);
             }
 
+            // === CẬP NHẬT: Logic tìm kiếm ===
+            
+            // 1. Tìm theo ID (dùng =)
             if (columnToSearch.equals("trip_id") || columnToSearch.equals("bus_id") || columnToSearch.equals("route_id")) {
                 try {
                     int id = Integer.parseInt(searchKey);
                     sql.append("AND ").append(columnToSearch).append(" = ? ");
                     params.add(id);
                 } catch (NumberFormatException e) {
-                    return new ArrayList<>(); 
+                    return new ArrayList<>(); // Nhập chữ, 0 kết quả
                 }
-            } else if (columnToSearch.equals("driver_id") || columnToSearch.equals("conductor_id") || columnToSearch.equals("status")) {
-                sql.append("AND ").append(columnToSearch).append(" LIKE ? ");
-                params.add("%" + searchKey + "%");
+            // 2. Tìm theo Mã Tài xế / Phụ xe (dùng = / chính xác)
+            } else if (columnToSearch.equals("driver_id") || columnToSearch.equals("conductor_id")) {
+                sql.append("AND ").append(columnToSearch).append(" = ? ");
+                params.add(searchKey);
+            // 3. Tìm theo Trạng thái (dịch TV -> ENUM rồi dùng =)
+            } else if (columnToSearch.equals("status")) {
+                String dbStatus = translateStatusSearch(searchKey);
+                sql.append("AND ").append(columnToSearch).append(" = ? ");
+                params.add(dbStatus);
             }
         }
+
+        // === CẬP NHẬT: Logic Sắp xếp ===
         String sortColumn = "trip_id"; 
         if (sortCol != null && !sortCol.trim().isEmpty()) {
             switch (sortCol) {
-                case "status":
+                // === ĐÃ XÓA "status" KHỎI ĐÂY ===
                 case "departure_time":
                 case "arrival_time":
                 case "bus_id":
@@ -145,7 +180,6 @@ public class TripDAO extends DBContext implements ITripDAO {
         }
 
         sql.append("ORDER BY ").append(sortColumn).append(" ").append(sortDirection).append(" ");
-
         sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
         params.add((page - 1) * pageSize);
         params.add(pageSize);
@@ -194,6 +228,8 @@ public class TripDAO extends DBContext implements ITripDAO {
                 addDefaultSearch(sql, params, searchKey);
             }
 
+            // === CẬP NHẬT: Logic tìm kiếm (giống hệt findAllTrips) ===
+            
             if (columnToSearch.equals("trip_id") || columnToSearch.equals("bus_id") || columnToSearch.equals("route_id")) {
                 try {
                     int id = Integer.parseInt(searchKey);
@@ -202,9 +238,13 @@ public class TripDAO extends DBContext implements ITripDAO {
                 } catch (NumberFormatException e) {
                     return 0; 
                 }
-            } else if (columnToSearch.equals("driver_id") || columnToSearch.equals("conductor_id") || columnToSearch.equals("status")) {
-                sql.append("AND ").append(columnToSearch).append(" LIKE ? ");
-                params.add("%" + searchKey + "%");
+            } else if (columnToSearch.equals("driver_id") || columnToSearch.equals("conductor_id")) {
+                sql.append("AND ").append(columnToSearch).append(" = ? ");
+                params.add(searchKey);
+            } else if (columnToSearch.equals("status")) {
+                String dbStatus = translateStatusSearch(searchKey);
+                sql.append("AND ").append(columnToSearch).append(" = ? ");
+                params.add(dbStatus);
             }
         }
 
@@ -225,7 +265,6 @@ public class TripDAO extends DBContext implements ITripDAO {
         }
         return 0;
     }
-
     @Override
     public Trip getTripDetail(int tripId) throws SQLException {
         return findTripById(tripId);
