@@ -1,8 +1,7 @@
 
 package module.trip.model.entity;
 
-import java.time.LocalDateTime;
-
+import java.sql.Timestamp;
 
 public class Trip {
 
@@ -11,14 +10,14 @@ public class Trip {
     private int busId;
     private String driverId;
     private String conductorId;
-    private LocalDateTime departureTime;
-    private LocalDateTime arrivalTime;
+    private Timestamp departureTime;
+    private Timestamp arrivalTime;
     private String status;
 
     public Trip() {
     }
 
-    public Trip(int tripId, int routeId, int busId, String driverId, String conductorId, LocalDateTime departureTime, LocalDateTime arrivalTime, String status) {
+    public Trip(int tripId, int routeId, int busId, String driverId, String conductorId, Timestamp departureTime, Timestamp arrivalTime, String status) {
         this.tripId = tripId;
         this.routeId = routeId;
         this.busId = busId;
@@ -69,19 +68,19 @@ public class Trip {
         this.conductorId = conductorId;
     }
 
-    public LocalDateTime getDepartureTime() {
+    public Timestamp getDepartureTime() {
         return departureTime;
     }
 
-    public void setDepartureTime(LocalDateTime departureTime) {
+    public void setDepartureTime(Timestamp departureTime) {
         this.departureTime = departureTime;
     }
 
-    public LocalDateTime getArrivalTime() {
+    public Timestamp getArrivalTime() {
         return arrivalTime;
     }
 
-    public void setArrivalTime(LocalDateTime arrivalTime) {
+    public void setArrivalTime(Timestamp arrivalTime) {
         this.arrivalTime = arrivalTime;
     }
 

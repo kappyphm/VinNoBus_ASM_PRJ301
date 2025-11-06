@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ include file="header.jsp" %>
+<%@ include file="/header.jsp" %>
 
 <style>
     body {
@@ -65,12 +65,12 @@
         <tr><td>Mã xe buýt:</td><td>${trip.busId}</td></tr>
         <tr><td>Tài xế:</td><td>${trip.driverId}</td></tr>
         <tr><td>Phụ xe:</td><td>${trip.conductorId}</td></tr>
-        <tr><td>Giờ khởi hành:</td><td><fmt:formatDate value="${trip.departureTime}" pattern="HH:mm:ss"/></td></tr>
-        <tr><td>Giờ kết thúc:</td><td><fmt:formatDate value="${trip.arrivalTime}" pattern="HH:mm:ss"/></td></tr>
+        <tr><td>Giờ khởi hành:</td><td><fmt:formatDate value="${trip.departureTime}" pattern="HH:mm:ss dd-MM-yyyy"/></td></tr>
+        <tr><td>Giờ kết thúc:</td><td><fmt:formatDate value="${trip.arrivalTime}" pattern="HH:mm:ss dd-MM-yyyy"/></td></tr>
         <tr><td>Trạng thái:</td><td>${trip.status}</td></tr>
     </table>
 
     <a href="TripServlet?action=list" class="btn-back">← Quay lại danh sách</a>
 </div>
 
-<%@ include file="footer.jsp" %>
+<%@ include file="/footer.jsp" %>

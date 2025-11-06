@@ -1,6 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ include file="header.jsp" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<%@ include file="/header.jsp" %>
 
 <style>
     body {
@@ -117,18 +119,18 @@
 
 
         <label for="departureTime">Giờ khởi hành:</label>
-        <input type="datetime-local" name="departureTime" 
-               value="<%= request.getParameter("departureTime") != null ? request.getParameter("departureTime") : "" %>">
-
+        <input type="datetime-local" name="departureTime"
+               value="<fmt:formatDate value='${trip.departureTime}' pattern='yyyy-MM-dd\'T\'HH:mm'/>"
+               required />
 
         <label for="arrivalTime">Giờ kết thúc:</label>
-        <input type="datetime-local" name="arrivalTime" 
-               value="<%= request.getParameter("arrivalTime") != null ? request.getParameter("arrivalTime") : "" %>">
-
+        <input type="datetime-local" name="arrivalTime"
+               value="<fmt:formatDate value='${trip.arrivalTime}' pattern='yyyy-MM-dd\'T\'HH:mm'/>"
+               required />
 
         <button type="submit" class="btn">Thêm chuyến</button>
         <a href="TripServlet?action=list" style="margin-left:10px; text-decoration:none; color:#0078d7;">← Quay lại danh sách</a>
     </form>
 </div>
 
-<%@ include file="footer.jsp" %>
+<%@ include file="/footer.jsp" %>

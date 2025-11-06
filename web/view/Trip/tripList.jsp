@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ include file="header.jsp" %>
+<%@ include file="/header.jsp" %>
 
 <style>
     body {
@@ -207,7 +207,7 @@
 
 <form class="search-form" action="TripServlet" method="get">
     <input type="hidden" name="action" value="search">
-    
+
     <label>Lọc theo:</label>
     <select name="filter">
         <option value="">-- Chọn --</option>
@@ -230,7 +230,7 @@
 
     <button type="submit">Tìm</button>
 </form>
-
+<p>${errorMessage}</p>
 <c:choose>
     <c:when test="${empty trips}">
         <p style="text-align:center; color:#777; font-style:italic;">Không có chuyến xe nào để hiển thị.</p>
@@ -261,13 +261,14 @@
                         <td data-label="Mã xe buýt">${t.busId}</td>
                         <td data-label="Tài xế">${t.driverId}</td>
                         <td data-label="Phụ xe">${t.conductorId}</td>
-                        <td data-label="Giờ khởi hành"><fmt:formatDate value="${t.departureTime}" pattern="HH:mm:ss"/></td>
-                        <td data-label="Giờ kết thúc"><fmt:formatDate value="${t.arrivalTime}" pattern="HH:mm:ss"/></td>
+                        <td data-label="Giờ khởi hành"><fmt:formatDate value="${t.departureTime}" pattern="HH:mm:ss dd-MM-yyyy"/></td>
+                        <td data-label="Giờ kết thúc"><fmt:formatDate value="${t.arrivalTime}" pattern="HH:mm:ss dd-MM-yyyy"/></td>
                         <td data-label="Trạng thái">
                             <c:choose>
-                                <c:when test="${t.status eq 'IN_PROGRESS'}"><span style="color:#e69138;font-weight:600;">Đang chạy</span></c:when>
-                                <c:when test="${t.status eq 'COMPLETED'}"><span style="color:#6aa84f;font-weight:600;">Hoàn thành</span></c:when>
-                                <c:otherwise><span style="color:#999;">Chưa bắt đầu</span></c:otherwise>
+                                <c:when test="${t.status eq 'NOT_STARTED'}"><span style="color:#e69138;font-weight:600;">Chưa bắt đầu</span></c:when>
+                                <c:when test="${t.status eq 'IN_PROGRESS'}"><span style="color:#6aa84f;font-weight:600;">Đang chạy</span></c:when>
+                                <c:when test="${t.status eq 'COMPLETED'}"><span style="color:#6aa84f;font-weight:600;">Hoàn Thành</span></c:when>
+                                <c:when test="${t.status eq 'CANCELLED'}"><span style="color:#6aa84f;font-weight:600;">Đã Hủy</span></c:when>
                             </c:choose>
                         </td>
                         <td class="action-links" data-label="Hành động">
@@ -307,4 +308,4 @@
     </c:otherwise>
 </c:choose>
 
-<%@ include file="footer.jsp" %>
+<%@ include file="/footer.jsp" %>

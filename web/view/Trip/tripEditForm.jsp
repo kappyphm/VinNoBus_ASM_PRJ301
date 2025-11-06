@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ include file="header.jsp" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ include file="/header.jsp" %>
 
 <style>
     body {
@@ -82,6 +83,7 @@
 <div class="container">
     <h2>Chỉnh sửa chuyến xe</h2>
 
+    <!-- Hiển thị lỗi nếu có -->
     <c:if test="${not empty errors}">
         <div class="error">
             <ul>
@@ -93,38 +95,46 @@
     </c:if>
 
     <form action="TripServlet?action=update" method="post">
-        <input type="hidden" name="tripId" value="${trip.tripId}">
+        <input type="hidden" name="tripId" value="${trip.tripId}" />
 
         <label for="routeId">Mã tuyến:</label>
-        <input type="number" name="routeId" value="${trip.routeId}" required>
+        <input type="number" name="routeId" value="${trip.routeId}" required />
 
         <label for="busId">Mã xe buýt:</label>
-        <input type="number" name="busId" value="${trip.busId}" required>
+        <input type="number" name="busId" value="${trip.busId}" required />
 
         <label for="driverId">Tài xế xe:</label>
-        <input type="text" name="driverId" value="${trip.driverId}" placeholder="Nguyễn Văn A"required>
+        <input type="text" name="driverId" value="${trip.driverId}" placeholder="Nguyễn Văn A" required />
 
         <label for="conductorId">Phụ xe:</label>
-        <input type="text" name="conductorId" value="${trip.conductorId}" placeholder="Nguyễn Văn B"required>
+        <input type="text" name="conductorId" value="${trip.conductorId}" placeholder="Nguyễn Văn B" required />
 
         <label for="departureTime">Giờ khởi hành:</label>
-        <input type="time" name="departureTime" value="${trip.departureTime}" required>
+        <input type="datetime-local" name="departureTime"
+               value="<fmt:formatDate value='${trip.departureTime}' pattern='yyyy-MM-dd\'T\'HH:mm'/>"
+               required />
 
         <label for="arrivalTime">Giờ kết thúc:</label>
-        <input type="time" name="arrivalTime" value="${trip.arrivalTime}" required>
+        <input type="datetime-local" name="arrivalTime"
+               value="<fmt:formatDate value='${trip.arrivalTime}' pattern='yyyy-MM-dd\'T\'HH:mm'/>"
+               required />
+
 
         <label for="status">Trạng thái:</label>
         <select name="status">
-            <option value="NOT_STARTED" ${trip.status eq 'NOT_STARTED' ? 'selected' : ''}>Chưa bắt đầu</option>
-            <option value="IN_PROGRESS" ${trip.status eq 'IN_PROGRESS' ? 'selected' : ''}>Đang chạy</option>
-            <option value="COMPLETED" ${trip.status eq 'COMPLETED' ? 'selected' : ''}>Hoàn thành</option>
-            <option value="CANCELLED" ${trip.status eq 'CANCELLED' ? 'selected' : ''}>Đã Hủy</option>
-        </select>
+            <option value="NOT_STARTED" <c:if test="${trip.status eq 'NOT_STARTED'}">selected</c:if>>Chưa bắt đầu</option>
+            <option value="IN_PROGRESS" <c:if test="${trip.status eq 'IN_PROGRESS'}">selected</c:if>>Đang chạy</option>
+            <option value="COMPLETED" <c:if test="${trip.status eq 'COMPLETED'}">selected</c:if>>Hoàn thành</option>
+            <option value="CANCELLED" <c:if test="${trip.status eq 'CANCELLED'}">selected</c:if>>Đã hủy</option>
+            </select>
 
-        <button type="submit" class="btn">Cập nhật</button>
-        <a href="TripServlet?action=delete&tripId=${trip.tripId}" class="btn btn-delete" onclick="return confirm('Bạn chắc muốn xóa chuyến này?')">Xóa</a>
+            <button type="submit" class="btn">Cập nhật</button>
+            <a href="TripServlet?action=delete&tripId=${trip.tripId}"
+           class="btn btn-delete"
+           onclick="return confirm('Bạn chắc muốn xóa chuyến này?');">Xóa</a>
+
         <a href="TripServlet?action=list" style="margin-left:10px; text-decoration:none; color:#0078d7;">← Quay lại</a>
     </form>
 </div>
 
-<%@ include file="footer.jsp" %>
+<%@ include file="/footer.jsp" %>

@@ -2,7 +2,7 @@ package module.trip.service;
 
 import module.trip.model.entity.Trip;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.List;
 
 public interface ITripService {
@@ -17,7 +17,7 @@ public interface ITripService {
     Trip findTripById(int tripId) throws SQLException;
 
     // Danh sách & tìm kiếm
-    List<Trip> findAllTrips() throws SQLException;
+    List<Trip> findTrips() throws SQLException;
 
     List<Trip> findTrips(String search, String filter, String sort, int page, int pageSize) throws SQLException;
 
@@ -36,7 +36,7 @@ public interface ITripService {
     boolean assignConductor(int tripId, String conductorId) throws SQLException;
 
     // Thời gian & trạng thái
-    boolean updateTripTime(int tripId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException;
+    boolean updateTripTime(int tripId, Timestamp departureTime, Timestamp arrivalTime) throws SQLException;
 
     boolean updateTripStatus(int tripId, String status) throws SQLException;
 
@@ -49,13 +49,13 @@ public interface ITripService {
 
     List<Trip> findTripsByRoute(int routeId) throws SQLException;
 
-    List<Trip> findTripsByTime(LocalDateTime from, LocalDateTime to) throws SQLException;
+    List<Trip> findTripsByTime(Timestamp from, Timestamp to) throws SQLException;
 
     // Validation
-    boolean checkDriver(String driverId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException;
+    boolean checkDriver(String driverId, Timestamp departureTime, Timestamp arrivalTime, int tripId) throws SQLException;
 
-    boolean checkBus(int busId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException;
+    boolean checkBus(int busId, Timestamp departureTime, Timestamp arrivalTime,int tripId) throws SQLException;
 
-    boolean checkConductor(String conductorId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException;
+    boolean checkConductor(String conductorId, Timestamp departureTime, Timestamp arrivalTime, int tripId) throws SQLException;
 
 }
