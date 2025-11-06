@@ -6,16 +6,16 @@ package module.user.dao;
 
 import java.sql.Connection;
 import module.core.AbstractDAO;
-import module.user.model.entity.Profile;
+import module.user.model.entity.User;
 
 /**
  *
  * @author kappyphm
  */
-public class ProfileDAO extends AbstractDAO<Profile, String> {
+public class UserDAO extends AbstractDAO<User, String> {
 
-    public ProfileDAO(Connection connection) {
-        super(connection, Profile.class);
+    public UserDAO(Connection connection) {
+        super(connection, User.class);
     }
 
 }

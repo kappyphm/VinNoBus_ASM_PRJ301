@@ -9,7 +9,7 @@
     <c:set var="ctx" value="${pageContext.request.contextPath}" />
     <c:choose>
         <c:when test="${not empty sessionScope.user_id}">
-            <a href="${ctx}/user/profile" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-xl shadow-sm transition">
+            <a href="${ctx}/customer/profile" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-xl shadow-sm transition">
                 Trang cá nhân
             </a>
         </c:when>

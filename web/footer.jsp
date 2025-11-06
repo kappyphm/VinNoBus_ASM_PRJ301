@@ -1,26 +1,31 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 
-<footer
-  class="bg-gradient-to-br from-[#0d2b66] to-[#005fa3] text-white px-6 py-10 md:py-12 font-sans overflow-hidden animate-fadeUp"
->
-  <!-- Container -->
-  <div class="max-w-6xl mx-auto flex flex-wrap justify-between gap-10">
-    <!-- Left -->
-    <div class="flex-1 min-w-[250px]">
-      <h3 class="text-2xl font-semibold mb-2 tracking-wide">
-        Bus Management System
-      </h3>
-      <p class="text-[#d1d9ff] text-sm leading-relaxed">
-        Hệ thống quản lý tuyến xe thông minh và chuyên nghiệp
-      </p>
-    </div>
 
-    <!-- Center -->
-    <div class="flex-1 min-w-[250px]">
-      <h4 class="text-lg font-semibold text-[#ffdd57] mb-2">Liên hệ</h4>
-      <p class="text-[#d1d9ff] text-sm mb-1">📍 123 Đường ABC, TP.HCM</p>
-      <p class="text-[#d1d9ff] text-sm mb-1">✉️ support@busmanagement.com</p>
-      <p class="text-[#d1d9ff] text-sm">📞 +84 123 456 789</p>
+
+<footer class="bg-white border-t border-slate-200 mt-10">
+    <div class="max-w-5xl mx-auto px-5 py-8 grid md:grid-cols-3 gap-6">
+        <div>
+            <h3 class="font-semibold text-lg text-brand-700">VinNoBus</h3>
+            <p class="text-slate-600 mt-1">Hệ thống quản lý tuyến xe thông minh và chuyên nghiệp</p>
+        </div>
+        <div>
+            <h4 class="font-semibold text-md text-brand-700">Liên hệ</h4>
+            <p class="text-slate-600 mt-1">📍 123 Đường ABC, TP.HCM</p>
+            <p class="text-slate-600">✉️ support@busmanagement.com</p>
+            <p class="text-slate-600">📞 +84 123 456 789</p>
+        </div>
+        <div>
+            <h4 class="font-semibold text-md text-brand-700">Theo dõi chúng tôi</h4>
+            <div class="flex gap-3 mt-1 text-2xl">
+                <a href="#" class="hover:text-brand-500">🌐</a>
+                <a href="#" class="hover:text-brand-500">🐦</a>
+                <a href="#" class="hover:text-brand-500">📘</a>
+                <a href="#" class="hover:text-brand-500">💼</a>
+            </div>
+        </div>
+    </div>
+    <div class="border-t border-slate-200 mt-4 text-center text-sm text-slate-500 py-3">
+        © 2025 VinNoBus - Designed by Ngô Quang Huy, Phạm Gia Khánh, Nguyễn Thị Thắm, Đinh Thị Thu Trang, Nguyễn Bá Quang Minh
     </div>
 
     <!-- Right -->
@@ -65,3 +70,5 @@
     Nguyễn Thị Thắm, Đinh Thị Thu Trang, Nguyễn Bá Quang Minh
   </div>
 </footer>
+</body>
+</html>

@@ -2,52 +2,27 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package module.user.model.entity;
-
-import module.core.annotation.Column;
-import module.core.annotation.PK;
-import module.core.annotation.Table;
+package module.user.model.dto;
 
 /**
  *
  * @author kappyphm
  */
-@Table(name = "staff")
-public class Staff {
+public class StaffDTO {
 
-//    user_id VARCHAR(128) NOT NULL UNIQUE,
-//    staff_code VARCHAR(50) NOT NULL UNIQUE,
-//    position NVARCHAR(100) NULL,
-//    department NVARCHAR(100) NULL,
-    @PK
-    @Column(name = "user_id")
-    private String userId;
-
-    @Column(name = "staff_code")
     private String staffCode;
 
-    @Column(name = "postion")
     private String position;
 
-    @Column(name = "department")
     private String department;
 
-    public Staff() {
-    }
-
-    public Staff(String userId, String staffCode, String position, String department) {
-        this.userId = userId;
+    public StaffDTO(String staffCode, String position, String department) {
         this.staffCode = staffCode;
         this.position = position;
         this.department = department;
     }
 
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public StaffDTO() {
     }
 
     public String getStaffCode() {

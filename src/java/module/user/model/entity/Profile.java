@@ -1,43 +1,56 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package module.user.model.entity;
 
-import java.sql.Date;
-import java.sql.Timestamp;
+import java.sql.*;
+import module.core.annotation.Column;
+import module.core.annotation.PK;
+import module.core.annotation.Table;
+import module.core.annotation.Unique;
 
 /**
- * Represents a user's personal profile details. This entity holds general user
- * information shared by both Staff and Customer roles.
  *
- * <p>
- * <b>OOP Relationship:</b></p>
- * <ul>
- * <li><b>Association</b> with {@link User}: one user has one profile.</li>
- * <li><b>Composition</b>: if the user is deleted, the profile should also be
- * deleted.</li>
- * </ul>
- *
- * <p>
- * Mapped to the <code>user_profile</code> table in the database.</p>
+ * @author kappyphm
  */
+@Table(name = "profile")
 public class Profile {
 
+    @PK
+    @Column(name = "user_id")
     private String userId;
-    private String fullName;
-    private String email;
-    private String phone;
-    private String address;
-    private String avatarUrl;
-    private Date dateOfBirth;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
 
-    /**
-     * Default constructor.
-     */
-    public Profile() {
+    @Column(name = "full_name")
+    private String name;
+
+    @Column(name = "birth_date")
+    private Date dob;
+
+    @Column(name = "phone")
+    @Unique
+    private String phone;
+
+    @Unique
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
+    @Column(name = "address")
+    private String address;
+
+    public String getAddress() {
+        return address;
     }
 
-    // region Getters and Setters
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
+    public Profile() {
+    }
 
     public String getUserId() {
         return userId;
@@ -47,20 +60,20 @@ public class Profile {
         this.userId = userId;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getName() {
+        return name;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getEmail() {
-        return email;
+    public Date getDob() {
+        return dob;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setDob(Date dob) {
+        this.dob = dob;
     }
 
     public String getPhone() {
@@ -71,12 +84,12 @@ public class Profile {
         this.phone = phone;
     }
 
-    public String getAddress() {
-        return address;
+    public String getEmail() {
+        return email;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getAvatarUrl() {
@@ -85,30 +98,6 @@ public class Profile {
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
-    }
-
-    public Date getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
 }
