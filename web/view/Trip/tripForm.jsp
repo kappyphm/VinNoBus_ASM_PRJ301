@@ -1,134 +1,93 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ include file="header.jsp" %>
+<%@ taglib prefix="ui" tagdir="/WEB-INF/tags" %>
 
-<style>
-    body {
-        font-family: 'Segoe UI', Roboto, sans-serif;
-        background: #f4f6f9;
-        padding: 20px;
-    }
+<ui:layout>
+    <jsp:attribute name="title">Thêm Chuyến xe mới • VinNoBus</jsp:attribute>
 
-    .container {
-        max-width: 600px;
-        margin: 0 auto;
-        background: white;
-        border-radius: 10px;
-        padding: 25px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
+    <jsp:body>
+        <main class="min-h-screen bg-brand-50 flex items-center justify-center p-6">
+            <div class="w-full max-w-md bg-white rounded-2xl shadow-soft p-6">
 
-    h2 {
-        text-align: center;
-        color: #0078d7;
-        margin-bottom: 25px;
-    }
+                <h1 class="text-xl font-semibold mb-2 text-slate-900">Thêm chuyến xe mới</h1>
+                <p class="text-sm text-slate-600 mb-4">Nhập thông tin chuyến xe vào hệ thống VinNoBus.</p>
 
-    label {
-        display: block;
-        font-weight: 600;
-        margin-bottom: 5px;
-    }
+                <!-- Hiển thị lỗi -->
+                <c:if test="${not empty errors}">
+                    <div class="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 shadow-soft">
+                        <ul class="list-disc pl-5">
+                            <c:forEach var="err" items="${errors}">
+                                <li>${err}</li>
+                            </c:forEach>
+                        </ul>
+                    </div>
+                </c:if>
 
-    input, select {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 15px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 14px;
-    }
+                <!-- Thông báo thành công -->
+                <c:if test="${not empty success}">
+                    <div class="mb-4 p-3 rounded-xl bg-green-50 border border-green-200 text-green-700 shadow-soft">
+                        ✅ ${success}
+                    </div>
+                </c:if>
 
-    input:focus {
-        outline: none;
-        border-color: #0078d7;
-        box-shadow: 0 0 3px #0078d7;
-    }
+                <form action="TripServlet?action=add" method="post" class="space-y-4">
 
-    .btn {
-        background: #0078d7;
-        color: white;
-        padding: 10px 18px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: 0.25s;
-    }
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Mã tuyến xe</label>
+                        <input type="number" name="routeId" required
+                               value="${param.routeId}"
+                               class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
 
-    .btn:hover {
-        background: #005fa3;
-    }
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Mã xe buýt</label>
+                        <input type="number" name="busId" required
+                               value="${param.busId}"
+                               class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
 
-    .message {
-        background: #e1f5fe;
-        border-left: 4px solid #0078d7;
-        padding: 10px;
-        color: #333;
-        margin-bottom: 10px;
-    }
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Tài xế</label>
+                        <input type="text" name="driverId" placeholder="Nguyễn Văn A" required
+                               value="${param.driverId}"
+                               class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
 
-    .error {
-        background: #ffebee;
-        border-left: 4px solid #d32f2f;
-        padding: 10px;
-        color: #d32f2f;
-        margin-bottom: 10px;
-    }
-</style>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Phụ xe</label>
+                        <input type="text" name="conductorId" placeholder="Nguyễn Văn B" required
+                               value="${param.conductorId}"
+                               class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
 
-<div class="container">
-    <h2>Thêm chuyến xe mới</h2>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Giờ khởi hành</label>
+                        <input type="datetime-local" name="departureTime"
+                               value="${param.departureTime}"
+                               class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
 
-    <!-- Hiển thị lỗi -->
-    <c:if test="${not empty errors}">
-        <div class="error">
-            <ul>
-                <c:forEach var="err" items="${errors}">
-                    <li>${err}</li>
-                    </c:forEach>
-            </ul>
-        </div>
-    </c:if>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Giờ kết thúc</label>
+                        <input type="datetime-local" name="arrivalTime"
+                               value="${param.arrivalTime}"
+                               class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
 
-    <!-- Thông báo thành công -->
-    <c:if test="${not empty success}">
-        <div class="message">${success}</div>
-    </c:if>
+                    <div class="flex justify-between items-center pt-3">
+                        <a href="TripServlet?action=list"
+                           class="px-4 py-2 rounded-xl border border-slate-300 text-sm text-slate-700 hover:bg-slate-100">
+                            ← Quay lại danh sách
+                        </a>
 
-    <form action="TripServlet?action=add" method="post">
+                        <button type="submit"
+                                class="px-4 py-2 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 shadow-soft transition">
+                            Thêm chuyến
+                        </button>
+                    </div>
 
-        <label for="routeId">Mã tuyến xe:</label>
-        <input type="number" id="routeId" name="routeId" required
-               value="<%= request.getParameter("routeId") != null ? request.getParameter("routeId") : "" %>">
-
-        <label for="busId">Mã xe buýt:</label>
-        <input type="number" name="busId" required
-               value="<%= request.getParameter("busId") != null ? request.getParameter("busId") : "" %>">
-
-
-        <label for="driverId">Tài xế xe:</label>
-        <input type="text" name="driverId" placeholder="Nguyễn Văn A"required
-               value="<%= request.getParameter("driverId") != null ? request.getParameter("driverId") : "" %>">
-
-
-        <label for="conductorId">Phụ xe:</label>
-        <input type="text" name="conductorId" placeholder="Nguyễn Văn B"required
-               value="<%= request.getParameter("conductorId") != null ? request.getParameter("conductorId") : "" %>">
-
-
-        <label for="departureTime">Giờ khởi hành:</label>
-        <input type="datetime-local" name="departureTime" 
-               value="<%= request.getParameter("departureTime") != null ? request.getParameter("departureTime") : "" %>">
-
-
-        <label for="arrivalTime">Giờ kết thúc:</label>
-        <input type="datetime-local" name="arrivalTime" 
-               value="<%= request.getParameter("arrivalTime") != null ? request.getParameter("arrivalTime") : "" %>">
-
-
-        <button type="submit" class="btn">Thêm chuyến</button>
-        <a href="TripServlet?action=list" style="margin-left:10px; text-decoration:none; color:#0078d7;">← Quay lại danh sách</a>
-    </form>
-</div>
-
-<%@ include file="footer.jsp" %>
+                </form>
+            </div>
+        </main>
+    </jsp:body>
+</ui:layout>

@@ -1,130 +1,98 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ include file="header.jsp" %>
+<%@ taglib prefix="ui" tagdir="/WEB-INF/tags" %>
 
-<style>
-    body {
-        font-family: 'Segoe UI', Roboto, sans-serif;
-        background: #f4f6f9;
-        padding: 20px;
-    }
+<ui:layout>
+    <jsp:attribute name="title">Chỉnh sửa Chuyến xe • VinNoBus</jsp:attribute>
 
-    .container {
-        max-width: 600px;
-        margin: 0 auto;
-        background: white;
-        border-radius: 10px;
-        padding: 25px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
+    <jsp:body>
+        <main class="min-h-screen bg-brand-50 flex items-center justify-center p-6">
+            <div class="w-full max-w-md bg-white rounded-2xl shadow-soft p-6">
 
-    h2 {
-        text-align: center;
-        color: #0078d7;
-        margin-bottom: 25px;
-    }
+                <h1 class="text-xl font-semibold mb-2 text-slate-900">Chỉnh sửa chuyến xe</h1>
+                <p class="text-sm text-slate-600 mb-4">Cập nhật thông tin chuyến xe trong hệ thống VinNoBus.</p>
 
-    label {
-        display: block;
-        font-weight: 600;
-        margin-bottom: 5px;
-    }
+                <!-- Hiển thị lỗi -->
+                <c:if test="${not empty errors}">
+                    <div class="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 shadow-soft">
+                        <ul class="list-disc pl-5">
+                            <c:forEach var="err" items="${errors}">
+                                <li>${err}</li>
+                            </c:forEach>
+                        </ul>
+                    </div>
+                </c:if>
 
-    input, select {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 15px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 14px;
-    }
+                <form action="TripServlet?action=update" method="post" class="space-y-4">
+                    <input type="hidden" name="tripId" value="${trip.tripId}">
 
-    .btn {
-        background: #0078d7;
-        color: white;
-        padding: 10px 18px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: 0.25s;
-    }
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Mã tuyến</label>
+                        <input type="number" name="routeId" value="${trip.routeId}" required
+                               class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
 
-    .btn:hover {
-        background: #005fa3;
-    }
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Mã xe buýt</label>
+                        <input type="number" name="busId" value="${trip.busId}" required
+                               class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
 
-    .btn-delete {
-        background: #d32f2f;
-        margin-left: 10px;
-    }
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Tài xế</label>
+                        <input type="text" name="driverId" value="${trip.driverId}" placeholder="Nguyễn Văn A" required
+                               class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
 
-    .btn-delete:hover {
-        background: #a31818;
-    }
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Phụ xe</label>
+                        <input type="text" name="conductorId" value="${trip.conductorId}" placeholder="Nguyễn Văn B" required
+                               class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
 
-    .message {
-        background: #e1f5fe;
-        border-left: 4px solid #0078d7;
-        padding: 10px;
-        color: #333;
-        margin-bottom: 10px;
-    }
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Giờ khởi hành</label>
+                        <input type="datetime-local" name="departureTime" value="${trip.departureTime}"
+                               class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
 
-    .error {
-        background: #ffebee;
-        border-left: 4px solid #d32f2f;
-        padding: 10px;
-        color: #d32f2f;
-        margin-bottom: 10px;
-    }
-</style>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Giờ kết thúc</label>
+                        <input type="datetime-local" name="arrivalTime" value="${trip.arrivalTime}"
+                               class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
 
-<div class="container">
-    <h2>Chỉnh sửa chuyến xe</h2>
+                    <div>
+                        <label class="block text-sm font-medium mb-1">Trạng thái</label>
+                        <select name="status" class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                            <option value="NOT_STARTED" ${trip.status eq 'NOT_STARTED' ? 'selected' : ''}>Chưa bắt đầu</option>
+                            <option value="IN_PROGRESS" ${trip.status eq 'IN_PROGRESS' ? 'selected' : ''}>Đang chạy</option>
+                            <option value="COMPLETED" ${trip.status eq 'COMPLETED' ? 'selected' : ''}>Hoàn thành</option>
+                            <option value="CANCELLED" ${trip.status eq 'CANCELLED' ? 'selected' : ''}>Đã hủy</option>
+                        </select>
+                    </div>
 
-    <c:if test="${not empty errors}">
-        <div class="error">
-            <ul>
-                <c:forEach var="err" items="${errors}">
-                    <li>${err}</li>
-                    </c:forEach>
-            </ul>
-        </div>
-    </c:if>
+                    <div class="flex justify-between items-center pt-3">
+                        <a href="TripServlet?action=list"
+                           class="px-4 py-2 rounded-xl border border-slate-300 text-sm text-slate-700 hover:bg-slate-100 transition">
+                            ← Quay lại
+                        </a>
 
-    <form action="TripServlet?action=update" method="post">
-        <input type="hidden" name="tripId" value="${trip.tripId}">
+                        <div class="flex gap-2">
+                            <button type="submit"
+                                    class="px-4 py-2 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 shadow-soft transition">
+                                Cập nhật
+                            </button>
 
-        <label for="routeId">Mã tuyến:</label>
-        <input type="number" name="routeId" value="${trip.routeId}" required>
-
-        <label for="busId">Mã xe buýt:</label>
-        <input type="number" name="busId" value="${trip.busId}" required>
-
-        <label for="driverId">Tài xế xe:</label>
-        <input type="text" name="driverId" value="${trip.driverId}" placeholder="Nguyễn Văn A"required>
-
-        <label for="conductorId">Phụ xe:</label>
-        <input type="text" name="conductorId" value="${trip.conductorId}" placeholder="Nguyễn Văn B"required>
-
-        <label for="departureTime">Giờ khởi hành:</label>
-        <input type="time" name="departureTime" value="${trip.departureTime}" required>
-
-        <label for="arrivalTime">Giờ kết thúc:</label>
-        <input type="time" name="arrivalTime" value="${trip.arrivalTime}" required>
-
-        <label for="status">Trạng thái:</label>
-        <select name="status">
-            <option value="NOT_STARTED" ${trip.status eq 'NOT_STARTED' ? 'selected' : ''}>Chưa bắt đầu</option>
-            <option value="IN_PROGRESS" ${trip.status eq 'IN_PROGRESS' ? 'selected' : ''}>Đang chạy</option>
-            <option value="COMPLETED" ${trip.status eq 'COMPLETED' ? 'selected' : ''}>Hoàn thành</option>
-            <option value="CANCELLED" ${trip.status eq 'CANCELLED' ? 'selected' : ''}>Đã Hủy</option>
-        </select>
-
-        <button type="submit" class="btn">Cập nhật</button>
-        <a href="TripServlet?action=delete&tripId=${trip.tripId}" class="btn btn-delete" onclick="return confirm('Bạn chắc muốn xóa chuyến này?')">Xóa</a>
-        <a href="TripServlet?action=list" style="margin-left:10px; text-decoration:none; color:#0078d7;">← Quay lại</a>
-    </form>
-</div>
-
-<%@ include file="footer.jsp" %>
+                            <a href="TripServlet?action=delete&tripId=${trip.tripId}" 
+                               onclick="return confirm('Bạn chắc muốn xóa chuyến này?')"
+                               class="px-4 py-2 rounded-xl bg-red-600 text-white text-sm font-medium hover:bg-red-700 shadow-soft transition">
+                                Xóa
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </jsp:body>
+</ui:layout>
