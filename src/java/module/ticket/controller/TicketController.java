@@ -79,7 +79,9 @@ public class TicketController extends HttpServlet {
             case "checkin":
                 request.getRequestDispatcher("/view/Ticket/checkin.jsp").forward(request, response);
                 break;
-
+            case "main":
+                showMainMenu(request, response, action);
+                break;
             case "history":
                 try {
                 TicketHistory(request, response);
@@ -133,6 +135,11 @@ public class TicketController extends HttpServlet {
                 request.getRequestDispatcher("/view/Ticket/sell.jsp").forward(request, response);
         }
 
+    }
+
+    private void showMainMenu(HttpServletRequest request, HttpServletResponse response, String jspPath)
+            throws ServletException, IOException {
+        request.getRequestDispatcher("/view/Ticket/main.jsp").forward(request, response);
     }
 
     private void TicketSell(HttpServletRequest request, HttpServletResponse response)
@@ -232,8 +239,6 @@ public class TicketController extends HttpServlet {
         }
 
     }
-
-   
 
     private void TicketCheckin(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

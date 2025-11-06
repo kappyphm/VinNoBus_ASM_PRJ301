@@ -46,7 +46,7 @@
                     🚏 Quản lý Trạm
                 </a>
 
-                <a href="TicketServlet?action=list"
+                <a href="TicketServlet?action=main"
                    class="px-6 py-3 bg-gradient-to-r from-blue-800 to-blue-800 text-white rounded-xl shadow-md font-semibold hover:-translate-y-1 hover:shadow-xl transition">
                     🎫 Quản lý Vé
                 </a>
