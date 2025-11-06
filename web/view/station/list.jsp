@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
+
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -9,6 +10,7 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
               integrity="sha512-p1M+Pq+3tHvJ5cWy7eohF0uUE9uoF7EN0uXY6x2iVQH+MsvZ9A4uwX9xX7d+4+Nq4U9lBLc1oxgvdYgH3Xv1sA=="
               crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdn.tailwindcss.com"></script>
         <style>
             @keyframes fadeSlideUp {
                 from {
