@@ -11,9 +11,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.*;
+import java.util.List;
 import java.util.Optional;
 import module.user.model.dto.UserDetailDTO;
 import module.user.model.entity.User;
+import module.user.service.StaffService;
 import module.user.service.UserService;
 
 /**
@@ -21,29 +23,24 @@ import module.user.service.UserService;
  * @author kappyphm
  */
 @WebServlet(name = "UserServlet", urlPatterns = {
-    "/user/detail", 
-    "/user/update", 
+    "/user/detail",
+    "/user/update",
     "/user/create",
     "/user/detete",
-    
     "/staffs",
     "/staff/detail",
     "/staff/update",
     "/staff/create",
     "/staff/delete",
-    
     "/customers",
     "/customer/detail",
     "/customer/update",
     "/customer/create",
-    "/customer/delete",
-    
-    
-
-})
+    "/customer/delete",})
 public class UserServlet extends HttpServlet {
 
     private final UserService userService = new UserService();
+    private final StaffService staffService = new StaffService();
 
     // <editor-fold defaultstate="collapsed" desc="GET Methods">
     @Override
@@ -55,6 +52,12 @@ public class UserServlet extends HttpServlet {
                 showProfile(req, resp);
             case "/user/update" ->
                 showUpdateProfileForm(req, resp);
+
+            //list view
+            case "/customers" ->
+                showCustomerList(req, resp);
+            case "/staffs" ->
+                showStaffList(req, resp);
             default ->
                 resp.sendError(404, "Page not found" + path);
         }
@@ -93,6 +96,8 @@ public class UserServlet extends HttpServlet {
                 createProfile(req, resp);
             case "/user/update" ->
                 updateProfile(req, resp);
+            case "/user/detele" ->
+                deleteUser(req, resp);
             default ->
                 resp.sendError(404, "Page not found");
         }
@@ -127,6 +132,65 @@ public class UserServlet extends HttpServlet {
         UserDetailDTO userDetail = new UserDetailDTO(userId, active, name, email, phone, avatarUrl, dob, address);
         userService.saveUserDetail(userDetail);
         resp.sendRedirect(req.getContextPath() + "/user/detail");
+    }
+
+    private void deleteUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String userId = req.getParameter("userId");
+
+        userService.deleteUser(userId);
+    }
+
+    private void showCustomerList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String search = req.getParameter("search"); // từ ô tìm kiếm
+        String sort = req.getParameter("sort");     // từ select sắp xếp
+        String pageParam = req.getParameter("page"); // trang hiện tại
+        int currentPage = 1;
+        if (pageParam != null) {
+            try {
+                currentPage = Integer.parseInt(pageParam);
+            } catch (NumberFormatException e) {
+                currentPage = 1;
+            }
+        }
+
+        // Ví dụ: gọi service lấy danh sách nhân viên dựa trên search, sort, currentPage
+        List<UserDetailDTO> users = userService.getUsers(search, sort, currentPage);
+
+        int totalPages = users.size() / 15;
+
+        // Set attributes để JSP dùng
+        req.setAttribute("userDetails", users);
+        req.setAttribute("currentPage", currentPage);
+        req.setAttribute("totalPages", totalPages);
+        req.getRequestDispatcher("/view/user/customer/list.jsp").forward(req, resp);
+    }
+
+    private void showStaffList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        String search = req.getParameter("search"); // từ ô tìm kiếm
+        String sort = req.getParameter("sort");     // từ select sắp xếp
+        String pageParam = req.getParameter("page"); // trang hiện tại
+        int currentPage = 1;
+        if (pageParam != null) {
+            try {
+                currentPage = Integer.parseInt(pageParam);
+            } catch (NumberFormatException e) {
+                currentPage = 1;
+            }
+        }
+
+        // Ví dụ: gọi service lấy danh sách nhân viên dựa trên search, sort, currentPage
+        List<UserDetailDTO> users = userService.getUsers(search, sort, currentPage);
+
+        int totalPages = users.size() / 15;
+
+        // Set attributes để JSP dùng
+        req.setAttribute("userDetails", users);
+        req.setAttribute("currentPage", currentPage);
+        req.setAttribute("totalPages", totalPages);
+
+        req.getRequestDispatcher("/view/user/staff/list.jsp").forward(req, resp);
     }
 
 }
