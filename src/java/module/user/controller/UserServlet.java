@@ -20,7 +20,27 @@ import module.user.service.UserService;
  *
  * @author kappyphm
  */
-@WebServlet(name = "UserServlet", urlPatterns = {"/user/detail", "/user/update", "/user/create"})
+@WebServlet(name = "UserServlet", urlPatterns = {
+    "/user/detail", 
+    "/user/update", 
+    "/user/create",
+    "/user/detete",
+    
+    "/staffs",
+    "/staff/detail",
+    "/staff/update",
+    "/staff/create",
+    "/staff/delete",
+    
+    "/customers",
+    "/customer/detail",
+    "/customer/update",
+    "/customer/create",
+    "/customer/delete",
+    
+    
+
+})
 public class UserServlet extends HttpServlet {
 
     private final UserService userService = new UserService();
