@@ -98,22 +98,15 @@
                                             <th class="py-2 pr-4">Mã tuyến</th>
                                             <th class="py-2 pr-4">Tên tuyến</th>
                                             <th class="py-2 pr-4">Loại tuyến</th>
+                                            <th class="py-2 pr-4">Hành động</th>
                                         </tr>
                                     </thead>
-
                                     <tbody class="divide-y divide-slate-100">
                                         <c:forEach var="r" items="${routes}">
                                             <tr>
                                                 <td class="py-2 pr-4 font-medium">${r.routeId}</td>
                                                 <td class="py-2 pr-4">${r.routeName}</td>
-                                                <td class="py-2 pr-4">${r.type}</td>
-                                                <c:choose>
-                                                    <c:when test="${not empty r.stations}">
-                                                        ${fn:length(r.stations)}
-                                                    </c:when>
-                                                    <c:otherwise>0</c:otherwise>
-                                                </c:choose>
-                                                </td>
+                                                <td class="py-2 pr-4">${r.type}</td>                                              
                                                 <td class="py-2 pr-4">
                                                     <a href="${pageContext.request.contextPath}/RouteServlet?action=details&id=${r.routeId}"
                                                        class="px-3 py-1 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors">
@@ -130,7 +123,7 @@
                     <c:otherwise>
                         <div class="rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-center text-slate-600">
                             Chưa có kết quả. Hãy chọn 2 trạm rồi bấm <strong>Tìm tuyến</strong>.
-                            <div class="mt-3 text-xs text-slate-500">*Controller nên cung cấp thuộc tính <code>routes</code> (List) chứa các tuyến đi qua cả 2 trạm.</div>
+                            <div class="mt-3 text-xs text-slate-500">*Controller nên cung cấp thuộc tính <code>routes</code>.</div>
                         </div>
                     </c:otherwise>
                 </c:choose>
