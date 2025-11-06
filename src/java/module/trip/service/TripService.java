@@ -87,8 +87,8 @@ public class TripService implements ITripService {
     }
 
     @Override
-    public List<Trip> findTrips(String search, String filter, String sort, int page, int pageSize) throws SQLException {
-        return tripDAO.findAllTrips(search, filter, sort, page, pageSize);
+    public List<Trip> findTrips(String search, String filter, String sortCol, String sortDir, int page, int pageSize) throws SQLException {
+        return tripDAO.findAllTrips(search, filter, sortCol, sortDir, page, pageSize);
     }
 
     @Override
