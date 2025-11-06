@@ -1,5 +1,4 @@
 package module.trip.controller;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -40,15 +39,12 @@ public class TripServlet extends HttpServlet {
                     showEditForm(request, response);
                 case "detail" ->
                     showTripDetail(request, response);
-                case "search" ->
-                    searchTrips(request, response);
                 case "list" ->
                     listTrips(request, response);
                 default ->
                     response.sendError(404);
             }
         } catch (ServletException | IOException e) {
-//            response.sendError(500,e.getMessage());
             request.setAttribute("errorMessage", "❌ Lỗi khi xử lý yêu cầu: " + e.getMessage());
             listTrips(request, response);
         }
@@ -89,7 +85,8 @@ public class TripServlet extends HttpServlet {
         try {
             String search = request.getParameter("search");
             String filter = request.getParameter("filter");
-            String sort = request.getParameter("sort");
+            String sortCol = request.getParameter("sortCol");
+            String sortDir = request.getParameter("sortDir");
 
             int page = 1;
             int pageSize = 10;
@@ -100,11 +97,15 @@ public class TripServlet extends HttpServlet {
             } catch (NumberFormatException ignored) {
             }
 
-            List<Trip> trips = tripService.findTrips(search, filter, sort, page, pageSize);
+            List<Trip> trips = tripService.findTrips(search, filter, sortCol, sortDir, page, pageSize);
             int total = tripService.countTrips(search, filter);
 
             request.setAttribute("trips", trips);
             request.setAttribute("total", total);
+
+            request.setAttribute("currentPage", page);
+            request.setAttribute("pageSize", pageSize);
+
             request.getRequestDispatcher("/view/Trip/tripList.jsp").forward(request, response);
 
         } catch (SQLException e) {
@@ -136,7 +137,6 @@ public class TripServlet extends HttpServlet {
 
         List<String> errors = new ArrayList<>();
 
-        String tripIdStr = request.getParameter("tripId");
         String routeIdStr = request.getParameter("routeId");
         String busIdStr = request.getParameter("busId");
         String driverId = request.getParameter("driverId");
@@ -147,7 +147,6 @@ public class TripServlet extends HttpServlet {
         int tripId = 0, routeId = 0, busId = 0;
         Timestamp departureTime = null, arrivalTime = null;
 
-        // Validation dữ liệu nhập
         try {
             routeId = Integer.parseInt(routeIdStr);
             if (routeId <= 0) {
@@ -165,27 +164,28 @@ public class TripServlet extends HttpServlet {
         } catch (NumberFormatException e) {
             errors.add("Mã xe buýt không hợp lệ, vui lòng nhập số.");
         }
+        String idRegex = "^[a-zA-Z0-9]+$";
 
-        // Kiểm tra tên tài xế
         if (driverId == null || driverId.trim().isBlank()) {
             errors.add("Mã tài xế không được để trống.");
+        } else if (!driverId.trim().matches(idRegex)) {
+            errors.add("Mã tài xế chỉ được chứa chữ cái và số, không chứa ký tự đặc biệt hoặc dấu cách.");
         }
-// Kiểm tra tên phụ xe
+
         if (conductorId == null || conductorId.trim().isBlank()) {
             errors.add("Mã phụ xe không được để trống.");
+        } else if (!conductorId.trim().matches(idRegex)) {
+            errors.add("Mã phụ xe chỉ được chứa chữ cái và số, không chứa ký tự đặc biệt hoặc dấu cách.");
         }
-        try {
 
+        try {
             if (departureStr == null || departureStr.isEmpty() || arrivalStr == null || arrivalStr.isEmpty()) {
                 errors.add("Giờ khởi hành và kết thúc không được để trống.");
             } else {
-
                 String departureSQL = departureStr.replace("T", " ") + ":00";
                 String arrivalSQL = arrivalStr.replace("T", " ") + ":00";
-
                 departureTime = Timestamp.valueOf(departureSQL);
                 arrivalTime = Timestamp.valueOf(arrivalSQL);
-
                 if (departureTime.after(arrivalTime)) {
                     errors.add("Giờ khởi hành phải trước giờ kết thúc.");
                 }
@@ -193,11 +193,8 @@ public class TripServlet extends HttpServlet {
         } catch (IllegalArgumentException e) {
             errors.add("Định dạng ngày giờ không hợp lệ.");
         }
-
-        // Nếu có lỗi → trả về form cùng dữ liệu cũ
         if (!errors.isEmpty()) {
             request.setAttribute("errors", errors);
-            request.setAttribute("tripId", tripIdStr);
             request.setAttribute("routeId", routeIdStr);
             request.setAttribute("busId", busIdStr);
             request.setAttribute("driverId", driverId);
@@ -207,32 +204,40 @@ public class TripServlet extends HttpServlet {
             request.getRequestDispatcher("/view/Trip/tripForm.jsp").forward(request, response);
             return;
         }
-
         Trip trip = new Trip(
                 tripId,
                 routeId,
                 busId,
-                driverId,
-                conductorId,
+                driverId.trim(), 
+                conductorId.trim(), 
                 departureTime,
                 arrivalTime,
                 "NOT_STARTED"
         );
-
         try {
             if (tripService.insertTrip(trip)) {
                 request.setAttribute("success", "✅ Thêm chuyến xe thành công!");
-                listTrips(request, response);
-                return;
+                request.getRequestDispatcher("/view/Trip/tripForm.jsp").forward(request, response);
             } else {
                 errors.add("❌ Không thể thêm chuyến xe. Có thể trùng dữ liệu.");
                 request.setAttribute("errors", errors);
-
+                request.setAttribute("routeId", routeIdStr);
+                request.setAttribute("busId", busIdStr);
+                request.setAttribute("driverId", driverId);
+                request.setAttribute("conductorId", conductorId);
+                request.setAttribute("departureTime", departureStr);
+                request.setAttribute("arrivalTime", arrivalStr);
                 request.getRequestDispatcher("/view/Trip/tripForm.jsp").forward(request, response);
             }
         } catch (SQLException e) {
             errors.add("Lỗi cơ sở dữ liệu: " + e.getMessage());
             request.setAttribute("errors", errors);
+            request.setAttribute("routeId", routeIdStr);
+            request.setAttribute("busId", busIdStr);
+            request.setAttribute("driverId", driverId);
+            request.setAttribute("conductorId", conductorId);
+            request.setAttribute("departureTime", departureStr);
+            request.setAttribute("arrivalTime", arrivalStr);
             request.getRequestDispatcher("/view/Trip/tripForm.jsp").forward(request, response);
         }
     }
@@ -251,7 +256,7 @@ public class TripServlet extends HttpServlet {
             Timestamp departureTime = Timestamp.valueOf(departureStr);
             Timestamp arrivalTime = Timestamp.valueOf(arrivalStr);
             String status = request.getParameter("status");
-            
+
             Trip updatedTrip = new Trip(
                     tripId, routeId, busId, driverId, conductorId, departureTime, arrivalTime, status
             );
@@ -259,7 +264,8 @@ public class TripServlet extends HttpServlet {
             boolean success = tripService.updateTrip(updatedTrip);
             if (success) {
                 request.setAttribute("success", "✅ Cập nhật chuyến xe thành công!");
-                listTrips(request, response);
+                request.setAttribute("trip", updatedTrip); 
+                request.getRequestDispatcher("/view/Trip/tripEditForm.jsp").forward(request, response);
                 return;
             } else {
                 errors.add("❌ Không thể cập nhật chuyến xe. Kiểm tra lại dữ liệu.");
