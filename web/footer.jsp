@@ -5,6 +5,8 @@
 --%>
 <%@ page contentType="text/html; charset=UTF-8" %>
 
+
+
 <footer class="bg-white border-t border-slate-200 mt-10">
     <div class="max-w-5xl mx-auto px-5 py-8 grid md:grid-cols-3 gap-6">
         <div>
@@ -31,3 +33,5 @@
         © 2025 VinNoBus - Designed by Ngô Quang Huy, Phạm Gia Khánh, Nguyễn Thị Thắm, Đinh Thị Thu Trang, Nguyễn Bá Quang Minh
     </div>
 </footer>
+</body>
+</html>

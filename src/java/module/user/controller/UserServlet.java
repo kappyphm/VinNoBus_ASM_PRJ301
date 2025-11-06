@@ -20,7 +20,7 @@ import module.user.service.UserService;
  *
  * @author kappyphm
  */
-@WebServlet(name = "UserServlet", urlPatterns = {"/user", "/user/detail", "/user/update", "/user/create"})
+@WebServlet(name = "UserServlet", urlPatterns = {"/user/detail", "/user/update", "/user/create"})
 public class UserServlet extends HttpServlet {
 
     private final UserService userService = new UserService();
@@ -30,6 +30,7 @@ public class UserServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getServletPath();
         switch (path) {
+
             case "/user/detail" ->
                 showProfile(req, resp);
             case "/user/update" ->
@@ -67,6 +68,7 @@ public class UserServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getServletPath();
         switch (path) {
+
             case "/user/create" ->
                 createProfile(req, resp);
             case "/user/update" ->
@@ -106,4 +108,5 @@ public class UserServlet extends HttpServlet {
         userService.saveUserDetail(userDetail);
         resp.sendRedirect(req.getContextPath() + "/user/detail");
     }
+
 }

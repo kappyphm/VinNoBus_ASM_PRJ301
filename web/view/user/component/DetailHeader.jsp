@@ -6,7 +6,7 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
 
 <c:choose>
     <c:when test="${action == 'create'}">

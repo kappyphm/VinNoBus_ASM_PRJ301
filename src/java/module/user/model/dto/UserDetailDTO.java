@@ -21,8 +21,9 @@ public class UserDetailDTO {
     private String avatarUrl;
     private Date dob;
     private String address;
-    
-    
+
+    private StaffDTO staff;
+    private CustomerDTO customer;
 
     public UserDetailDTO() {
     }
@@ -36,6 +37,22 @@ public class UserDetailDTO {
         this.avatarUrl = avatarUrl;
         this.dob = dob;
         this.address = address;
+    }
+
+    public StaffDTO getStaff() {
+        return staff;
+    }
+
+    public void setStaff(StaffDTO staff) {
+        this.staff = staff;
+    }
+
+    public CustomerDTO getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(CustomerDTO customer) {
+        this.customer = customer;
     }
 
     public String getUserId() {

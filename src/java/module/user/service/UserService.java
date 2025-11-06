@@ -13,9 +13,12 @@ import module.user.dao.CustomerDAO;
 import module.user.dao.ProfileDAO;
 import module.user.dao.StaffDAO;
 import module.user.dao.UserDAO;
+import module.user.model.dto.CustomerDTO;
+import module.user.model.dto.StaffDTO;
 import module.user.model.dto.UserDetailDTO;
 import module.user.model.entity.Customer;
 import module.user.model.entity.Profile;
+import module.user.model.entity.Staff;
 import module.user.model.entity.User;
 
 /**
@@ -50,6 +53,26 @@ public class UserService extends BaseService {
             userDetail.setAvatarUrl(profile.get().getAvatarUrl());
             userDetail.setAddress(profile.get().getAddress());
             userDetail.setDob(profile.get().getDob());
+
+            Optional<Staff> staff = staffDao.findById(userId);
+
+            if (staff.isPresent()) {
+                Staff st = staff.get();
+                StaffDTO staffDto = new StaffDTO(st.getStaffCode(), st.getPosition(), st.getDepartment());
+                userDetail.setStaff(staffDto);
+            }
+
+            Optional<Customer> customer = customerDao.findById(userId);
+            if (customer.isPresent()) {
+                Customer cs = customer.get();
+                CustomerDTO customerDto = new CustomerDTO(cs.getMembershipLevel(), cs.getLoyaltyPoints());
+                userDetail.setCustomer(customerDto);
+            } else {
+
+                customerDao.insert(new Customer(userId, "STANDARD", 0));
+                userDetail.setCustomer(new CustomerDTO("STANDARD", 0));
+
+            }
 
             return Optional.of(userDetail);
         } catch (SQLException e) {
