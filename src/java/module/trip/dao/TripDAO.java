@@ -75,26 +75,76 @@ public class TripDAO extends DBContext implements ITripDAO {
         return list;
     }
 
+    private void addDefaultSearch(StringBuilder sql, List<Object> params, String searchKey) {
+        try {
+            int id = Integer.parseInt(searchKey);
+            sql.append("AND (trip_id = ? OR status LIKE ?) ");
+            params.add(id);
+            params.add("%" + searchKey + "%");
+        } catch (NumberFormatException e) {
+            sql.append("AND status LIKE ? ");
+            params.add("%" + searchKey + "%");
+        }
+    }
+
     @Override
-    public List<Trip> findAllTrips(String search, String filter, String sort, int page, int pageSize) throws SQLException {
+    public List<Trip> findAllTrips(String search, String filter, String sortCol, String sortDir, int page, int pageSize) throws SQLException {
         StringBuilder sql = new StringBuilder("SELECT * FROM Trip WHERE 1=1 ");
         List<Object> params = new ArrayList<>();
-
         if (search != null && !search.trim().isEmpty()) {
-            sql.append("AND (status LIKE ? OR CAST(trip_id AS NVARCHAR) LIKE ?) ");
-            params.add("%" + search + "%");
-            params.add("%" + search + "%");
+            String searchKey = search.trim();
+            String columnToSearch = "";
+
+            if (filter != null && !filter.trim().isEmpty()) {
+                switch (filter) {
+                    case "tripId": columnToSearch = "trip_id"; break;
+                    case "busId": columnToSearch = "bus_id"; break;
+                    case "routeId": columnToSearch = "route_id"; break;
+                    case "driverId": columnToSearch = "driver_id"; break;
+                    case "conductorId": columnToSearch = "conductor_id"; break;
+                    case "status": columnToSearch = "status"; break;
+                    default:
+                        addDefaultSearch(sql, params, searchKey);
+                        break;
+                }
+            } else {
+                addDefaultSearch(sql, params, searchKey);
+            }
+
+            if (columnToSearch.equals("trip_id") || columnToSearch.equals("bus_id") || columnToSearch.equals("route_id")) {
+                try {
+                    int id = Integer.parseInt(searchKey);
+                    sql.append("AND ").append(columnToSearch).append(" = ? ");
+                    params.add(id);
+                } catch (NumberFormatException e) {
+                    return new ArrayList<>(); 
+                }
+            } else if (columnToSearch.equals("driver_id") || columnToSearch.equals("conductor_id") || columnToSearch.equals("status")) {
+                sql.append("AND ").append(columnToSearch).append(" LIKE ? ");
+                params.add("%" + searchKey + "%");
+            }
+        }
+        String sortColumn = "trip_id"; 
+        if (sortCol != null && !sortCol.trim().isEmpty()) {
+            switch (sortCol) {
+                case "status":
+                case "departure_time":
+                case "arrival_time":
+                case "bus_id":
+                case "route_id":
+                case "driver_id":
+                case "conductor_id":
+                    sortColumn = sortCol;
+                    break;
+            }
         }
 
-        if (filter != null && !filter.trim().isEmpty()) {
-            sql.append("AND status = ? ");
-            params.add(filter);
+        String sortDirection = "ASC";
+        if (sortDir != null && "desc".equalsIgnoreCase(sortDir.trim())) {
+            sortDirection = "DESC";
         }
 
-        if (sort == null || sort.isEmpty()) {
-            sort = "trip_id ASC";
-        }
-        sql.append("ORDER BY ").append(sort).append(" ");
+        sql.append("ORDER BY ").append(sortColumn).append(" ").append(sortDirection).append(" ");
 
         sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
         params.add((page - 1) * pageSize);
@@ -125,19 +175,47 @@ public class TripDAO extends DBContext implements ITripDAO {
         List<Object> params = new ArrayList<>();
 
         if (search != null && !search.trim().isEmpty()) {
-            sql.append("AND (status LIKE ? OR CAST(trip_id AS NVARCHAR) LIKE ?) ");
-            params.add("%" + search + "%");
-            params.add("%" + search + "%");
-        }
+            String searchKey = search.trim();
+            String columnToSearch = "";
 
-        if (filter != null && !filter.trim().isEmpty()) {
-            sql.append("AND status = ? ");
-            params.add(filter);
+            if (filter != null && !filter.trim().isEmpty()) {
+                switch (filter) {
+                    case "tripId": columnToSearch = "trip_id"; break;
+                    case "busId": columnToSearch = "bus_id"; break;
+                    case "routeId": columnToSearch = "route_id"; break;
+                    case "driverId": columnToSearch = "driver_id"; break;
+                    case "conductorId": columnToSearch = "conductor_id"; break;
+                    case "status": columnToSearch = "status"; break;
+                    default:
+                        addDefaultSearch(sql, params, searchKey);
+                        break;
+                }
+            } else {
+                addDefaultSearch(sql, params, searchKey);
+            }
+
+            if (columnToSearch.equals("trip_id") || columnToSearch.equals("bus_id") || columnToSearch.equals("route_id")) {
+                try {
+                    int id = Integer.parseInt(searchKey);
+                    sql.append("AND ").append(columnToSearch).append(" = ? ");
+                    params.add(id);
+                } catch (NumberFormatException e) {
+                    return 0; 
+                }
+            } else if (columnToSearch.equals("driver_id") || columnToSearch.equals("conductor_id") || columnToSearch.equals("status")) {
+                sql.append("AND ").append(columnToSearch).append(" LIKE ? ");
+                params.add("%" + searchKey + "%");
+            }
         }
 
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             for (int i = 0; i < params.size(); i++) {
-                ps.setString(i + 1, (String) params.get(i));
+                Object p = params.get(i);
+                if (p instanceof String) {
+                    ps.setString(i + 1, (String) p);
+                } else if (p instanceof Integer) {
+                    ps.setInt(i + 1, (Integer) p);
+                }
             }
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
