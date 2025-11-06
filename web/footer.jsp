@@ -1,143 +1,68 @@
-<%-- 
-    Document   : footer
-    Created on : Oct 16, 2025, 3:43:12 PM
-    Author     : Admin
---%>
 <%@ page contentType="text/html; charset=UTF-8" %>
 
-<!-- Footer -->
-<footer class="footer">
-    <div class="footer-container">
-        <div class="footer-left">
-            <h3>Bus Management System</h3>
-            <p>Hệ thống quản lý tuyến xe thông minh và chuyên nghiệp</p>
+<footer class="bg-gradient-to-br from-[#0d2b66] to-[#005fa3] text-white
+        px-6 py-10 md:py-12 font-sans overflow-hidden animate-fadeUp">
+
+    <!-- Container -->
+    <div class="max-w-6xl mx-auto flex flex-wrap justify-between gap-10">
+
+        <!-- Left -->
+        <div class="flex-1 min-w-[250px]">
+            <h3 class="text-2xl font-semibold mb-2 tracking-wide">
+                Bus Management System
+            </h3>
+            <p class="text-[#d1d9ff] text-sm leading-relaxed">
+                Hệ thống quản lý tuyến xe thông minh và chuyên nghiệp
+            </p>
         </div>
-        <div class="footer-center">
-            <h4>Liên hệ</h4>
-            <p>📍 123 Đường ABC, TP.HCM</p>
-            <p>✉️ support@busmanagement.com</p>
-            <p>📞 +84 123 456 789</p>
+
+        <!-- Center -->
+        <div class="flex-1 min-w-[250px]">
+            <h4 class="text-lg font-semibold text-[#ffdd57] mb-2">Liên hệ</h4>
+            <p class="text-[#d1d9ff] text-sm mb-1">📍 123 Đường ABC, TP.HCM</p>
+            <p class="text-[#d1d9ff] text-sm mb-1">✉️ support@busmanagement.com</p>
+            <p class="text-[#d1d9ff] text-sm">📞 +84 123 456 789</p>
         </div>
-        <div class="footer-right">
-            <h4>Theo dõi chúng tôi</h4>
-            <div class="social-icons">
-                <a href="#" class="social-icon">🌐</a>
-                <a href="#" class="social-icon">🐦</a>
-                <a href="#" class="social-icon">📘</a>
-                <a href="#" class="social-icon">💼</a>
+
+        <!-- Right -->
+        <div class="flex-1 min-w-[250px]">
+            <h4 class="text-lg font-semibold text-[#ffdd57] mb-3">Theo dõi chúng tôi</h4>
+
+            <div class="flex gap-3 mt-1">
+                <a class="w-9 h-9 rounded-full flex items-center justify-center
+                   bg-white/20 text-white text-lg transition
+                   hover:bg-[#ffdd57] hover:text-[#0d2b66]
+                   hover:-translate-y-1 hover:scale-110 shadow-md">
+                    🌐
+                </a>
+
+                <a class="w-9 h-9 rounded-full flex items-center justify-center
+                   bg-white/20 text-white text-lg transition
+                   hover:bg-[#ffdd57] hover:text-[#0d2b66]
+                   hover:-translate-y-1 hover:scale-110 shadow-md">
+                    🐦
+                </a>
+
+                <a class="w-9 h-9 rounded-full flex items-center justify-center
+                   bg-white/20 text-white text-lg transition
+                   hover:bg-[#ffdd57] hover:text-[#0d2b66]
+                   hover:-translate-y-1 hover:scale-110 shadow-md">
+                    📘
+                </a>
+
+                <a class="w-9 h-9 rounded-full flex items-center justify-center
+                   bg-white/20 text-white text-lg transition
+                   hover:bg-[#ffdd57] hover:text-[#0d2b66]
+                   hover:-translate-y-1 hover:scale-110 shadow-md">
+                    💼
+                </a>
             </div>
         </div>
     </div>
-    <div class="footer-bottom">
-        © 2025 Bus Management System - Designed by Ngô Quang Huy, Phạm Gia Khánh, Nguyễn Thị Thắm, Đinh Thị Thu Trang, Nguyễn Bá Quang Minh
+
+    <!-- Footer Bottom -->
+    <div class="text-center text-[#cfd8ff] text-xs mt-8 border-t border-white/20 pt-3">
+        © 2025 Bus Management System - Designed by Ngô Quang Huy, Phạm Gia Khánh,
+        Nguyễn Thị Thắm, Đinh Thị Thu Trang, Nguyễn Bá Quang Minh
     </div>
 </footer>
-
-<style>
-    /* ===== Footer Global ===== */
-    .footer {
-        background: linear-gradient(135deg, #0d2b66, #005fa3);
-        color: #fff;
-        padding: 40px 20px 20px;
-        font-family: 'Segoe UI', sans-serif;
-        position: relative;
-        overflow: hidden;
-        animation: fadeInUp 1s ease forwards;
-    }
-
-    .footer-container {
-        display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 30px;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-
-    .footer h3 {
-        margin-bottom: 10px;
-        font-size: 22px;
-        letter-spacing: 1px;
-    }
-
-    .footer h4 {
-        margin-bottom: 10px;
-        font-size: 18px;
-        color: #ffdd57;
-    }
-
-    .footer p {
-        margin-bottom: 8px;
-        font-size: 14px;
-        color: #d1d9ff;
-        line-height: 1.5;
-    }
-
-    /* Social icons */
-    .social-icons {
-        display: flex;
-        gap: 12px;
-        margin-top: 5px;
-    }
-
-    .social-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
-        height: 36px;
-        background: rgba(255,255,255,0.15);
-        border-radius: 50%;
-        color: white;
-        font-size: 18px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-    }
-
-    .social-icon:hover {
-        background: #ffdd57;
-        color: #0d2b66;
-        transform: translateY(-3px) scale(1.1);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-
-    /* Footer bottom */
-    .footer-bottom {
-        text-align: center;
-        margin-top: 30px;
-        font-size: 13px;
-        color: #cfd8ff;
-        border-top: 1px solid rgba(255,255,255,0.2);
-        padding-top: 15px;
-    }
-
-    /* ===== Animations ===== */
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    /* ===== Responsive ===== */
-    @media (max-width: 768px) {
-        .footer-container {
-            flex-direction: column;
-            text-align: center;
-            gap: 20px;
-        }
-
-        .footer-right, .footer-center, .footer-left {
-            width: 100%;
-        }
-
-        .social-icons {
-            justify-content: center;
-        }
-    }
-</style>
-
