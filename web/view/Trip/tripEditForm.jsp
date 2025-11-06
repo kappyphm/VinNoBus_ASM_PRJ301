@@ -3,138 +3,111 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ include file="/header.jsp" %>
 
-<style>
-    body {
-        font-family: 'Segoe UI', Roboto, sans-serif;
-        background: #f4f6f9;
-        padding: 20px;
-    }
+<script src="https://cdn.tailwindcss.com"></script>
 
-    .container {
-        max-width: 600px;
-        margin: 0 auto;
-        background: white;
-        border-radius: 10px;
-        padding: 25px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
+<body class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-100 font-['Segoe_UI'] p-6">
 
-    h2 {
-        text-align: center;
-        color: #0078d7;
-        margin-bottom: 25px;
-    }
+    <div class="max-w-2xl mx-auto bg-white/90 backdrop-blur-sm rounded-2xl shadow-md p-8 mt-10">
+        
+        <h2 class="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            Chỉnh sửa chuyến xe 
+        </h2>
 
-    label {
-        display: block;
-        font-weight: 600;
-        margin-bottom: 5px;
-    }
+        <c:if test="${not empty success}">
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md mb-6" role="alert">
+                <p class="font-bold">${success}</p>
+            </div>
+        </c:if>
 
-    input, select {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 15px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 14px;
-    }
-
-    .btn {
-        background: #0078d7;
-        color: white;
-        padding: 10px 18px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        transition: 0.25s;
-    }
-
-    .btn:hover {
-        background: #005fa3;
-    }
-
-    .btn-delete {
-        background: #d32f2f;
-        margin-left: 10px;
-    }
-
-    .btn-delete:hover {
-        background: #a31818;
-    }
-
-    .message {
-        background: #e1f5fe;
-        border-left: 4px solid #0078d7;
-        padding: 10px;
-        color: #333;
-        margin-bottom: 10px;
-    }
-
-    .error {
-        background: #ffebee;
-        border-left: 4px solid #d32f2f;
-        padding: 10px;
-        color: #d32f2f;
-        margin-bottom: 10px;
-    }
-</style>
-
-<div class="container">
-    <h2>Chỉnh sửa chuyến xe</h2>
-
-    <!-- Hiển thị lỗi nếu có -->
-    <c:if test="${not empty errors}">
-        <div class="error">
-            <ul>
-                <c:forEach var="err" items="${errors}">
-                    <li>${err}</li>
+        <c:if test="${not empty errors}">
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-6" role="alert">
+                <p class="font-bold">Đã xảy ra lỗi:</p>
+                <ul class="list-disc list-inside ml-2">
+                    <c:forEach var="err" items="${errors}">
+                        <li>${err}</li>
                     </c:forEach>
-            </ul>
+                </ul>
+            </div>
+        </c:if>
+
+        <form action="TripServlet?action=update" method="post">
+            <input type="hidden" name="tripId" value="${trip.tripId}" />
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
+                <div>
+                    <label for="routeId" class="block mb-2 text-sm font-medium text-gray-900">Mã tuyến xe:</label>
+                    <input type="number" id="routeId" name="routeId" value="${trip.routeId}" required
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+                </div>
+                <div>
+                    <label for="busId" class="block mb-2 text-sm font-medium text-gray-900">Mã xe buýt:</label>
+                    <input type="number" id="busId" name="busId" value="${trip.busId}" required
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+                </div>
+            </div>
+
+            <div class="mb-5">
+                <label for="driverId" class="block mb-2 text-sm font-medium text-gray-900">Mã tài xế:</label>
+                <input type="text" id="driverId" name="driverId" value="${trip.driverId}" required
+                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+            </div>
+
+            <div class="mb-5">
+                <label for="conductorId" class="block mb-2 text-sm font-medium text-gray-900">Mã phụ xe:</label>
+                <input type="text" id="conductorId" name="conductorId" value="${trip.conductorId}" required
+                       class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label for="departureTime" class="block mb-2 text-sm font-medium text-gray-900">Giờ khởi hành:</label>
+                    <input type="datetime-local" id="departureTime" name="departureTime" required
+                           value="<fmt:formatDate value='${trip.departureTime}' pattern='yyyy-MM-dd\'T\'HH:mm'/>"
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+                </div>
+                <div>
+                    <label for="arrivalTime" class="block mb-2 text-sm font-medium text-gray-900">Giờ kết thúc:</label>
+                    <input type="datetime-local" id="arrivalTime" name="arrivalTime" required
+                           value="<fmt:formatDate value='${trip.arrivalTime}' pattern='yyyy-MM-dd\'T\'HH:mm'/>"
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <label for="status" class="block mb-2 text-sm font-medium text-gray-900">Trạng thái:</label>
+                <select id="status" name="status"
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5">
+                    <option value="NOT_STARTED" <c:if test="${trip.status eq 'NOT_STARTED'}">selected</c:if>>Chưa bắt đầu</option>
+                    <option value="IN_PROCESS"  <c:if test="${trip.status eq 'IN_PROCESS'}">selected</c:if>>Đang chạy</option>
+                    <option value="FINISHED"    <c:if test="${trip.status eq 'FINISHED'}">selected</c:if>>Hoàn thành</option>
+                    <option value="CANCELLED"   <c:if test="${trip.status eq 'CANCELLED'}">selected</c:if>>Đã hủy</option>
+                </select>
+            </div>
+            
+            <div class="flex items-center justify-between">
+                <button type="submit"
+                        class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white px-6 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105">
+                    💾 Cập nhật
+                </button>
+                <a href="TripServlet?action=list" class="text-sm font-medium text-indigo-600 hover:underline">
+                    ← Quay lại danh sách
+                </a>
+            </div>
+        </form>
+        
+        <div class="mt-6 border-t pt-6">
+             <form action="TripServlet" method="post" 
+                   onsubmit="return confirm('Bạn có chắc muốn xóa chuyến xe này không? Hành động này không thể hoàn tác.')">
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="tripId" value="${trip.tripId}">
+                <button type="submit"
+                        class="w-full bg-red-600 text-white px-6 py-2.5 rounded-lg shadow-md hover:bg-red-700 transition-all duration-200">
+                    ❌ Xóa chuyến xe này
+                </button>
+            </form>
         </div>
-    </c:if>
 
-    <form action="TripServlet?action=update" method="post">
-        <input type="hidden" name="tripId" value="${trip.tripId}" />
+    </div>
 
-        <label for="routeId">Mã tuyến:</label>
-        <input type="number" name="routeId" value="${trip.routeId}" required />
-
-        <label for="busId">Mã xe buýt:</label>
-        <input type="number" name="busId" value="${trip.busId}" required />
-
-        <label for="driverId">Tài xế xe:</label>
-        <input type="text" name="driverId" value="${trip.driverId}" placeholder="Nguyễn Văn A" required />
-
-        <label for="conductorId">Phụ xe:</label>
-        <input type="text" name="conductorId" value="${trip.conductorId}" placeholder="Nguyễn Văn B" required />
-
-        <label for="departureTime">Giờ khởi hành:</label>
-        <input type="datetime-local" name="departureTime"
-               value="<fmt:formatDate value='${trip.departureTime}' pattern='yyyy-MM-dd\'T\'HH:mm'/>"
-               required />
-
-        <label for="arrivalTime">Giờ kết thúc:</label>
-        <input type="datetime-local" name="arrivalTime"
-               value="<fmt:formatDate value='${trip.arrivalTime}' pattern='yyyy-MM-dd\'T\'HH:mm'/>"
-               required />
-
-
-        <label for="status">Trạng thái:</label>
-        <select name="status">
-            <option value="NOT_STARTED" <c:if test="${trip.status eq 'NOT_STARTED'}">selected</c:if>>Chưa bắt đầu</option>
-            <option value="IN_PROGRESS" <c:if test="${trip.status eq 'IN_PROGRESS'}">selected</c:if>>Đang chạy</option>
-            <option value="COMPLETED" <c:if test="${trip.status eq 'COMPLETED'}">selected</c:if>>Hoàn thành</option>
-            <option value="CANCELLED" <c:if test="${trip.status eq 'CANCELLED'}">selected</c:if>>Đã hủy</option>
-            </select>
-
-            <button type="submit" class="btn">Cập nhật</button>
-            <a href="TripServlet?action=delete&tripId=${trip.tripId}"
-           class="btn btn-delete"
-           onclick="return confirm('Bạn chắc muốn xóa chuyến này?');">Xóa</a>
-
-        <a href="TripServlet?action=list" style="margin-left:10px; text-decoration:none; color:#0078d7;">← Quay lại</a>
-    </form>
-</div>
-
+</body>
 <%@ include file="/footer.jsp" %>
