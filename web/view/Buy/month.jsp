@@ -1,5 +1,16 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="java.util.*, module.ticket.dao.TicketDAO" %>
+<%@ page import="java.util.*, module.ticket.dao.TicketDAO" %>
+<%
+    // Chỉ load danh sách tuyến khi chưa tính tiền
+    List<Map<String, Object>> routes = null;
+    if (request.getParameter("action") == null) {
+        TicketDAO dao = new TicketDAO();
+        routes = dao.getAllRoutes();
+        request.setAttribute("routes", routes);
+    }
+%>
 <!DOCTYPE html>
 <html lang="vi">
     <head>
@@ -33,15 +44,7 @@
 
     <body class="bg-brand-50 min-h-screen text-slate-800">
         <!-- Header -->
-        <header class="border-b border-slate-200 bg-white shadow-soft">
-            <div class="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
-                <a href="/home.jsp" class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-xl bg-brand-600 text-white grid place-items-center font-semibold">V</div>
-                    <span class="font-semibold">VinNoBus</span>
-                </a>
-                <!--<a href="/routes/search" class="text-sm text-brand-700 hover:underline">Tìm tuyến xe</a>-->
-            </div>
-        </header>
+        <jsp:include page="/WEB-INF/components/header.jsp" />
 
         <!-- Main -->
         <main class="max-w-lg mx-auto p-6 mt-10 bg-white rounded-2xl shadow-soft">
@@ -49,7 +52,7 @@
 
             <!-- Form tính tiền -->
             <form action="${pageContext.request.contextPath}/buy" method="post" class="space-y-4">
-                <input type="hidden" name="action" value="calcMonth" />
+                <input type="hidden" name="action" value="calcMonth"/>
 
                 <div>
                     <label class="block text-sm font-medium mb-1">ID khách hàng</label>
@@ -58,31 +61,37 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium mb-1">Tuyến bus</label>
+                    <label class="block text-sm font-medium mb-1">Tuyến (vé ngày/tháng)</label>
                     <select name="routeId" required
-                            class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white">
-                        <option value="1">Tuyến 1: Thanh Miện - Hải Dương</option>
-                        <option value="2">Tuyến 2: Hải Dương - Hà Nội</option>
-                        <option value="3">Tuyến 3: Hải Dương - Bắc Ninh</option>
+                            class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-300 focus:border-brand-500">
+                        <option value="">-- Chọn tuyến --</option>
+                        <c:forEach var="r" items="${routes}">
+                            <option value="${r.route_id}">Tuyến ${r.route_id}: ${r.route_name}</option>
+                        </c:forEach>
                     </select>
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-1">Ngân hàng</label>
-                    <input type="text" name="bank" placeholder="Ví dụ: MB"
-                           class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white" required />
+                    <input type="text" name="bank" value="MB Bank" readonly
+                           class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-gray-100 text-gray-700 cursor-not-allowed" />
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-1">Số tài khoản</label>
-                    <input type="text" name="stk" placeholder="Nhập STK của bạn"
-                           class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-white" required />
+                    <input type="text" name="stk" value="0965047076" readonly
+                           class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-gray-100 text-gray-700 cursor-not-allowed" />
                 </div>
+
 
                 <button type="submit"
                         class="w-full py-3 bg-brand-600 text-white rounded-xl font-semibold hover:bg-brand-700 transition">
                     Tính tiền
                 </button>
+                           <a href="${pageContext.request.contextPath}/view/Buy/ticket.jsp"
+                   class="block w-full text-center bg-slate-400 hover:bg-slate-500 text-white py-2.5 rounded-xl font-medium transition-all shadow-soft">
+                    ⬅️ Quay Lại
+                </a>
             </form>
 
             <!-- Hóa đơn -->

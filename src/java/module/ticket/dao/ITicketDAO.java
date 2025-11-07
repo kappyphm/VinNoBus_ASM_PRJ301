@@ -14,5 +14,6 @@ import java.util.List;
 public interface ITicketDAO {
     boolean insertTicket(Ticket ticket) throws SQLException;
     List<Ticket> findAll() throws SQLException;
-    
+    Ticket findMonthlyTicket(String customerId, int routeId)throws SQLException;
+    Ticket findTicketById(String ticketId) throws SQLException;
 }

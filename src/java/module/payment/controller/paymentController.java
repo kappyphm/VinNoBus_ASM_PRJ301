@@ -16,8 +16,6 @@ import java.util.Date;
 import module.ticket.dao.TicketDAO;
 import module.ticket.model.Ticket;
 
-import org.apache.catalina.User;
-
 /**
  *
  * @author Tham
@@ -79,11 +77,11 @@ public class paymentController extends HttpServlet {
 
             case "buyMonth":
                 buyMonth(request, response);
-                request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
                 break;
             case "calcMonth":
                 calcMonth(request, response);
-                request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
                 break;
 
             default:
@@ -120,11 +118,11 @@ public class paymentController extends HttpServlet {
 
             case "buyMonth":
                 buyMonth(request, response);
-                request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
                 break;
             case "calcMonth":
                 calcMonth(request, response);
-                request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
                 break;
 
             default:
@@ -172,22 +170,13 @@ public class paymentController extends HttpServlet {
             int tripId = Integer.parseInt(request.getParameter("tripId"));
             int qty = Integer.parseInt(request.getParameter("quantity"));
 
-            double price = 7000; // giá vé cố định
+            double price = 15000; // giá vé cố định
             double total = price * qty;
 
             // Tạo QR cho thanh toán
-            String bank = request.getParameter("bank");
-            String stk = request.getParameter("stk");
-            if (bank == null || bank.isEmpty() || stk == null || stk.isEmpty()) {
-                request.setAttribute("error", "Vui lòng nhập ngân hàng và số tài khoản để tạo mã QR!");
-                request.setAttribute("customerId", customerId);
-                request.setAttribute("tripId", tripId);
-                request.setAttribute("qty", qty);
-                request.setAttribute("price", price);
-                request.setAttribute("total", total);
-                request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
-                return;
-            }
+            String bank = "MBBank";
+            String stk = "0965047076";
+
             String qrUrl = "https://img.vietqr.io/image/"
                     + bank + "-" + stk + "-compact2.jpg?amount=" + (int) total;
 
@@ -213,20 +202,9 @@ public class paymentController extends HttpServlet {
             throws ServletException, IOException {
         try {
             HttpSession session = request.getSession();
-//            if (session == null || session.getAttribute("userId") == null) {
-//                request.setAttribute("error", "Bạn phải đăng nhập để mua vé tháng!");
-//                request.getRequestDispatcher("Login.jsp").forward(request, response);
-//                return;
-//        };
-//            String role = (String) session.getAttribute("role");
-//            if (!"CUSTOMER".equals(role)) {
-//                request.setAttribute("error", "Chỉ khách hàng mới được mua vé!");
-//                request.getRequestDispatcher("error.jsp").forward(request, response);
-//                return;
-//            }
             String customerId = (String) session.getAttribute("userId");
-            int RouteId = Integer.parseInt(request.getParameter("routeId"));
-            double price = 200000;
+            int routeId = Integer.parseInt(request.getParameter("routeId"));
+            double price = 400000;
 
             // Ngày bắt đầu và ngày hết hạn (30 ngày)
             Date issueDate = new Date();
@@ -239,8 +217,7 @@ public class paymentController extends HttpServlet {
             t.setPrice(price);
             t.setIssueDate(issueDate);
             t.setExpiryDate(expiry);
-            t.setRouteId(RouteId);
-            t.setCreatedBy(customerId);
+            t.setRouteId(routeId);
 
             boolean ok = ticketDAO.insertTicket(t);
 
@@ -267,22 +244,12 @@ public class paymentController extends HttpServlet {
             // Lấy thông tin từ form
             String customerId = request.getParameter("customerId");
             int routeId = Integer.parseInt(request.getParameter("routeId"));
-            double price = 200000; // Giá vé tháng cố định
+            double price = 400000; // Giá vé tháng cố định
             double total = price;  // Chỉ 1 vé / tháng
 
             // Lấy thông tin ngân hàng và số tài khoản
-            String bank = request.getParameter("bank");
-            String stk = request.getParameter("stk");
-
-            if (bank == null || bank.isEmpty() || stk == null || stk.isEmpty()) {
-                request.setAttribute("error", "Vui lòng nhập ngân hàng và số tài khoản!");
-                request.setAttribute("customerId", customerId);
-                request.setAttribute("routeId", routeId);
-                request.setAttribute("price", price);
-                request.setAttribute("total", total);
-                request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
-                return;
-            }
+            String bank = "MBBank";
+            String stk = "0965047076";
 
             // Sinh URL QR thanh toán
             String qrUrl = "https://img.vietqr.io/image/"
