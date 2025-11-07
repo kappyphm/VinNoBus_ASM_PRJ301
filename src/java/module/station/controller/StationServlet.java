@@ -306,7 +306,11 @@ public class StationServlet extends HttpServlet {
                 request.getRequestDispatcher("/view/station/edit.jsp").forward(request, response);
                 return;
             }
-
+            if (stationServices.existsByName(name.trim())) {
+                request.setAttribute("error", "❌ Tên trạm \"" + name + "\" đã tồn tại.");
+                request.getRequestDispatcher("/view/station/add.jsp").forward(request, response);
+                return;
+            }
             int estimatedTime = 0;
             if (estTimeStr != null && !estTimeStr.isEmpty()) {
                 try {
