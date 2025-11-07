@@ -23,8 +23,8 @@ public class TicketDAO extends DBContext implements ITicketDAO {
     @Override
     public boolean insertTicket(Ticket ticket) throws SQLException {
 
-        String sql = "INSERT INTO Ticket (customer_id, trip_id, route_id, price, issue_date, expiry_date, created_by, invoice_id) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Ticket (customer_id, trip_id, route_id, price, issue_date, expiry_date, invoice_id) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, ticket.getCustomerId());
             ps.setObject(2, ticket.getTripId() == 0 ? null : ticket.getTripId());
@@ -36,14 +36,14 @@ public class TicketDAO extends DBContext implements ITicketDAO {
             } else {
                 ps.setNull(6, java.sql.Types.DATE);
             }
-            ps.setString(7, ticket.getCreatedBy());
-            ps.setObject(8, ticket.getInvoiceId());
+            ps.setObject(7, ticket.getInvoiceId());
 
             int rows = ps.executeUpdate();
             return rows > 0;
         } catch (SQLException e) {
             System.out.println("Lỗi khi thêm vé: " + e.getMessage());
-            return false;
+            throw new RuntimeException(e.getMessage());
+
         }
     }
 
@@ -63,7 +63,6 @@ public class TicketDAO extends DBContext implements ITicketDAO {
                 t.setPrice(rs.getDouble("price"));
                 t.setIssueDate(rs.getDate("issue_date"));
                 t.setExpiryDate(rs.getDate("expiry_date"));
-                t.setCreatedBy(rs.getString("created_by"));
                 t.setInvoiceId(rs.getObject("invoice_id", Integer.class));
                 list.add(t);
             }
@@ -91,7 +90,6 @@ public class TicketDAO extends DBContext implements ITicketDAO {
                     ticket.setIssueDate(rs.getDate("issue_date"));
                     ticket.setExpiryDate(rs.getDate("expiry_date"));
                     ticket.setPrice(rs.getDouble("price"));
-                    ticket.setCreatedBy(rs.getString("created_by"));
                     ticket.setInvoiceId(rs.getObject("invoice_id", Integer.class));
                     return ticket;
                 }
@@ -116,27 +114,33 @@ public class TicketDAO extends DBContext implements ITicketDAO {
             t.setRouteId(rs.getInt("route_id"));
             t.setIssueDate(rs.getDate("issue_date"));
             t.setExpiryDate(rs.getDate("expiry_date"));
-            t.setCreatedBy(rs.getString("created_by"));
             t.setInvoiceId(rs.getInt("invoice_id"));
             return t;
         }
         return null;
     }
-    public List<Map<String, Object>> getAllRoutes() {
-    List<Map<String, Object>> list = new ArrayList<>();
-    String sql = "SELECT route_id, route_name FROM Route ORDER BY route_id";
-    try (PreparedStatement ps = connection.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
-        while (rs.next()) {
-            Map<String, Object> r = new HashMap<>();
-            r.put("route_id", rs.getInt("route_id"));
-            r.put("route_name", rs.getString("route_name"));
-            list.add(r);
-        }
-    } catch (Exception e) {
-        System.out.println("❌ Lỗi lấy danh sách tuyến: " + e.getMessage());
-    }
-    return list;
-}
 
+    public List<Map<String, Object>> getAllRoutes() {
+        List<Map<String, Object>> list = new ArrayList<>();
+        String sql = "SELECT route_id, route_name FROM Route ORDER BY route_id";
+        try {
+            if (connection == null || connection.isClosed()) {
+                System.out.println("⚠️ Kết nối null trong getAllRoutes()");
+                return list;
+            }
+
+            try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+
+                while (rs.next()) {
+                    Map<String, Object> r = new HashMap<>();
+                    r.put("route_id", rs.getInt("route_id"));
+                    r.put("route_name", rs.getString("route_name"));
+                    list.add(r);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("❌ Lỗi lấy danh sách tuyến: " + e.getMessage());
+        }
+        return list;
+    }
 }

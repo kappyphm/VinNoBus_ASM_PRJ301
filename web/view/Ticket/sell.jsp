@@ -80,7 +80,7 @@
                         <input type="number" name="tripId" 
                                value="${param.tripId} required" 
                                class="w-full border border-slate-300 rounded-lg px-3 py-2"
-                               placeholder="Nhập ID chuyến (ví dụ: 20, 21, 22)">
+                               placeholder="Nhập ID chuyến ">
                     </div>
                 </c:if>
                 <c:if test="${param.ticketType != 'TRIP' && not empty param.ticketType}">
@@ -112,27 +112,22 @@
 
                     <div>
                         <label class="block text-sm font-medium mb-1">Ngân hàng</label>
-                        <select name="bank"
-                                class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-300 focus:border-brand-500">
-                            <option value="">-- Chọn --</option>
-                            <option value="mbbank" <c:if test="${param.bank=='mbbank'}">selected</c:if>>MB Bank</option>
-                        <option value="vietcombank" <c:if test="${param.bank=='vietcombank'}">selected</c:if>>Vietcombank</option>
-                        <option value="acb" <c:if test="${param.bank=='acb'}">selected</c:if>>ACB</option>
-                        </select>
+                        <input type="text" name="bank" value="MB Bank" readonly
+                               class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-gray-100 text-gray-700 cursor-not-allowed" />
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium mb-1">Số tài khoản</label>
-                        <input type="text" name="stk" value="${param.stk}"
-                           class="w-full border border-slate-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-brand-300 focus:border-brand-500">
-                </div>
+                        <input type="text" name="stk" value="0965047076" readonly
+                               class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-gray-100 text-gray-700 cursor-not-allowed" />
+                    </div>
 
-                <button type="submit"
-                        class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-xl font-medium transition-all shadow-soft">
-                    💰 Bán Vé
-                </button>
+                    <button type="submit"
+                            class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-xl font-medium transition-all shadow-soft">
+                        💰 Bán Vé
+                    </button>
 
-                <a href="${pageContext.request.contextPath}/view/Ticket/main.jsp"
+                    <a href="${pageContext.request.contextPath}/view/Ticket/main.jsp"
                    class="block w-full text-center bg-slate-400 hover:bg-slate-500 text-white py-2.5 rounded-xl font-medium transition-all shadow-soft">
                     ⬅️ Quay Lại
                 </a>

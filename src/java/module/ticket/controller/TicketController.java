@@ -165,7 +165,6 @@ public class TicketController extends HttpServlet {
             Ticket ticket = new Ticket();
             ticket.setCustomerId(customerId);
             ticket.setPrice(price);
-            ticket.setCreatedBy(createdBy);
             ticket.setIssueDate(new Date());
             int quantity = 1;
             try {
@@ -204,8 +203,8 @@ public class TicketController extends HttpServlet {
                 request.setAttribute("message", "Bán vé và tạo hóa đơn thành công!");
                 if ("ONLINE".equalsIgnoreCase(paymentMethod)) {
                     // Lấy thông tin ngân hàng cố định (hoặc cho phép chọn từ form)
-                    String bank = request.getParameter("bank");
-                    String stk = request.getParameter("stk");
+                    String bank = "MB Bank";
+                    String stk = "0965047076";
                     double amount = ticket.getPrice(); // Lấy số tiền thật từ hóa đơn
 
                     // Tạo URL QR VietQR
@@ -302,8 +301,8 @@ public class TicketController extends HttpServlet {
         try {
             String tripIdStr = request.getParameter("tripId");
             String paymentMethod = request.getParameter("paymentMethod");
-            String bank = request.getParameter("bank");
-            String stk = request.getParameter("stk");
+            String bank = "MB Bank";
+            String stk = "0965047076";
             int quantity = Integer.parseInt(request.getParameter("quantity"));
 
             if (tripIdStr == null || tripIdStr.isEmpty()) {
@@ -322,21 +321,17 @@ public class TicketController extends HttpServlet {
                 t.setPrice(price);
                 t.setIssueDate(new Date());
                 t.setExpiryDate(null);
-                t.setCreatedBy("conductor");
                 t.setInvoiceId(null);
                 ticketService.createTrip(t);
             }
 
             if ("QR".equalsIgnoreCase(paymentMethod)) {
-                if (bank == null || stk == null || bank.isEmpty() || stk.isEmpty()) {
-                    request.setAttribute("error", "Vui lòng nhập ngân hàng và số tài khoản!");
-                } else {
-                    String qrUrl = "https://img.vietqr.io/image/"
-                            + bank + "-" + stk + "-compact2.jpg?amount=" + (int) total;
-                    request.setAttribute("qr", qrUrl);
-                    request.setAttribute("bank", bank);
-                    request.setAttribute("stk", stk);
-                }
+
+                String qrUrl = "https://img.vietqr.io/image/"
+                        + bank + "-" + stk + "-compact2.jpg?amount=" + (int) total;
+                request.setAttribute("qr", qrUrl);
+                request.setAttribute("bank", bank);
+                request.setAttribute("stk", stk);
             } else {
                 request.setAttribute("successMessage", "💵 Thanh toán tiền mặt thành công cho " + quantity + " vé!");
             }
