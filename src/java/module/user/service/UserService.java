@@ -247,6 +247,10 @@ public class UserService extends BaseService {
         } catch (SQLException ex) {
             Logger.getLogger(UserService.class.getName()).log(Level.SEVERE, null, ex);
         }
+
     }
 
+    public List<UserDetailDTO> getOperator() {
+        return null;
+    }
 }

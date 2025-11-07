@@ -18,7 +18,7 @@
                         <ul class="list-disc pl-5">
                             <c:forEach var="err" items="${errors}">
                                 <li>${err}</li>
-                            </c:forEach>
+                                </c:forEach>
                         </ul>
                     </div>
                 </c:if>
@@ -47,17 +47,23 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium mb-1">Tài xế</label>
-                        <input type="text" name="driverId" placeholder="Nguyễn Văn A" required
-                               value="${param.driverId}"
-                               class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                        <label>Tài xế:</label>
+                        <select name="driverId">
+                            <option value="">-- Chọn --</option>
+                            <c:forEach var="op" items="${operators}">
+                                <option value="${op.id}">${op.name}</option>
+                            </c:forEach>
+                        </select>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium mb-1">Phụ xe</label>
-                        <input type="text" name="conductorId" placeholder="Nguyễn Văn B" required
-                               value="${param.conductorId}"
-                               class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                        <label>Phụ xe:</label>
+                        <select name="conductorId">
+                            <option value="">-- Chọn --</option>
+                            <c:forEach var="op" items="${operators}">
+                                <option value="${op.id}">${op.name}</option>
+                            </c:forEach>
+                        </select>
                     </div>
 
                     <div>
