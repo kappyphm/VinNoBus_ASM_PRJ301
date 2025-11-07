@@ -27,8 +27,20 @@
         </c:forEach>
     </div>
     <div class="mt-4">
-        <a href="${ctx}/profile/update?id=${userDetail.userId}" class="px-3 py-2 rounded-xl bg-brand-600 text-white text-sm hover:bg-brand-700 shadow-soft">
-            Chỉnh sửa thông tin cá nhân
-        </a>
+        <c:choose>
+            <c:when test="${actor eq 'me'}">
+                <a href="${ctx}/me/update"
+                   class="px-3 py-2 rounded-xl bg-brand-600 text-white text-sm hover:bg-brand-700 shadow-soft">
+                    Cập nhật
+                </a>
+            </c:when>
+            <c:otherwise>
+                <a href="${ctx}/profile/update?id=${userDetail.userId}"
+                   class="px-3 py-2 rounded-xl bg-brand-600 text-white text-sm hover:bg-brand-700 shadow-soft">
+                    Cập nhật
+                </a>
+            </c:otherwise>
+        </c:choose>
+
     </div>
 </div>

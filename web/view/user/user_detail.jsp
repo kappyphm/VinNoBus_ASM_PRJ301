@@ -4,6 +4,8 @@
 <%@ taglib prefix="ui" tagdir="/WEB-INF/tags" %>
 <c:set var="ctx" value="${pageContext.request.contextPath}" />
 
+<c:set var="actor" value="staff" scope="request" />
+
 <ui:layout>
     <jsp:attribute name="title">Thông tin cá nhân</jsp:attribute>
     <jsp:body>

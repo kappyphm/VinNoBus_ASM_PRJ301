@@ -6,6 +6,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.*;
+import module.user.model.dto.UserDetailDTO;
+import module.user.service.UserService;
 
 @WebServlet(name = "UserServlet", urlPatterns = {
     // current user
@@ -28,6 +31,8 @@ import java.io.IOException;
     "/staff/delete"
 })
 public class UserServlet extends HttpServlet {
+
+    private final UserService userService = new UserService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -140,60 +145,100 @@ public class UserServlet extends HttpServlet {
     // ===========================
     // Handler methods placeholder
     // ===========================
-    private void showCurrentUserInfo(HttpServletRequest req, HttpServletResponse resp) {
+    private void showCurrentUserInfo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        UserDetailDTO currentUser = (UserDetailDTO) req.getSession().getAttribute("user");
+        req.setAttribute("userDetail", currentUser);
+        req.getRequestDispatcher("/view/user/me.jsp").forward(req, resp);
     }
 
-    private void showCurrentUserUpdateForm(HttpServletRequest req, HttpServletResponse resp) {
+    private void showCurrentUserUpdateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        UserDetailDTO currentUser = (UserDetailDTO) req.getSession().getAttribute("user");
+        req.setAttribute("userDetail", currentUser);
+        req.getRequestDispatcher("/view/user/me_update.jsp").forward(req, resp);
     }
 
-    private void handleCurrentUserUpdate(HttpServletRequest req, HttpServletResponse resp) {
+    private void handleCurrentUserUpdate(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String avatarUrl = req.getParameter("avatarUrl");
+        String userId = req.getParameter("userId");
+        String name = req.getParameter("name");
+        String email = req.getParameter("email");
+        String phone = req.getParameter("phone");
+        String dob = req.getParameter("dob"); // dạng String yyyy-MM-dd
+        String address = req.getParameter("address");
+        boolean active = req.getParameter("active").equals("true");
+
+        UserDetailDTO userDetail = new UserDetailDTO(userId, active, name, email, phone, avatarUrl, Date.valueOf(dob), address);
+        userService.saveProfile(userDetail);
+
+        userDetail = userService.getUserDetail(userId).get();
+
+        req.getSession().setAttribute("user", userDetail);
+        resp.sendRedirect(req.getContextPath() + "/me");
+        return;
     }
 
-    private void handleRegister(HttpServletRequest req, HttpServletResponse resp) {
+    private void handleRegister(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String avatarUrl = req.getParameter("avatarUrl");
+        String userId = req.getParameter("userId");
+        String name = req.getParameter("name");
+        String email = req.getParameter("email");
+        String phone = req.getParameter("phone");
+        String dob = req.getParameter("dob"); // dạng String yyyy-MM-dd
+        String address = req.getParameter("address");
+
+        UserDetailDTO userDetail = new UserDetailDTO(userId, false, name, email, phone, avatarUrl, Date.valueOf(dob), address);
+        userService.createUserDetail(userDetail);
+
+        userDetail = userService.getUserDetail(userId).get();
+
+        req.getSession().setAttribute("user", userDetail);
+        resp.sendRedirect(req.getContextPath() + "/me");
+        return;
+
     }
 
-    private void listUsers(HttpServletRequest req, HttpServletResponse resp) {
+    private void listUsers(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 
-    private void showUserDetail(HttpServletRequest req, HttpServletResponse resp) {
+    private void showUserDetail(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 
-    private void createOrUpdateUser(HttpServletRequest req, HttpServletResponse resp) {
+    private void createOrUpdateUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 
-    private void handleUserDelete(HttpServletRequest req, HttpServletResponse resp) {
+    private void handleUserDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 
-    private void showProfileDetail(HttpServletRequest req, HttpServletResponse resp) {
+    private void showProfileDetail(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 
-    private void showProfileUpdateForm(HttpServletRequest req, HttpServletResponse resp) {
+    private void showProfileUpdateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 
-    private void handleProfileUpdate(HttpServletRequest req, HttpServletResponse resp) {
+    private void handleProfileUpdate(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 
-    private void showCustomerUpdateForm(HttpServletRequest req, HttpServletResponse resp) {
+    private void showCustomerUpdateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 
-    private void handleCustomerUpdate(HttpServletRequest req, HttpServletResponse resp) {
+    private void handleCustomerUpdate(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 
-    private void listStaffs(HttpServletRequest req, HttpServletResponse resp) {
+    private void listStaffs(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 
-    private void showStaffUpdateForm(HttpServletRequest req, HttpServletResponse resp) {
+    private void showStaffUpdateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 
-    private void handleStaffUpdate(HttpServletRequest req, HttpServletResponse resp) {
+    private void handleStaffUpdate(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 
-    private void showStaffAssignForm(HttpServletRequest req, HttpServletResponse resp) {
+    private void showStaffAssignForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 
-    private void handleStaffAssign(HttpServletRequest req, HttpServletResponse resp) {
+    private void handleStaffAssign(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 
-    private void handleStaffDelete(HttpServletRequest req, HttpServletResponse resp) {
+    private void handleStaffDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
     }
 }

@@ -9,7 +9,7 @@
     </c:when>
 
     <c:otherwise>
-        <a class="px-3 py-2 rounded-xl bg-brand-600 text-white text-sm hover:bg-brand-700 shadow-soft" href="${ctx}/user/detail">Hồ sơ</a>
+        <a class="px-3 py-2 rounded-xl bg-brand-600 text-white text-sm hover:bg-brand-700 shadow-soft" href="${ctx}/me">Hồ sơ</a>
     </c:otherwise>
 </c:choose>
 

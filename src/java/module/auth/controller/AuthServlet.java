@@ -53,7 +53,7 @@ public class AuthServlet extends HttpServlet {
 
         //Check user is login
         if (req.getSession().getAttribute("user") != null) {
-            resp.sendRedirect(req.getContextPath() + "/user/detail");
+            resp.sendRedirect(req.getContextPath() + "/me");
             return;
         }
 
@@ -119,12 +119,11 @@ public class AuthServlet extends HttpServlet {
                     resp.sendRedirect(redirectURL);
                 } else {
                     // Mặc định về trang chủ
-                    resp.sendRedirect(req.getContextPath() + "/");
+                    resp.sendRedirect(req.getContextPath() + "/me");
                 }
             } else {
                 req.setAttribute("googleUser", googleUser);
-                req.setAttribute("action", "create");
-                req.getRequestDispatcher("/view/user/form.jsp").forward(req, resp);
+                req.getRequestDispatcher("/view/user/register.jsp").forward(req, resp);
 
                 //  resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Cannot find user in system");
             }

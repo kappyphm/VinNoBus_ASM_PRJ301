@@ -23,9 +23,12 @@
             </div>
         </div>
         <div class="mt-4">
-            <a href="${ctx}/customer/update?id=${userDetail.userId}" class="px-3 py-2 rounded-xl bg-brand-600 text-white text-sm hover:bg-brand-700 shadow-soft">
-                Chỉnh sửa thông tin khách hàng
-            </a>
+            <c:if test="${userDetail.staff.position eq 'CSKH' and actor ne 'me'}">
+                <a href="${ctx}/customer/update?id=${userDetail.userId}" 
+                   class="px-3 py-2 rounded-xl bg-brand-600 text-white text-sm hover:bg-brand-700 shadow-soft">
+                    Chỉnh sửa thông tin khách hàng
+                </a>
+            </c:if>
         </div>
     </div>
 </c:if>
