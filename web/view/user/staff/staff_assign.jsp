@@ -17,8 +17,13 @@
                 </div>
                 <div>
                     <label class="block text-slate-500 text-sm">Phòng ban</label>
-                    <input type="text" name="department" value="${department}" class="w-full mt-1 p-2 border border-slate-300 rounded-xl"/>
+                    <select name="department" class="w-full mt-1 p-2 border border-slate-300 rounded-xl">
+                        <option value="MANAGER" ${department == 'MANAGER' ? 'selected' : ''}>MANAGER</option>
+                        <option value="OPERATOR" ${department == 'OPERATOR' ? 'selected' : ''}>OPERATOR</option>
+                        <option value="SALE" ${department == 'SALE' ? 'selected' : ''}>SALE</option>
+                    </select>
                 </div>
+
                 <button type="submit" class="px-4 py-2 bg-brand-600 text-white rounded-xl hover:bg-brand-700 shadow-soft">Gán</button>
             </form>
         </main>

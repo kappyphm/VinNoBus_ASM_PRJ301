@@ -8,8 +8,23 @@ import java.io.IOException;
 import module.user.model.dto.UserDetailDTO;
 
 @WebFilter({
-    "/user/detail",
-    "/user/update"
+    // current user
+    "/me",
+    "/me/update",
+    // user manage
+    "/users",
+    "/user",
+    "/user/delete",
+    // profile manage
+    "/profile",
+    "/profile/update",
+    // customer manage
+    "/customer/update",
+    // staff manage
+    "/staffs",
+    "/staff/update",
+    "/staff/assign",
+    "/staff/delete"
 }) // áp dụng cho tất cả request, nhưng chúng ta sẽ lọc bên trong
 public class AuthFilter implements Filter {
 
@@ -25,11 +40,6 @@ public class AuthFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
 
         String path = req.getServletPath();
-        // Cho phép truy cập /user/update nếu là POST (đang hoàn thiện hồ sơ)
-        if ("/user/update".equals(path) && "POST".equalsIgnoreCase(req.getMethod())) {
-            chain.doFilter(request, response);
-            return;
-        }
 
         UserDetailDTO user = (UserDetailDTO) req.getSession().getAttribute("user");
 
