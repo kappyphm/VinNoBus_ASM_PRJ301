@@ -22,7 +22,7 @@
                 </div>
             </div>
 
-            <%-- Include các phần chi tiết --%>
+            <%-- Include các phần chi tiết --%> 
             <jsp:include page="/view/include/profile.jsp"/>
             <jsp:include page="/view/include/staff.jsp"/>
             <jsp:include page="/view/include/customer.jsp"/>

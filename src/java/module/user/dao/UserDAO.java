@@ -4,7 +4,7 @@
  */
 package module.user.dao;
 
-import java.sql.Connection;
+import java.sql.*;
 import module.core.AbstractDAO;
 import module.user.model.entity.User;
 
@@ -16,6 +16,15 @@ public class UserDAO extends AbstractDAO<User, String> {
 
     public UserDAO(Connection connection) {
         super(connection, User.class);
+    }
+
+    public void updateUserActive(String userId, boolean active) throws SQLException {
+        String sql = "UPDATE [user] SET is_active = ? WHERE user_id = ?";
+        try (PreparedStatement st = connection.prepareStatement(sql)) {
+            st.setBoolean(1, active);
+            st.setString(2, userId);
+            st.executeUpdate();
+        }
     }
 
 }

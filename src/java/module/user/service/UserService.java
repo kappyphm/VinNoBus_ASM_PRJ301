@@ -173,6 +173,8 @@ public class UserService extends BaseService {
 
             profileDao.update(profile);
 
+            userDao.updateUserActive(userDetail.getUserId(), userDetail.isActive());
+
             commitTransaction();
 
         } catch (SQLException e) {
