@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.*;
 import java.util.List;
+import java.util.Optional;
 import module.user.model.dto.UserDetailDTO;
 import module.user.service.UserService;
 
@@ -209,6 +210,11 @@ public class UserServlet extends HttpServlet {
     }
 
     private void showUserDetail(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String userId = req.getParameter("id");
+        Optional<UserDetailDTO> userDetail = userService.getUserDetail(userId);
+        if(userDetail.isPresent()){
+            req.setAttribute("userDetail", userDetail);
+        }
     }
 
     private void createOrUpdateUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
