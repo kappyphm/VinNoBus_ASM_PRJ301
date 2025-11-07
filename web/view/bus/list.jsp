@@ -1,63 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="ui" tagdir="/WEB-INF/tags" %>
 
-<!DOCTYPE html>
-<html lang="vi">
-    <head>
-        <meta charset="UTF-8">
-        <title>Danh sách Bus • VinNoBus</title>
+<ui:layout>
+    <jsp:attribute name="title">Danh sách Bus • VinNoBus</jsp:attribute>
 
-        <!-- Google Fonts Roboto Mono -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-        <!-- TailwindCSS -->
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        fontFamily: {mono: ['Roboto Mono', 'ui-monospace', 'monospace']},
-                        colors: {
-                            brand: {
-                                50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe', 300: '#93c5fd',
-                                400: '#60a5fa', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8',
-                                800: '#1e40af', 900: '#1e3a8a'
-                            }
-                        },
-                        boxShadow: {soft: "0 8px 24px rgba(2,6,23,.06)"}
-                    }
-                }
-            }
-        </script>
-
-        <style>
-            body {
-                font-family: 'Roboto Mono', monospace;
-                font-weight: 400;
-            }
-            .fade-up {
-                animation: fadeSlideUp 0.5s ease forwards;
-            }
-            @keyframes fadeSlideUp {
-                0% {
-                    opacity: 0;
-                    transform: translateY(15px);
-                }
-                100% {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-        </style>
-    </head>
-
-    <body class="bg-brand-50 min-h-screen font-mono text-slate-900 font-normal">
-
-        <jsp:include page="/header.jsp" />
-
+    <jsp:body>
         <main class="max-w-6xl mx-auto px-5 py-8">
 
             <!-- Tiêu đề -->
@@ -78,14 +27,12 @@
 
             <!-- Toolbar -->
             <div class="flex flex-wrap items-center justify-between gap-3 mb-6 fade-up">
-
                 <a href="BusServlet?action=add"
                    class="px-5 py-2 rounded-2xl bg-brand-600 text-white shadow-soft hover:bg-brand-700 transition">
                     + Thêm Xe Bus
                 </a>
 
                 <div class="flex flex-wrap gap-2">
-
                     <form method="get" action="BusServlet" class="flex gap-2">
                         <input type="hidden" name="action" value="list" />
                         <input type="text" name="search" value="${fn:trim(param.search)}"
@@ -110,11 +57,10 @@
                             Sắp xếp
                         </button>
                     </form>
-
                 </div>
             </div>
 
-            <!-- Bảng -->
+            <!-- Bảng danh sách Bus -->
             <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-soft fade-up">
                 <table class="min-w-full text-sm font-normal">
                     <thead class="bg-brand-100 text-left text-slate-700 border-b border-slate-200">
@@ -168,8 +114,5 @@
             </div>
 
         </main>
-
-        <jsp:include page="/footer.jsp" />
-
-    </body>
-</html>
+    </jsp:body>
+</ui:layout>

@@ -316,4 +316,18 @@ public class StationDAO extends DBContext implements iStationDAO {
         return list;
     }
 
+    public boolean existsByName(String name) {
+        String sql = "SELECT COUNT(*) FROM Station WHERE station_name = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi kiểm tra trùng tên: " + e.getMessage());
+        }
+        return false;
+    }
+
 }

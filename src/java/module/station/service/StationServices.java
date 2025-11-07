@@ -62,4 +62,8 @@ public class StationServices {
         return stationDAO.getStationsByPageWithRoutes(page, pageSize);
     }
 
+    public boolean existsByName(String name) {
+        return stationDAO.existsByName(name);
+    }
+
 }

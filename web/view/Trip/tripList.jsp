@@ -1,310 +1,157 @@
-<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ include file="header.jsp" %>
+<%@ taglib prefix="ui" tagdir="/WEB-INF/tags" %>
 
-<style>
-    body {
-        font-family: 'Segoe UI', Roboto, sans-serif;
-        background: #f4f6f9;
-        margin: 0;
-        padding: 20px;
-    }
+<ui:layout>
+    <jsp:attribute name="title">Danh sách Chuyến xe • VinNoBus</jsp:attribute>
 
-    h1 {
-        text-align: center;
-        color: #0078d7;
-        margin-bottom: 20px;
-    }
+    <jsp:body>
+        <main class="min-h-screen bg-brand-50 p-8">
 
-    /* --- Thanh trên cùng --- */
-    .top-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: white;
-        padding: 12px 20px;
-        border-radius: 10px;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        margin-bottom: 20px;
-    }
+            <div class="max-w-7xl mx-auto">
 
-    .top-bar h2 {
-        margin: 0;
-        color: #333;
-    }
+                <!-- Header -->
+                <div class="flex flex-wrap justify-between items-center mb-6">
+                    <h1 class="text-3xl font-semibold text-slate-900">Danh sách chuyến xe</h1>
+                    <a href="TripServlet?action=add"
+                       class="px-5 py-2 rounded-xl bg-brand-600 text-white text-sm font-medium shadow-soft hover:bg-brand-700 transition">
+                        ➕ Tạo chuyến mới
+                    </a>
+                </div>
 
-    .add-btn {
-        display: inline-block;
-        padding: 10px 18px;
-        background-color: #0078d7;
-        color: white;
-        text-decoration: none;
-        border-radius: 8px;
-        font-weight: 500;
-        transition: 0.25s;
-    }
+                <!-- Form lọc & tìm kiếm -->
+                <form action="TripServlet" method="get" class="flex flex-wrap gap-3 mb-6 bg-white p-4 rounded-2xl shadow-soft">
+                    <input type="hidden" name="action" value="search">
 
-    .add-btn:hover {
-        background-color: #005fa3;
-        transform: translateY(-2px);
-    }
+                    <div class="flex flex-col">
+                        <label class="text-sm font-medium">Lọc theo</label>
+                        <select name="filter" class="px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                            <option value="">-- Chọn --</option>
+                            <option value="tripId" ${param.filter == 'tripId' ? 'selected' : ''}>Mã chuyến</option>
+                            <option value="busId" ${param.filter == 'busId' ? 'selected' : ''}>Mã xe buýt</option>
+                            <option value="routeId" ${param.filter == 'routeId' ? 'selected' : ''}>Mã tuyến</option>
+                            <option value="driverId" ${param.filter == 'driverId' ? 'selected' : ''}>Tài xế</option>
+                            <option value="conductorId" ${param.filter == 'conductorId' ? 'selected' : ''}>Phụ xe</option>
+                        </select>
+                    </div>
 
-    /* --- Form lọc --- */
-    form.search-form {
-        background: white;
-        padding: 15px 20px;
-        border-radius: 10px;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 25px;
-    }
+                    <div class="flex flex-col">
+                        <label class="text-sm font-medium">Tìm kiếm</label>
+                        <input type="text" name="search" value="${param.search}" placeholder="Nhập từ khóa..."
+                               class="px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
 
-    form label {
-        font-weight: 600;
-        color: #333;
-    }
+                    <div class="flex flex-col">
+                        <label class="text-sm font-medium">Sắp xếp</label>
+                        <select name="sort" class="px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                            <option value="">-- Không --</option>
+                            <option value="asc" ${param.sort == 'asc' ? 'selected' : ''}>Tăng dần</option>
+                            <option value="desc" ${param.sort == 'desc' ? 'selected' : ''}>Giảm dần</option>
+                        </select>
+                    </div>
 
-    form select, form input[type=text], form button {
-        padding: 8px 10px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 14px;
-    }
+                    <div class="self-end">
+                        <button type="submit" class="px-4 py-2 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition">
+                            🔍 Tìm
+                        </button>
+                    </div>
+                </form>
 
-    form select:focus, form input:focus {
-        outline: none;
-        border-color: #0078d7;
-        box-shadow: 0 0 3px #0078d7;
-    }
+                <!-- Table -->
+                <c:choose>
+                    <c:when test="${empty trips}">
+                        <p class="text-center text-slate-500 italic">Không có chuyến xe nào để hiển thị.</p>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="overflow-x-auto bg-white rounded-2xl shadow-soft">
+                            <table class="min-w-full text-sm divide-y divide-slate-200">
+                                <thead class="bg-brand-100 text-left text-slate-700">
+                                    <tr>
+                                        <th class="py-2 px-4">STT</th>
+                                        <th class="py-2 px-4">Mã chuyến</th>
+                                        <th class="py-2 px-4">Mã tuyến</th>
+                                        <th class="py-2 px-4">Mã xe buýt</th>
+                                        <th class="py-2 px-4">Tài xế</th>
+                                        <th class="py-2 px-4">Phụ xe</th>
+                                        <th class="py-2 px-4">Giờ khởi hành</th>
+                                        <th class="py-2 px-4">Giờ kết thúc</th>
+                                        <th class="py-2 px-4">Trạng thái</th>
+                                        <th class="py-2 px-4">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    <c:set var="index" value="1" />
+                                    <c:forEach var="t" items="${trips}">
+                                        <tr class="hover:bg-brand-50 transition">
+                                            <td class="py-2 px-4">${index}</td>
+                                            <td class="py-2 px-4">${t.tripId}</td>
+                                            <td class="py-2 px-4">${t.routeId}</td>
+                                            <td class="py-2 px-4">${t.busId}</td>
+                                            <td class="py-2 px-4">${t.driverId}</td>
+                                            <td class="py-2 px-4">${t.conductorId}</td>
+                                            <td class="py-2 px-4"><fmt:formatDate value="${t.departureTime}" pattern="HH:mm:ss"/></td>
+                                            <td class="py-2 px-4"><fmt:formatDate value="${t.arrivalTime}" pattern="HH:mm:ss"/></td>
+                                            <td class="py-2 px-4">
+                                                <c:choose>
+                                                    <c:when test="${t.status eq 'IN_PROGRESS'}">
+                                                        <span class="px-2 py-1 rounded-xl bg-yellow-300 text-yellow-900 font-semibold text-xs">Đang chạy</span>
+                                                    </c:when>
+                                                    <c:when test="${t.status eq 'COMPLETED'}">
+                                                        <span class="px-2 py-1 rounded-xl bg-green-300 text-green-900 font-semibold text-xs">Hoàn thành</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="px-2 py-1 rounded-xl bg-slate-300 text-slate-700 font-semibold text-xs">Chưa bắt đầu</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td class="py-2 px-4 flex gap-2 flex-wrap">
+                                                <a href="TripServlet?action=detail&tripId=${t.tripId}" class="text-blue-600 hover:underline text-xs">Chi tiết</a>
+                                                <a href="TripServlet?action=edit&tripId=${t.tripId}" class="text-yellow-600 hover:underline text-xs">Sửa</a>
+                                                <a href="TripServlet?action=delete&tripId=${t.tripId}" 
+                                                   onclick="return confirm('Bạn có chắc muốn xóa chuyến này không?')"
+                                                   class="text-red-600 hover:underline text-xs">Xóa</a>
+                                            </td>
+                                        </tr>
+                                        <c:set var="index" value="${index + 1}" />
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
 
-    form button {
-        background-color: #0078d7;
-        color: white;
-        border: none;
-        cursor: pointer;
-        transition: 0.25s;
-    }
+                        <!-- Tổng số -->
+                        <p class="mt-3 text-right font-medium text-slate-700">Tổng số chuyến: <strong>${total}</strong></p>
 
-    form button:hover {
-        background-color: #005fa3;
-    }
+                        <!-- Pagination -->
+                        <c:if test="${total > 0}">
+                            <c:set var="pageSize" value="10" />
+                            <c:set var="totalPages" value="${(total + pageSize - 1) / pageSize}" />
+                            <c:set var="currentPage" value="${param.page != null ? param.page : 1}" />
 
-    /* --- Bảng dữ liệu --- */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
+                            <div class="flex justify-center gap-2 mt-4">
+                                <c:if test="${currentPage > 1}">
+                                    <a href="TripServlet?page=${currentPage - 1}&action=list&search=${param.search}&filter=${param.filter}&sort=${param.sort}"
+                                       class="px-3 py-1 border border-brand-600 rounded-xl text-brand-600 hover:bg-brand-600 hover:text-white transition">«</a>
+                                </c:if>
 
-    th {
-        background: #0078d7;
-        color: white;
-        text-align: center;
-        padding: 10px;
-    }
+                                <c:forEach var="i" begin="1" end="${totalPages}">
+                                    <a href="TripServlet?page=${i}&action=list&search=${param.search}&filter=${param.filter}&sort=${param.sort}"
+                                       class="px-3 py-1 rounded-xl border ${i == currentPage ? 'bg-brand-600 text-white border-brand-600' : 'border-brand-600 text-brand-600'} hover:bg-brand-600 hover:text-white transition">
+                                        ${i}
+                                    </a>
+                                </c:forEach>
 
-    td {
-        text-align: center;
-        padding: 10px;
-        border-bottom: 1px solid #eee;
-    }
+                                <c:if test="${currentPage < totalPages}">
+                                    <a href="TripServlet?page=${currentPage + 1}&action=list&search=${param.search}&filter=${param.filter}&sort=${param.sort}"
+                                       class="px-3 py-1 border border-brand-600 rounded-xl text-brand-600 hover:bg-brand-600 hover:text-white transition">»</a>
+                                </c:if>
+                            </div>
+                        </c:if>
+                    </c:otherwise>
+                </c:choose>
 
-    tr:hover {
-        background-color: #f1f8ff;
-        transition: 0.2s;
-    }
-
-    .action-links a {
-        text-decoration: none;
-        color: #0078d7;
-        font-weight: 500;
-        margin: 0 4px;
-    }
-
-    .action-links a:hover {
-        text-decoration: underline;
-    }
-
-    p.total {
-        margin-top: 15px;
-        font-weight: 600;
-        text-align: right;
-        color: #333;
-    }
-
-    /* --- Phân trang --- */
-    .pagination {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-        margin-top: 20px;
-    }
-
-    .pagination a {
-        padding: 6px 12px;
-        text-decoration: none;
-        border: 1px solid #0078d7;
-        color: #0078d7;
-        border-radius: 6px;
-        transition: 0.2s;
-        font-weight: 500;
-    }
-
-    .pagination a:hover {
-        background: #0078d7;
-        color: white;
-    }
-
-    .pagination .active {
-        background: #0078d7;
-        color: white;
-        pointer-events: none;
-    }
-
-    /* --- Responsive --- */
-    @media (max-width: 900px) {
-        table, thead, tbody, th, td, tr {
-            display: block;
-        }
-
-        th {
-            display: none;
-        }
-
-        td {
-            text-align: right;
-            padding-left: 50%;
-            position: relative;
-        }
-
-        td::before {
-            content: attr(data-label);
-            position: absolute;
-            left: 15px;
-            width: 45%;
-            text-align: left;
-            font-weight: bold;
-            color: #0078d7;
-        }
-    }
-</style>
-
-<h1>Danh sách chuyến xe</h1>
-
-<div class="top-bar">
-    <h2>Quản lý chuyến</h2>
-    <a href="TripServlet?action=add" class="add-btn">➕ Tạo chuyến mới</a>
-</div>
-
-<form class="search-form" action="TripServlet" method="get">
-    <input type="hidden" name="action" value="search">
-    
-    <label>Lọc theo:</label>
-    <select name="filter">
-        <option value="">-- Chọn --</option>
-        <option value="tripId" ${param.filter == 'tripId' ? 'selected' : ''}>Mã chuyến</option>
-        <option value="busId" ${param.filter == 'busId' ? 'selected' : ''}>Mã xe buýt</option>
-        <option value="routeId" ${param.filter == 'routeId' ? 'selected' : ''}>Mã tuyến</option>
-        <option value="driverId" ${param.filter == 'driverId' ? 'selected' : ''}>Tài xế</option>
-        <option value="conductorId" ${param.filter == 'conductorId' ? 'selected' : ''}>Phụ xe</option>
-    </select>
-
-    <label>Tìm kiếm:</label>
-    <input type="text" name="search" value="${param.search}" placeholder="Nhập từ khóa...">
-
-    <label>Sắp xếp:</label>
-    <select name="sort">
-        <option value="">-- Không --</option>
-        <option value="asc" ${param.sort == 'asc' ? 'selected' : ''}>Tăng dần</option>
-        <option value="desc" ${param.sort == 'desc' ? 'selected' : ''}>Giảm dần</option>
-    </select>
-
-    <button type="submit">Tìm</button>
-</form>
-
-<c:choose>
-    <c:when test="${empty trips}">
-        <p style="text-align:center; color:#777; font-style:italic;">Không có chuyến xe nào để hiển thị.</p>
-    </c:when>
-    <c:otherwise>
-        <table>
-            <thead>
-                <tr>
-                    <th>STT</th>
-                    <th>Mã chuyến</th>
-                    <th>Mã tuyến</th>
-                    <th>Mã xe buýt</th>
-                    <th>Tài xế</th>
-                    <th>Phụ xe</th>
-                    <th>Giờ khởi hành</th>
-                    <th>Giờ kết thúc</th>
-                    <th>Trạng thái</th>
-                    <th>Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:set var="index" value="1" />
-                <c:forEach var="t" items="${trips}">
-                    <tr>
-                        <td data-label="STT">${index}</td>
-                        <td data-label="Mã chuyến">${t.tripId}</td>
-                        <td data-label="Mã tuyến">${t.routeId}</td>
-                        <td data-label="Mã xe buýt">${t.busId}</td>
-                        <td data-label="Tài xế">${t.driverId}</td>
-                        <td data-label="Phụ xe">${t.conductorId}</td>
-                        <td data-label="Giờ khởi hành"><fmt:formatDate value="${t.departureTime}" pattern="HH:mm:ss"/></td>
-                        <td data-label="Giờ kết thúc"><fmt:formatDate value="${t.arrivalTime}" pattern="HH:mm:ss"/></td>
-                        <td data-label="Trạng thái">
-                            <c:choose>
-                                <c:when test="${t.status eq 'IN_PROGRESS'}"><span style="color:#e69138;font-weight:600;">Đang chạy</span></c:when>
-                                <c:when test="${t.status eq 'COMPLETED'}"><span style="color:#6aa84f;font-weight:600;">Hoàn thành</span></c:when>
-                                <c:otherwise><span style="color:#999;">Chưa bắt đầu</span></c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td class="action-links" data-label="Hành động">
-                            <a href="TripServlet?action=detail&tripId=${t.tripId}">Chi tiết</a> |
-                            <a href="TripServlet?action=edit&tripId=${t.tripId}">Sửa</a> |
-                            <a href="TripServlet?action=delete&tripId=${t.tripId}" 
-                               onclick="return confirm('Bạn có chắc muốn xóa chuyến này không?')">Xóa</a>
-                        </td>
-                    </tr>
-                    <c:set var="index" value="${index + 1}" />
-                </c:forEach>
-            </tbody>
-        </table>
-        <p class="total">Tổng số chuyến: <strong>${total}</strong></p>
-
-        <!-- Phân trang -->
-        <c:if test="${total > 0}">
-            <c:set var="pageSize" value="10" />
-            <c:set var="totalPages" value="${(total + pageSize - 1) / pageSize}" />
-            <c:set var="currentPage" value="${param.page != null ? param.page : 1}" />
-
-            <div class="pagination">
-                <c:if test="${currentPage > 1}">
-                    <a href="TripServlet?page=${currentPage - 1}&action=list&search=${param.search}&filter=${param.filter}&sort=${param.sort}">«</a>
-                </c:if>
-
-                <c:forEach var="i" begin="1" end="${totalPages}">
-                    <a href="TripServlet?page=${i}&action=list&search=${param.search}&filter=${param.filter}&sort=${param.sort}" 
-                       class="${i == currentPage ? 'active' : ''}">${i}</a>
-                </c:forEach>
-
-                <c:if test="${currentPage < totalPages}">
-                    <a href="TripServlet?page=${currentPage + 1}&action=list&search=${param.search}&filter=${param.filter}&sort=${param.sort}">»</a>
-                </c:if>
             </div>
-        </c:if>
-    </c:otherwise>
-</c:choose>
 
-<%@ include file="footer.jsp" %>
+        </main>
+    </jsp:body>
+</ui:layout>

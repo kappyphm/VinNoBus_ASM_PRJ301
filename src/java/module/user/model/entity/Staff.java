@@ -1,51 +1,52 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package module.user.model.entity;
 
-import java.sql.Timestamp;
+import module.core.annotation.Column;
+import module.core.annotation.PK;
+import module.core.annotation.Table;
 
 /**
- * Represents a staff member in the system. Each staff record is associated with
- * a {@link User}.
  *
- * <p>
- * <b>OOP Relationship:</b></p>
- * <ul>
- * <li><b>Association</b> with {@link User}: 1:1 relationship via userId.</li>
- * <li><b>Composition</b>: lifecycle tied to its User.</li>
- * </ul>
- *
- * <p>
- * Mapped to the <code>staff_account</code> table.</p>
+ * @author kappyphm
  */
+@Table(name = "staff")
 public class Staff {
 
-    private int staffId;
-    private int userId;
-    private String staffCode;
-    private String department;
-    private String position;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
+//    user_id VARCHAR(128) NOT NULL UNIQUE,
+//    staff_code VARCHAR(50) NOT NULL UNIQUE,
+//    position NVARCHAR(100) NULL,
+//    department NVARCHAR(100) NULL,
+    @PK
+    @Column(name = "user_id")
+    private String userId;
 
-    /**
-     * Default constructor.
-     */
+    @Column(name = "staff_code")
+    private String staffCode;
+
+    @Column(name = "postion")
+    private String position;
+
+    @Column(name = "department")
+    private String department;
+
     public Staff() {
     }
 
-    // region Getters and Setters
-    public int getStaffId() {
-        return staffId;
+    public Staff(String userId, String staffCode, String position, String department) {
+        this.userId = userId;
+        this.staffCode = staffCode;
+        this.position = position;
+        this.department = department;
     }
 
-    public void setStaffId(int staffId) {
-        this.staffId = staffId;
-    }
-
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
@@ -57,14 +58,6 @@ public class Staff {
         this.staffCode = staffCode;
     }
 
-    public String getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(String department) {
-        this.department = department;
-    }
-
     public String getPosition() {
         return position;
     }
@@ -73,21 +66,12 @@ public class Staff {
         this.position = position;
     }
 
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
+    public String getDepartment() {
+        return department;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-    // endregion
 }

@@ -1,69 +1,44 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package module.user.model.entity;
 
-import java.sql.Timestamp;
+import module.core.annotation.Column;
+import module.core.annotation.PK;
+import module.core.annotation.Table;
 
 /**
- * Represents a customer account in the system.
  *
- * <p>
- * <b>OOP Relationship:</b></p>
- * <ul>
- * <li><b>Association</b> with {@link User}: each customer is linked to one User
- * record.</li>
- * <li><b>Composition</b>: customer cannot exist without its user.</li>
- * </ul>
- *
- * <p>
- * Mapped to the <code>customer_account</code> table.</p>
+ * @author kappyphm
  */
+@Table(name = "customer")
 public class Customer {
 
-    private int customerId;
-    private int userId;
-    private int loyaltyPoints;
+    @PK
+    @Column(name = "user_id")
+    private String userId;
+    @Column(name = "membership_level")
     private String membershipLevel;
-    private Timestamp createdAt;
-    private Timestamp updatedAt;
+    @Column(name = "loyalty_points")
+    private int loyaltyPoints;
 
-    /**
-     * Default constructor.
-     */
     public Customer() {
     }
 
-    // region Getters and Setters
-    public int getCustomerId() {
-        return customerId;
+    public Customer(String userId, String membershipLevel, int loyaltyPoints) {
+        this.userId = userId;
+        this.membershipLevel = membershipLevel;
+        this.loyaltyPoints = loyaltyPoints;
     }
 
-    public void setCustomerId(int customerId) {
-        this.customerId = customerId;
-    }
-
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-    // endregion
 
     public String getMembershipLevel() {
         return membershipLevel;
@@ -80,4 +55,5 @@ public class Customer {
     public void setLoyaltyPoints(int loyaltyPoints) {
         this.loyaltyPoints = loyaltyPoints;
     }
+
 }

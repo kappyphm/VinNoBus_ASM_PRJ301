@@ -26,9 +26,6 @@ GO
 -- ==========================================================
 CREATE TABLE dbo.[user] (
     user_id VARCHAR(128) NOT NULL UNIQUE,
-    role VARCHAR(20) NOT NULL 
-        CHECK (role IN ('ADMIN', 'STAFF', 'CUSTOMER')) 
-        DEFAULT 'CUSTOMER',
     is_active BIT NOT NULL DEFAULT 1,
     created_at DATETIME NOT NULL DEFAULT GETDATE(),
     updated_at DATETIME NOT NULL DEFAULT GETDATE(),
@@ -192,8 +189,9 @@ CREATE TABLE Station (
 CREATE TABLE Route (
     route_id INT IDENTITY(1,1) PRIMARY KEY,
     route_name NVARCHAR(150) NOT NULL,
-	type VARCHAR(10) CHECK (type in ('ROUND_TRIP', 'CIRCULAR')),
-    frequency INT CHECK (frequency >= 0)
+    type VARCHAR(10) CHECK (type in ('ROUND_TRIP', 'CIRCULAR')),
+    frequency INT CHECK (frequency >= 0),
+    CONSTRAINT UQ_Route_RouteName UNIQUE (route_name)
 );
 
 -- ==============================================
@@ -208,7 +206,7 @@ CREATE TABLE Route_Station (
     estimated_time INT DEFAULT 0, -- th?i gian ??c l??ng (phút) t? tr?m này ??n tr?m k? ti?p
     PRIMARY KEY (route_id, station_id),
     CONSTRAINT FK_RS_Route FOREIGN KEY (route_id) REFERENCES Route(route_id),
-    CONSTRAINT FK_RS_Station FOREIGN KEY (station_id) REFERENCES Station(station_id)
+    CONSTRAINT FK_RS_Station FOREIGN KEY (station_id) REFERENCES Station(station_id) ON DELETE CASCADE
 );
 -- ==============================================
 -- B?ng Chuy?n xe (Trip)
