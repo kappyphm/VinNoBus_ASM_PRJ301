@@ -5,7 +5,7 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import module.user.model.entity.User;
+import module.user.model.dto.UserDetailDTO;
 
 @WebFilter({
     "/user/detail",
@@ -31,7 +31,7 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        User user = (User) req.getSession().getAttribute("user");
+        UserDetailDTO user = (UserDetailDTO) req.getSession().getAttribute("user");
 
         if (user == null) {
             // chưa đăng nhập → redirect về login
