@@ -251,6 +251,23 @@ public class UserService extends BaseService {
     }
 
     public List<UserDetailDTO> getOperator() {
-        return null;
+        List<UserDetailDTO> res = new ArrayList();
+        try {
+            List<Staff> staffs = staffDao.findAllBy("department", "OPERATOR");
+            for (Staff st : staffs) {
+                String userId = st.getUserId();
+                Optional<UserDetailDTO> userOtp = getUserDetail(userId);
+                if (userOtp.isPresent()) {
+                    UserDetailDTO u = userOtp.get();
+                    res.add(u);
+
+                }
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(UserService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return res;
     }
+
 }

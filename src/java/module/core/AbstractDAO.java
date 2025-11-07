@@ -233,6 +233,43 @@ public abstract class AbstractDAO<T, ID> implements GenericRepository<T, ID> {
         }
     }
 
+    public Optional<T> findBy(String column, Object value) throws SQLException {
+        if (!columns.containsKey(column)) {
+            throw new IllegalArgumentException("Column not found: " + column);
+        }
+
+        String sql = "SELECT * FROM " + tableName + " WHERE " + column + " = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, value);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() ? Optional.of(map(rs)) : Optional.empty();
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException("Mapping entity failed", e);
+        }
+    }
+
+    public List<T> findAllBy(String column, Object value) throws SQLException {
+        if (!columns.containsKey(column)) {
+            throw new IllegalArgumentException("Column not found: " + column);
+        }
+
+        String sql = "SELECT * FROM " + tableName + " WHERE " + column + " = ?";
+        List<T> list = new ArrayList<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, value);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                list.add(map(rs));
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException("Mapping entity failed", e);
+        }
+
+        return list;
+    }
+
     // ========================== Helper ==========================
     protected T map(ResultSet rs) throws ReflectiveOperationException, SQLException {
         T obj = entityClass.getDeclaredConstructor().newInstance();
