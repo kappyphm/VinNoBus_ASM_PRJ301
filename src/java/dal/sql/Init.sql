@@ -205,7 +205,7 @@ CREATE TABLE Route_Station (
     estimated_time INT DEFAULT 0, -- th?i gian ??c l??ng (phút) t? tr?m này ??n tr?m k? ti?p
     PRIMARY KEY (route_id, station_id),
     CONSTRAINT FK_RS_Route FOREIGN KEY (route_id) REFERENCES Route(route_id),
-    CONSTRAINT FK_RS_Station FOREIGN KEY (station_id) REFERENCES Station(station_id)
+    CONSTRAINT FK_RS_Station FOREIGN KEY (station_id) REFERENCES Station(station_id) ON DELETE CASCADE
 );
 -- ==============================================
 -- B?ng Chuy?n xe (Trip)
