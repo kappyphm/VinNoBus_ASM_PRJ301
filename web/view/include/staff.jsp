@@ -1,17 +1,10 @@
-<%-- 
-    Document   : detail
-    Created on : Nov 6, 2025, 11:48:08 PM
-    Author     : kappyphm
---%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-
-<!-- Staff Info -->
-<c:set var="staff" value="${userDetail.staff}" />
-<c:if test="${not empty staff}">
-    
-    <div class="mt-10 rounded-2xl border border-slate-200 bg-white p-5 shadow-soft">
+<c:set var="ctx" value="${pageContext.request.contextPath}" />
+<c:if test="${not empty userDetail.staff}">
+    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-soft mt-6">
         <h2 class="text-xl font-semibold text-brand-700 mb-3">Thông tin nhân viên</h2>
         <div class="grid sm:grid-cols-2 gap-4 text-sm">
             <c:forEach var="field" items="${['staffCode','position','department']}">
@@ -23,9 +16,14 @@
                             <c:otherwise>Phòng ban</c:otherwise>
                         </c:choose>
                     </div>
-                    <div class="font-medium">${empty staff[field] ? '—' : staff[field]}</div>
+                    <div class="font-medium">${empty userDetail.staff[field] ? '—' : userDetail.staff[field]}</div>
                 </div>
             </c:forEach>
+        </div>
+        <div class="mt-4">
+            <a href="${ctx}/staff/update?id=${userDetail.userId}" class="px-3 py-2 rounded-xl bg-brand-600 text-white text-sm hover:bg-brand-700 shadow-soft">
+                Chỉnh sửa thông tin nhân viên
+            </a>
         </div>
     </div>
 </c:if>
