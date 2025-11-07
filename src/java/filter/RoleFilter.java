@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
+import module.user.model.dto.UserDetailDTO;
 
 @WebFilter({
     "/users", //MANAGER,SALE
@@ -67,7 +68,8 @@ public class RoleFilter implements Filter {
         // Nếu route có trong danh sách
         if (routeRoles.containsKey(path)) {
             if (session != null) {
-                String role = (String) session.getAttribute("role");
+                UserDetailDTO user = (UserDetailDTO) session.getAttribute("user");
+                String role = user.getStaff().getDepartment();
                 if (role != null && routeRoles.get(path).contains(role)) {
                     chain.doFilter(request, response); // hợp lệ
                     return;
