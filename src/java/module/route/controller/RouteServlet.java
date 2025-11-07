@@ -1,4 +1,4 @@
-/*
+ /*
          * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
          * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
@@ -305,7 +305,7 @@ public class RouteServlet extends HttpServlet {
                 }
 
                 // Thông báo thành công
-                request.getSession().setAttribute("message", "✅ Thêm tuyến \"" + name + "\" thành công!");
+                request.getSession().setAttribute("message", "Thêm tuyến \"" + name + "\" thành công!");
                 response.sendRedirect("RouteServlet?action=list");
             } else {
                 request.setAttribute("errorMessage", "❌ Thêm thất bại! Có thể tuyến đã tồn tại.");
@@ -373,7 +373,7 @@ public class RouteServlet extends HttpServlet {
                     }
                 }
                 // Thông báo thành công
-                request.getSession().setAttribute("message", "✅ Cập nhật tuyến \"" + name + "\" thành công!");
+                request.getSession().setAttribute("message", "Cập nhật tuyến \"" + name + "\" thành công!");
                 response.sendRedirect("RouteServlet?action=list");
             } else {
                 request.setAttribute("errorMessage", "⚠️ Không thể cập nhật. Tuyến không tồn tại hoặc dữ liệu trùng!");
@@ -398,7 +398,7 @@ public class RouteServlet extends HttpServlet {
                 boolean deleted = routeServices.deleteRoute(id);
                 if (deleted) {
                     request.getSession().setAttribute("message",
-                            "🗑️ Xóa tuyến \"" + route.getRouteName() + "\" (ID: " + id + ") thành công!");
+                            "️Xóa tuyến \"" + route.getRouteName() + "\" (ID: " + id + ") thành công!");
                 } else {
                     request.getSession().setAttribute("errorMessage",
                             "❌ Không thể xóa tuyến \"" + route.getRouteName() + "\"! Có thể đang được tham chiếu ở bảng khác.");
@@ -444,7 +444,7 @@ public class RouteServlet extends HttpServlet {
         }
         Route route = routeServices.getRouteById(routeId);
         String routeName = (route != null) ? route.getRouteName() : "ID " + routeId;
-        request.getSession().setAttribute("message", "✅ Cập nhật danh sách trạm cho tuyến " + routeName + " thành công!");
+        request.getSession().setAttribute("message", "Cập nhật danh sách trạm cho tuyến " + routeName + " thành công!");
         response.sendRedirect("RouteServlet?action=details&id=" + routeId);
     }
 
