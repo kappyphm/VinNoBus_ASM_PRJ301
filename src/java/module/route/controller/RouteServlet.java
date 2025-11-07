@@ -1,4 +1,4 @@
- /*
+/*
          * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
          * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
@@ -12,7 +12,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import module.route.dao.RouteDAO;
 import module.route.model.entity.Route;
 import module.route.service.RouteServices;
@@ -426,25 +428,57 @@ public class RouteServlet extends HttpServlet {
 
     private void saveAssignedStations(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, SQLException {
-        int routeId = Integer.parseInt(request.getParameter("id")); // 🔹 đổi routeId -> id
+
+        int routeId = Integer.parseInt(request.getParameter("id"));
         String[] stationIds = request.getParameterValues("stationIds");
-        if (stationIds != null) {
-            routeServices.deleteAllStationsFromRoute(routeId);
-            for (String sid : stationIds) {
-                try {
-                    int index = Integer.parseInt(request.getParameter("index_of_" + sid));
 
-                    int order = Integer.parseInt(request.getParameter("stationOrder_" + index));
-                    int time = Integer.parseInt(request.getParameter("estimatedTime_" + index));
+        // ✅ 0. Không chọn trạm nào → báo lỗi
+        if (stationIds == null || stationIds.length == 0) {
+            request.setAttribute("errorMessage", "Bạn phải chọn ít nhất 1 trạm để gán!");
 
-                    routeServices.addStationToRoute(routeId, Integer.parseInt(sid), order, time);
-                } catch (NumberFormatException e) {
-                }
-            }
+            Route route = routeServices.getRouteWithStations(routeId);
+            List<Station> allStations = stationServices.getAllStations();
+
+            request.setAttribute("route", route);
+            request.setAttribute("allStations", allStations);
+            request.getRequestDispatcher("/view/route/assign.jsp").forward(request, response);
+            return;
         }
+
+        // ✅ 1. Kiểm tra trùng thứ tự (giống code trước)
+        Map<Integer, Integer> usedOrders = new HashMap<>();
+        for (String sid : stationIds) {
+            int index = Integer.parseInt(request.getParameter("index_of_" + sid));
+            int order = Integer.parseInt(request.getParameter("stationOrder_" + index));
+            if (usedOrders.containsKey(order)) {
+                request.setAttribute("errorMessage", "️Thứ tự trạm bị trùng: " + order);
+
+                Route route = routeServices.getRouteWithStations(routeId);
+                List<Station> allStations = stationServices.getAllStations();
+                request.setAttribute("route", route);
+                request.setAttribute("allStations", allStations);
+
+                request.getRequestDispatcher("/view/route/assign.jsp").forward(request, response);
+                return;
+            }
+            usedOrders.put(order, Integer.parseInt(sid));
+        }
+
+        // ✅ 2. Không lỗi → tiến hành lưu
+        routeServices.deleteAllStationsFromRoute(routeId);
+
+        for (String sid : stationIds) {
+            int index = Integer.parseInt(request.getParameter("index_of_" + sid));
+            int order = Integer.parseInt(request.getParameter("stationOrder_" + index));
+            int time = Integer.parseInt(request.getParameter("estimatedTime_" + index));
+
+            routeServices.addStationToRoute(routeId, Integer.parseInt(sid), order, time);
+        }
+
+        // ✅ 3. Thành công → redirect
         Route route = routeServices.getRouteById(routeId);
-        String routeName = (route != null) ? route.getRouteName() : "ID " + routeId;
-        request.getSession().setAttribute("message", "Cập nhật danh sách trạm cho tuyến " + routeName + " thành công!");
+        request.getSession().setAttribute("message",
+                "Cập nhật danh sách trạm cho tuyến " + route.getRouteName() + " thành công!");
         response.sendRedirect("RouteServlet?action=details&id=" + routeId);
     }
 
