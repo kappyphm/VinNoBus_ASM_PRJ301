@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 import java.util.Optional;
+import module.user.model.dto.StaffDTO;
 import module.user.model.dto.UserDetailDTO;
 import module.user.service.UserService;
+import util.StaffUtil;
 
 @WebServlet(name = "UserServlet", urlPatterns = {
     // current user
@@ -272,6 +274,9 @@ public class UserServlet extends HttpServlet {
     }
     
     private void listStaffs(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        List<UserDetailDTO> staffs = userService.getStaffs();
+        req.setAttribute("staffs", staffs);
+        req.getRequestDispatcher("/view/user/staff/staffs.jsp").forward(req, resp);
     }
     
     private void showStaffUpdateForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -281,11 +286,25 @@ public class UserServlet extends HttpServlet {
     }
     
     private void showStaffAssignForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String userId = req.getParameter("id");
+        req.setAttribute("userId", userId);
+        req.getRequestDispatcher("/view/user/staff/staff_assign.jsp").forward(req, resp);
     }
     
     private void handleStaffAssign(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String userId = req.getParameter("userId");
+        String position = req.getParameter("position");
+        String department = req.getParameter("department");
+        
+        StaffDTO staff = new StaffDTO(StaffUtil.generateStaffCode(department, position, userId), position, department);
+        userService.saveStaff(userId, staff);
+        resp.sendRedirect(req.getContextPath() + "/user?id=" + userId);
+        return;
     }
     
     private void handleStaffDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String userId = req.getParameter("id");
+        userService.deleteStaff(userId);
+        resp.sendRedirect(req.getContextPath() + "/staffs");
     }
 }
