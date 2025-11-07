@@ -234,6 +234,11 @@ public class StationServlet extends HttpServlet {
                 request.getRequestDispatcher("/view/station/list.jsp").forward(request, response);
                 return;
             }
+            if (success) {
+                request.setAttribute("message", "✅ Xóa trạm thành công (ID: " + id + ")");
+                listStations(request, response);
+                return;
+            }
             response.sendRedirect("StationServlet?action=list");
         } catch (NumberFormatException e) {
             request.setAttribute("error", "ID trạm phải là số hợp lệ.");
@@ -253,6 +258,11 @@ public class StationServlet extends HttpServlet {
                 request.getRequestDispatcher("/view/station/add.jsp").forward(request, response);
                 return;
             }
+            if (stationServices.existsByName(name.trim())) {
+                request.setAttribute("error", "❌ Tên trạm \"" + name + "\" đã tồn tại.");
+                request.getRequestDispatcher("/view/station/add.jsp").forward(request, response);
+                return;
+            }
             int estimatedTime = 0;
             if (estTimeStr != null && !estTimeStr.isEmpty()) {
                 try {
@@ -269,6 +279,11 @@ public class StationServlet extends HttpServlet {
             if (!created) {
                 request.setAttribute("error", "Không thể thêm trạm mới. Vui lòng thử lại.");
                 request.getRequestDispatcher("/view/station/add.jsp").forward(request, response);
+                return;
+            }
+            if (created) {
+                request.setAttribute("message", "✅ Thêm trạm thành công: " + name);
+                listStations(request, response);
                 return;
             }
             response.sendRedirect("StationServlet?action=list");
@@ -312,7 +327,11 @@ public class StationServlet extends HttpServlet {
                 request.getRequestDispatcher("/view/station/edit.jsp").forward(request, response);
                 return;
             }
-
+            if (success) {
+                request.setAttribute("message", "✅ Cập nhật trạm thành công: " + name);
+                listStations(request, response);
+                return;
+            }
             response.sendRedirect("StationServlet?action=list");
 
         } catch (NumberFormatException e) {
