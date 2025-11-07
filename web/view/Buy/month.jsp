@@ -33,15 +33,7 @@
 
     <body class="bg-brand-50 min-h-screen text-slate-800">
         <!-- Header -->
-        <header class="border-b border-slate-200 bg-white shadow-soft">
-            <div class="max-w-5xl mx-auto px-5 py-4 flex items-center justify-between">
-                <a href="/home.jsp" class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-xl bg-brand-600 text-white grid place-items-center font-semibold">V</div>
-                    <span class="font-semibold">VinNoBus</span>
-                </a>
-                <!--<a href="/routes/search" class="text-sm text-brand-700 hover:underline">Tìm tuyến xe</a>-->
-            </div>
-        </header>
+        <jsp:include page="/WEB-INF/components/header.jsp" />
 
         <!-- Main -->
         <main class="max-w-lg mx-auto p-6 mt-10 bg-white rounded-2xl shadow-soft">
