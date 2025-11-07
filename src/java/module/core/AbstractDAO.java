@@ -1,0 +1,251 @@
+package module.core;
+
+import java.lang.reflect.*;
+import java.sql.*;
+import java.util.*;
+import module.core.annotation.*;
+
+/**
+ * AbstractDAO<T, ID>
+ * ------------------- DAO tổng quát cho CRUD, Criteria, và tự động generate
+ * findBy<Field> với @Unique.
+ *
+ * @param <T> Entity type
+ * @param <ID> ID type
+ */
+public abstract class AbstractDAO<T, ID> implements GenericRepository<T, ID> {
+
+    protected final Connection connection;
+    protected final Class<T> entityClass;
+    protected final String tableName;
+
+    protected final Map<String, Field> columns = new LinkedHashMap<>();
+    protected final Map<String, Field> uniqueFields = new HashMap<>();
+    protected Field idField;
+
+    public AbstractDAO(Connection connection, Class<T> entityClass) {
+        this.connection = connection;
+        this.entityClass = entityClass;
+        this.tableName = initMetadata(entityClass);
+    }
+
+    // ========================== Metadata ==========================
+    private String initMetadata(Class<T> entityClass) {
+        Table table = entityClass.getAnnotation(Table.class);
+        if (table == null) {
+            throw new IllegalStateException("Entity missing @Table annotation: " + entityClass);
+        }
+
+        for (Field f : entityClass.getDeclaredFields()) {
+            f.setAccessible(true);
+            Column c = f.getAnnotation(Column.class);
+            PK pk = f.getAnnotation(PK.class);
+            if (c != null) {
+                columns.put(c.name(), f);
+                if (pk != null) {
+                    idField = f;
+                }
+            }
+            if (f.isAnnotationPresent(Unique.class)) {
+                uniqueFields.put("findBy" + capitalize(f.getName()), f);
+            }
+        }
+        if (idField == null) {
+            throw new IllegalStateException("Missing @Column(id=true) in entity " + entityClass);
+        }
+
+        return table.name();
+    }
+
+    // ========================== CRUD ==========================
+    @Override
+    public Optional<ID> insert(T entity) throws SQLException {
+        StringBuilder cols = new StringBuilder();
+        StringBuilder vals = new StringBuilder();
+        List<Object> params = new ArrayList<>();
+
+        try {
+            for (Map.Entry<String, Field> e : columns.entrySet()) {
+                Column c = e.getValue().getAnnotation(Column.class);
+                PK pk = e.getValue().getAnnotation(PK.class);
+
+                if (pk == null) {
+                    cols.append(c.name()).append(",");
+                    vals.append("?").append(",");
+                    params.add(e.getValue().get(entity));
+                } else if (!pk.auto()) {
+                    cols.append(c.name()).append(",");
+                    vals.append("?").append(",");
+                    params.add(e.getValue().get(entity));
+                }
+            }
+
+            cols.setLength(cols.length() - 1);
+            vals.setLength(vals.length() - 1);
+
+            String idCol = idField.getAnnotation(Column.class).name();
+            String sql = "INSERT INTO " + tableName + " (" + cols + ") "
+                    + "OUTPUT inserted." + idCol + " VALUES (" + vals + ")";
+
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                for (int i = 0; i < params.size(); i++) {
+                    stmt.setObject(i + 1, params.get(i));
+                }
+
+                ResultSet rs = stmt.executeQuery();
+                return rs.next() ? Optional.ofNullable((ID) rs.getObject(1)) : Optional.empty();
+            }
+
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Cannot access entity field value", e);
+        }
+    }
+
+    @Override
+    public Optional<ID> update(T entity) throws SQLException {
+        StringBuilder set = new StringBuilder();
+        List<Object> params = new ArrayList<>();
+
+        try {
+            for (Map.Entry<String, Field> e : columns.entrySet()) {
+                Column c = e.getValue().getAnnotation(Column.class);
+                PK pk = e.getValue().getAnnotation(PK.class);
+                if (pk == null) {
+                    set.append(c.name()).append(" = ?,");
+                    params.add(e.getValue().get(entity));
+                } else if (!pk.auto()) {
+                    set.append(c.name()).append(" = ?,");
+                    params.add(e.getValue().get(entity));
+                }
+            }
+            set.setLength(set.length() - 1);
+
+            String idCol = idField.getAnnotation(Column.class).name();
+            Object idVal = idField.get(entity);
+
+            String sql = "UPDATE " + tableName + " SET " + set
+                    + " OUTPUT inserted." + idCol + " WHERE " + idCol + " = ?";
+
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                int idx = 1;
+                for (Object p : params) {
+                    stmt.setObject(idx++, p);
+                }
+                stmt.setObject(idx, idVal);
+                ResultSet rs = stmt.executeQuery();
+                return rs.next() ? Optional.ofNullable((ID) rs.getObject(1)) : Optional.empty();
+            }
+
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Cannot access entity field value", e);
+        }
+    }
+
+    @Override
+    public Optional<ID> delete(ID id) throws SQLException {
+        String idCol = idField.getAnnotation(Column.class).name();
+        String sql = "DELETE FROM " + tableName + " OUTPUT deleted." + idCol
+                + " WHERE " + idCol + " = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, id);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() ? Optional.ofNullable((ID) rs.getObject(1)) : Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<T> findById(ID id) throws SQLException {
+        String sql = "SELECT * FROM " + tableName + " WHERE "
+                + idField.getAnnotation(Column.class).name() + " = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, id);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() ? Optional.of(map(rs)) : Optional.empty();
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException("Entity mapping failed", e);
+        }
+    }
+
+    @Override
+    public List<T> findAll() throws SQLException {
+        List<T> list = new ArrayList<>();
+        String sql = "SELECT * FROM " + tableName;
+        try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                list.add(map(rs));
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException("Entity mapping failed", e);
+        }
+        return list;
+    }
+
+    @Override
+    public boolean isExist(ID id) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE "
+                + idField.getAnnotation(Column.class).name() + " = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, id);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() && rs.getInt(1) > 0;
+        }
+    }
+
+    // ========================== Criteria ==========================
+    @Override
+    public List<T> findByCriteria(AbstractCriteria c) throws SQLException {
+        List<T> list = new ArrayList<>();
+        String sql = "SELECT * FROM " + tableName + " WHERE 1=1 " + c.buildWhereClause()
+                + " ORDER BY " + c.getSortBy() + " " + c.getSortDirection()
+                + " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            Object[] params = c.getParams();
+            int idx = 1;
+            for (Object p : params) {
+                stmt.setObject(idx++, p);
+            }
+            stmt.setInt(idx++, c.getOffset());
+            stmt.setInt(idx, c.getLimit());
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                list.add(map(rs));
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException("Entity mapping failed", e);
+        }
+        return list;
+    }
+
+    @Override
+    public int countByCriteria(AbstractCriteria c) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE 1=1 " + c.buildWhereClause();
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            Object[] params = c.getParams();
+            int idx = 1;
+            for (Object p : params) {
+                stmt.setObject(idx++, p);
+            }
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() ? rs.getInt(1) : 0;
+        }
+    }
+
+    // ========================== Helper ==========================
+    protected T map(ResultSet rs) throws ReflectiveOperationException, SQLException {
+        T obj = entityClass.getDeclaredConstructor().newInstance();
+        for (Map.Entry<String, Field> e : columns.entrySet()) {
+            Field f = e.getValue();
+            Object value = rs.getObject(e.getKey());
+            f.setAccessible(true);
+            f.set(obj, value);
+        }
+        return obj;
+    }
+
+    protected String capitalize(String str) {
+        return Character.toUpperCase(str.charAt(0)) + str.substring(1);
+    }
+}
