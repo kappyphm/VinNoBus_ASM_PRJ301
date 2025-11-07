@@ -34,7 +34,7 @@ public class UserService extends BaseService {
     private final UserDAO userDao = new UserDAO(connection);
     private final StaffDAO staffDao = new StaffDAO(connection);
     private final CustomerDAO customerDao = new CustomerDAO(connection);
-    
+
     public List<UserDetailDTO> getUsers(String search, String sort, int currentPage) {
 
         List<UserDetailDTO> result = new ArrayList<>();
@@ -62,42 +62,43 @@ public class UserService extends BaseService {
             List<Profile> profiles = profileDao.findByCriteria(criteria);
 
             for (Profile profile : profiles) {
-                UserDetailDTO detail = new UserDetailDTO();
+//                UserDetailDTO detail = new UserDetailDTO();
+//
+//                // ------------ Set thông tin PROFILE ------------
+//                detail.setUserId(profile.getUserId());
+//                detail.setName(profile.getName());
+//                detail.setEmail(profile.getEmail());
+//                detail.setPhone(profile.getPhone());
+//                detail.setAvatarUrl(profile.getAvatarUrl());
+//                detail.setAddress(profile.getAddress());
+//                detail.setDob(profile.getDob());
+//
+//                String userId = profile.getUserId();
+//
+//                // ------------ Lấy dữ liệu từ User ------------
+//                userDao.findById(userId).ifPresent(u -> {
+//                    detail.setActive(u.isActive());
+//                });
+//
+//                // ------------ Lấy dữ liệu Staff (nếu tồn tại) ------------
+//                staffDao.findById(userId).ifPresent(st -> {
+//                    detail.setStaff(new StaffDTO(
+//                            st.getStaffCode(),
+//                            st.getPosition(),
+//                            st.getDepartment()
+//                    ));
+//                });
+//
+//                // ------------ Lấy dữ liệu Customer (nếu muốn dùng) ------------
+//                customerDao.findById(userId).ifPresent(cus -> {
+//                    detail.setCustomer(new CustomerDTO(
+//                            cus.getMembershipLevel(),
+//                            cus.getLoyaltyPoints()
+//                    ));
+//
+//                });
 
-                // ------------ Set thông tin PROFILE ------------
-                detail.setUserId(profile.getUserId());
-                detail.setName(profile.getName());
-                detail.setEmail(profile.getEmail());
-                detail.setPhone(profile.getPhone());
-                detail.setAvatarUrl(profile.getAvatarUrl());
-                detail.setAddress(profile.getAddress());
-                detail.setDob(profile.getDob());
-
-                String userId = profile.getUserId();
-
-                // ------------ Lấy dữ liệu từ User ------------
-                userDao.findById(userId).ifPresent(u -> {
-                    detail.setActive(u.isActive());
-                });
-
-                // ------------ Lấy dữ liệu Staff (nếu tồn tại) ------------
-                staffDao.findById(userId).ifPresent(st -> {
-                    detail.setStaff(new StaffDTO(
-                            st.getStaffCode(),
-                            st.getPosition(),
-                            st.getDepartment()
-                    ));
-                });
-
-                // ------------ Lấy dữ liệu Customer (nếu muốn dùng) ------------
-                customerDao.findById(userId).ifPresent(cus -> {
-                    detail.setCustomer(new CustomerDTO(
-                            cus.getMembershipLevel(),
-                            cus.getLoyaltyPoints()
-                    ));
-
-                });
-
+                UserDetailDTO detail = getUserDetail(profile.getUserId()).get();
                 // Thêm vào danh sách kết quả
                 result.add(detail);
             }
@@ -137,6 +138,8 @@ public class UserService extends BaseService {
                 Staff st = staff.get();
                 StaffDTO staffDto = new StaffDTO(st.getStaffCode(), st.getPosition(), st.getDepartment());
                 userDetail.setStaff(staffDto);
+            } else {
+                userDetail.setStaff(null);
             }
 
             Optional<Customer> customer = customerDao.findById(userId);
@@ -155,29 +158,6 @@ public class UserService extends BaseService {
         } catch (SQLException e) {
             throw new DataAccessException("getUserProfile: " + e.getLocalizedMessage());
         }
-    }
-
-    public void saveUserDetail(UserDetailDTO userDetail) {
-        try {
-            beginTransaction();
-            Profile profile = new Profile();
-            profile.setAddress(userDetail.getAddress());
-            profile.setAvatarUrl(userDetail.getAvatarUrl());
-            profile.setDob((Date) userDetail.getDob());
-            profile.setEmail(userDetail.getEmail());
-            profile.setName(userDetail.getName());
-            profile.setPhone(userDetail.getPhone());
-            profile.setUserId(userDetail.getUserId());
-
-            profileDao.update(profile);
-
-            commitTransaction();
-
-        } catch (SQLException e) {
-            rollbackTransaction();
-            throw new DataAccessException("SAVE USER ERROR: " + e.getMessage());
-        }
-
     }
 
     public User createUserDetail(UserDetailDTO userDetail) {
@@ -221,5 +201,63 @@ public class UserService extends BaseService {
             throw new DataAccessException("CREATE USER ERROR: " + e.getMessage());
         }
     }
-    
+
+    public void saveProfile(UserDetailDTO userDetail) {
+        try {
+            beginTransaction();
+            Profile profile = new Profile();
+            profile.setAddress(userDetail.getAddress());
+            profile.setAvatarUrl(userDetail.getAvatarUrl());
+            profile.setDob((Date) userDetail.getDob());
+            profile.setEmail(userDetail.getEmail());
+            profile.setName(userDetail.getName());
+            profile.setPhone(userDetail.getPhone());
+            profile.setUserId(userDetail.getUserId());
+
+            profileDao.update(profile);
+
+            commitTransaction();
+
+        } catch (SQLException e) {
+            rollbackTransaction();
+            throw new DataAccessException("SAVE USER ERROR: " + e.getMessage());
+        }
+
+    }
+
+    public void saveCustomer(String userId, CustomerDTO customer) {
+        try {
+            beginTransaction();
+
+            Customer cus = new Customer(userId, customer.getMembershipLevel(), customer.getLoyaltyPoints());
+            customerDao.update(cus);
+
+            commitTransaction();
+
+        } catch (SQLException e) {
+            rollbackTransaction();
+            throw new DataAccessException("SAVE CUSTOMER ERROR: " + e.getMessage());
+        }
+    }
+
+    public void saveStaff(String userId, StaffDTO staff) {
+        try {
+            beginTransaction();
+
+            Staff st = new Staff(
+                    userId,
+                    staff.getStaffCode(),
+                    staff.getPosition(),
+                    staff.getDepartment()
+            );
+            staffDao.update(st);
+
+            commitTransaction();
+
+        } catch (SQLException e) {
+            rollbackTransaction();
+            throw new DataAccessException("SAVE CUSTOMER ERROR: " + e.getMessage());
+        }
+    }
+
 }

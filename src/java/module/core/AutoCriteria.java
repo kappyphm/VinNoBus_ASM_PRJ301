@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 import module.core.annotation.Column;
+import module.core.annotation.PK;
 
 /**
  * AutoCriteria<T>
@@ -32,6 +33,10 @@ public class AutoCriteria<T> extends AbstractCriteria {
         for (Field f : entityClass.getDeclaredFields()) {
             if (f.isAnnotationPresent(Column.class)) {
                 columns.put(f.getName(), f);
+            }
+            
+            if (f.isAnnotationPresent(PK.class)) {
+                this.sortBy = f.getAnnotation(Column.class).name();
             }
         }
     }

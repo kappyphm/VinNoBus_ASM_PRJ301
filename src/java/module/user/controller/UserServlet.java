@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 import java.util.Optional;
+import module.user.model.dto.CustomerDTO;
+import module.user.model.dto.StaffDTO;
 import module.user.model.dto.UserDetailDTO;
 import module.user.model.entity.User;
 import module.user.service.StaffService;
@@ -23,20 +25,27 @@ import module.user.service.UserService;
  * @author kappyphm
  */
 @WebServlet(name = "UserServlet", urlPatterns = {
-    "/user/detail",
-    "/user/update",
-    "/user/create",
-    "/user/detete",
-    "/staffs",
-    "/staff/detail",
-    "/staff/update",
-    "/staff/create",
-    "/staff/delete",
-    "/customers",
-    "/customer/detail",
+    //current user
+    "/me",
+    "/register",
+    "/me/update",
+    
+    //user manage
+    "/users",
+    "/user",
+    "/user/delete",
+    //profile manage
+    "/profile",
+    "/profile/update",
+    //customer manage
     "/customer/update",
-    "/customer/create",
-    "/customer/delete",})
+    //staff manage
+    "/staffs",
+    "/staff/update",
+    "/staff/assign",
+    "/staff/delete"
+
+})
 public class UserServlet extends HttpServlet {
 
     private final UserService userService = new UserService();
@@ -50,12 +59,21 @@ public class UserServlet extends HttpServlet {
 
             case "/user/detail" ->
                 showProfile(req, resp);
-            case "/user/update" ->
+            case "/profile/update" ->
                 showUpdateProfileForm(req, resp);
 
-            //list view
+            case "/user/delete" ->
+                deleteUser(req, resp);
+
+            //customer
             case "/customers" ->
                 showCustomerList(req, resp);
+            case "/customer/detail" ->
+                showCustomer(req, resp);
+            case "/customer/update" ->
+                showCustomerForm(req, resp);
+
+            //staff
             case "/staffs" ->
                 showStaffList(req, resp);
             default ->
@@ -64,7 +82,7 @@ public class UserServlet extends HttpServlet {
     }
 
     private void showProfile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        User currentSessionUser = (User) req.getSession().getAttribute("user");
+        UserDetailDTO currentSessionUser = (UserDetailDTO) req.getSession().getAttribute("user");
 
         Optional<UserDetailDTO> userDetail = userService.getUserDetail(currentSessionUser.getUserId());
         if (userDetail.isPresent()) {
@@ -77,11 +95,19 @@ public class UserServlet extends HttpServlet {
     }
 
     private void showUpdateProfileForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        User currentSessionUser = (User) req.getSession().getAttribute("user");
-        Optional<UserDetailDTO> userDetail = userService.getUserDetail(currentSessionUser.getUserId());
+        String userId = req.getParameter("id");
+
+        UserDetailDTO currentSessionUser = (UserDetailDTO) req.getSession().getAttribute("user");
+
+        if (userId == null || userId.isBlank()) {
+            userId = currentSessionUser.getUserId();
+
+        }
+        Optional<UserDetailDTO> userDetail = userService.getUserDetail(userId);
 
         req.setAttribute("userDetail", userDetail.get());
         req.setAttribute("action", "update");
+        req.setAttribute("editPmt", false);
         req.getRequestDispatcher("/view/user/form.jsp").forward(req, resp);
 
     }
@@ -92,12 +118,20 @@ public class UserServlet extends HttpServlet {
         String path = req.getServletPath();
         switch (path) {
 
+            //user guest
             case "/user/create" ->
                 createProfile(req, resp);
-            case "/user/update" ->
+            case "/profile/update" ->
                 updateProfile(req, resp);
             case "/user/detele" ->
                 deleteUser(req, resp);
+
+            //update for staff
+            case "/staff/update" ->
+                updateStaff(req, resp);
+            case "/customer/update" ->
+                updateCustomer(req, resp);
+
             default ->
                 resp.sendError(404, "Page not found");
         }
@@ -115,7 +149,8 @@ public class UserServlet extends HttpServlet {
 
         UserDetailDTO userDetail = new UserDetailDTO(userId, active, name, email, phone, avatarUrl, dob, address);
         User u = userService.createUserDetail(userDetail);
-        req.getSession().setAttribute("user", u);
+
+        req.getSession().setAttribute("user", userDetail);
         resp.sendRedirect(req.getContextPath() + "/user/detail");
     }
 
@@ -130,15 +165,38 @@ public class UserServlet extends HttpServlet {
         Date dob = Date.valueOf(req.getParameter("dob"));
 
         UserDetailDTO userDetail = new UserDetailDTO(userId, active, name, email, phone, avatarUrl, dob, address);
-        userService.saveUserDetail(userDetail);
+        userService.saveProfile(userDetail);
+        resp.sendRedirect(req.getContextPath() + "/user/detail");
+    }
+
+    private void updateCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String userId = req.getParameter("userId");
+        String membershipLevel = req.getParameter("membershipLevel");
+        int loyaltyPoints = Integer.parseInt(req.getParameter("loyaltyPoints"));
+
+        CustomerDTO customer = new CustomerDTO(membershipLevel, loyaltyPoints);
+        userService.saveCustomer(userId, customer);
+        resp.sendRedirect(req.getContextPath() + "/user/detail");
+    }
+
+    private void updateStaff(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String userId = req.getParameter("userId");
+
+        String staffCode = req.getParameter("staffCode");
+        String position = req.getParameter("position");
+        String department = req.getParameter("department");
+
+        StaffDTO staff = new StaffDTO(staffCode, position, department);
+        userService.saveStaff(userId, staff);
         resp.sendRedirect(req.getContextPath() + "/user/detail");
     }
 
     private void deleteUser(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String userId = req.getParameter("userId");
+        String userId = req.getParameter("id");
 
         userService.deleteUser(userId);
+        resp.sendRedirect(req.getContextPath() + "/customers");
     }
 
     private void showCustomerList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -191,6 +249,36 @@ public class UserServlet extends HttpServlet {
         req.setAttribute("totalPages", totalPages);
 
         req.getRequestDispatcher("/view/user/staff/list.jsp").forward(req, resp);
+    }
+
+    private void showCustomer(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String userId = req.getParameter("id");
+
+        Optional<UserDetailDTO> userOtp = userService.getUserDetail(userId);
+        if (userOtp.isPresent()) {
+            req.setAttribute("userDetail", userOtp.get());
+            req.getRequestDispatcher("/view/user/customer/detail.jsp").forward(req, resp);
+        } else {
+            resp.sendError(404, "User not found");
+            return;
+        }
+
+    }
+
+    private void showCustomerForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String userId = req.getParameter("id");
+
+        Optional<UserDetailDTO> userOtp = userService.getUserDetail(userId);
+        if (userOtp.isPresent()) {
+            req.setAttribute("userDetail", userOtp.get());
+            req.setAttribute("editPmt", true);
+            req.setAttribute("action", "update");
+            req.getRequestDispatcher("/view/user/customer/form.jsp").forward(req, resp);
+        } else {
+            resp.sendError(404, "User not found");
+            return;
+        }
+
     }
 
 }

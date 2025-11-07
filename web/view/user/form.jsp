@@ -42,15 +42,6 @@
                                class="mt-1 w-full border border-slate-200 rounded-xl px-3 py-2 bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
                     </div>
 
-                    <c:if test="${not empty sessionScope.staff}">
-                        <div class="flex items-center gap-2 mt-6 sm:mt-0">
-                            <input type="checkbox" name="active" id="active"
-                                   class="w-4 h-4 text-brand-600 border-slate-300 rounded focus:ring-brand-500"
-                                   ${userDetail.active ? 'checked' : ''}>
-                            <label for="active" class="text-slate-700 text-sm">Kích hoạt tài khoản</label>
-                        </div>
-                    </c:if>
-
                     <div>
                         <label class="text-slate-500">Họ & Tên</label>
                         <input type="text" name="name" required

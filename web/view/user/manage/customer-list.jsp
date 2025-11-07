@@ -61,7 +61,7 @@
                                 <td class="p-3 text-center">
                                     <a href="${ctx}/customer/detail?id=${u.userId}" class="text-brand-600 hover:underline">Chi tiết</a> |
                                     <a href="${ctx}/customer/update?id=${u.userId}" class="text-orange-600 hover:underline">Sửa</a> |
-                                    <a href="${ctx}/user/delete?id=${u.userId}" class="text-red-500 hover:underline">Xóa</a>
+                                    <a href="${ctx}/customer/delete?id=${u.userId}" class="text-red-500 hover:underline">Xóa</a>
                                 </td>
                             </tr>
                         </c:forEach>
