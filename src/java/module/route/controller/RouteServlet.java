@@ -432,53 +432,109 @@ public class RouteServlet extends HttpServlet {
         int routeId = Integer.parseInt(request.getParameter("id"));
         String[] stationIds = request.getParameterValues("stationIds");
 
-        // ✅ 0. Không chọn trạm nào → báo lỗi
+        // ✅ 0. Không chọn trạm nào
         if (stationIds == null || stationIds.length == 0) {
             request.setAttribute("errorMessage", "Bạn phải chọn ít nhất 1 trạm để gán!");
 
             Route route = routeServices.getRouteWithStations(routeId);
             List<Station> allStations = stationServices.getAllStations();
-
             request.setAttribute("route", route);
             request.setAttribute("allStations", allStations);
+
             request.getRequestDispatcher("/view/route/assign.jsp").forward(request, response);
             return;
         }
 
-        // ✅ 1. Kiểm tra trùng thứ tự (giống code trước)
+        // ✅ 1. Validate từng trạm + kiểm tra trùng thứ tự
         Map<Integer, Integer> usedOrders = new HashMap<>();
-        for (String sid : stationIds) {
-            int index = Integer.parseInt(request.getParameter("index_of_" + sid));
-            int order = Integer.parseInt(request.getParameter("stationOrder_" + index));
-            if (usedOrders.containsKey(order)) {
-                request.setAttribute("errorMessage", "️Thứ tự trạm bị trùng: " + order);
 
+        for (String sid : stationIds) {
+            try {
+                int index = Integer.parseInt(request.getParameter("index_of_" + sid));
+
+                String orderStr = request.getParameter("stationOrder_" + index);
+                String timeStr = request.getParameter("estimatedTime_" + index);
+
+                // ✅ 1.1 Thiếu thứ tự
+                if (orderStr == null || orderStr.trim().isEmpty()) {
+                    request.setAttribute("errorMessage", "Chưa nhập THỨ TỰ cho trạm ID: " + sid);
+
+                    Route route = routeServices.getRouteWithStations(routeId);
+                    List<Station> allStations = stationServices.getAllStations();
+
+                    request.setAttribute("route", route);
+                    request.setAttribute("allStations", allStations);
+
+                    request.getRequestDispatcher("/view/route/assign.jsp").forward(request, response);
+                    return;
+                }
+
+                // ✅ 1.2 Thiếu thời gian
+                if (timeStr == null || timeStr.trim().isEmpty()) {
+                    request.setAttribute("errorMessage", "️Chưa nhập THỜI GIAN (phút) cho trạm ID: " + sid);
+
+                    Route route = routeServices.getRouteWithStations(routeId);
+                    List<Station> allStations = stationServices.getAllStations();
+
+                    request.setAttribute("route", route);
+                    request.setAttribute("allStations", allStations);
+
+                    request.getRequestDispatcher("/view/route/assign.jsp").forward(request, response);
+                    return;
+                }
+
+                int order = Integer.parseInt(orderStr);
+                int time = Integer.parseInt(timeStr);
+
+                // ✅ 1.3 Kiểm tra trùng thứ tự
+                if (usedOrders.containsKey(order)) {
+                    request.setAttribute("errorMessage",
+                            "⚠️ Thứ tự trạm bị trùng: " + order
+                            + " (Trạm ID: " + sid + " bị trùng với trạm ID: " + usedOrders.get(order) + ")");
+
+                    Route route = routeServices.getRouteWithStations(routeId);
+                    List<Station> allStations = stationServices.getAllStations();
+
+                    request.setAttribute("route", route);
+                    request.setAttribute("allStations", allStations);
+
+                    request.getRequestDispatcher("/view/route/assign.jsp").forward(request, response);
+                    return;
+                }
+
+                // ✅ Lưu order vào map để ngăn trùng
+                usedOrders.put(order, Integer.parseInt(sid));
+
+            } catch (NumberFormatException e) {
+                request.setAttribute("errorMessage", "Dữ liệu không hợp lệ, vui lòng kiểm tra lại.");
                 Route route = routeServices.getRouteWithStations(routeId);
                 List<Station> allStations = stationServices.getAllStations();
+
                 request.setAttribute("route", route);
                 request.setAttribute("allStations", allStations);
 
                 request.getRequestDispatcher("/view/route/assign.jsp").forward(request, response);
                 return;
             }
-            usedOrders.put(order, Integer.parseInt(sid));
         }
 
-        // ✅ 2. Không lỗi → tiến hành lưu
+        // ✅ 2. Không có lỗi → tiến hành lưu
         routeServices.deleteAllStationsFromRoute(routeId);
 
         for (String sid : stationIds) {
             int index = Integer.parseInt(request.getParameter("index_of_" + sid));
+
             int order = Integer.parseInt(request.getParameter("stationOrder_" + index));
             int time = Integer.parseInt(request.getParameter("estimatedTime_" + index));
 
             routeServices.addStationToRoute(routeId, Integer.parseInt(sid), order, time);
         }
 
-        // ✅ 3. Thành công → redirect
+        // ✅ 3. Hoàn tất → redirect về trang details
         Route route = routeServices.getRouteById(routeId);
         request.getSession().setAttribute("message",
                 "Cập nhật danh sách trạm cho tuyến " + route.getRouteName() + " thành công!");
+
         response.sendRedirect("RouteServlet?action=details&id=" + routeId);
     }
 
