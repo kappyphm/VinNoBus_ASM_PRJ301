@@ -79,11 +79,11 @@ public class paymentController extends HttpServlet {
 
             case "buyMonth":
                 buyMonth(request, response);
-                request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
                 break;
             case "calcMonth":
                 calcMonth(request, response);
-                request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
                 break;
 
             default:
@@ -120,11 +120,11 @@ public class paymentController extends HttpServlet {
 
             case "buyMonth":
                 buyMonth(request, response);
-                request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
                 break;
             case "calcMonth":
                 calcMonth(request, response);
-                request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
                 break;
 
             default:

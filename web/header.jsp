@@ -53,7 +53,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
 
       <li>
         <a
-          href="TicketServlet?action=list"
+          href="TicketServlet?action=main"
           class="relative font-medium hover:text-yellow-300 after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:w-0 after:bg-yellow-300 after:transition-all hover:after:w-full"
         >
           Vé

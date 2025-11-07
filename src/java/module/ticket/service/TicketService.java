@@ -41,14 +41,15 @@ public class TicketService {
             }
 
             // 2️⃣ Gắn invoice_id vào vé
-            
-        invoice.setInvoiceId(invoiceId); //set đúng mã thực tế vừa sinh trong DB
+            invoice.setInvoiceId(invoiceId); //set đúng mã thực tế vừa sinh trong DB
 
-        ticket.setInvoiceId(invoiceId);
-        boolean success = ticketDAO.insertTicket(ticket);
+            ticket.setInvoiceId(invoiceId);
+            boolean success = ticketDAO.insertTicket(ticket);
 
-        if (success) return invoice; // Trả lại hóa đơn thật
-        return null;
+            if (success) {
+                return invoice; // Trả lại hóa đơn thật
+            }
+            return null;
         } catch (SQLException e) {
             System.out.println("💥 SQLException trong TicketService: " + e.getMessage());
             e.printStackTrace();
@@ -65,6 +66,25 @@ public class TicketService {
     public Ticket getMonthlyTicket(String customerId, int routeId) throws SQLException {
         return ticketDAO.findMonthlyTicket(customerId, routeId);
     }
+    // Tìm vé theo ID (đọc dữ liệu)
 
-   
+    public Ticket findTicketById(String ticketId) {
+        try {
+            return ticketDAO.findTicketById(ticketId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+// Tạo vé lượt (insert)
+    public boolean createTrip(Ticket ticket) {
+        try {
+            return ticketDAO.insertTicket(ticket);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
