@@ -15,7 +15,9 @@ import java.util.Optional;
 import java.util.UUID;
 import module.auth.model.dto.GoogleUserDTO;
 import module.auth.service.AuthService;
+import module.user.model.dto.UserDetailDTO;
 import module.user.model.entity.User;
+import module.user.service.UserService;
 import util.googleAuth.GoogleAuthException;
 import util.googleAuth.GoogleAuthUtil;
 
@@ -25,14 +27,15 @@ import util.googleAuth.GoogleAuthUtil;
  */
 @WebServlet(name = "AuthServlet", urlPatterns = {"/auth/login", "/auth/logout", "/auth/register", "/auth/callback"})
 public class AuthServlet extends HttpServlet {
-    
+
     private final AuthService authService = new AuthService();
+    private final UserService userService = new UserService();
 
     // <editor-fold defaultstate="collapsed" desc="GET endpoints">
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getServletPath();
-        
+
         switch (path) {
             case "/auth/login" ->
                 handleGoogleLogin(req, resp);
@@ -43,17 +46,17 @@ public class AuthServlet extends HttpServlet {
             default ->
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
-        
+
     }
-    
+
     private void handleGoogleLogin(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         //Check user is login
         if (req.getSession().getAttribute("user") != null) {
-            resp.sendRedirect(req.getContextPath() + "/user/detail");
+            resp.sendRedirect(req.getContextPath() + "/me");
             return;
         }
-        
+
         String refer = req.getHeader("Refers");
         req.getSession().setAttribute("loginRedirect", refer);
 
@@ -67,7 +70,7 @@ public class AuthServlet extends HttpServlet {
         // Redirect user to Google login
         resp.sendRedirect(authUrl);
     }
-    
+
     private void handleLogout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getSession().invalidate();
         //TODO: delete both staff data
@@ -87,12 +90,12 @@ public class AuthServlet extends HttpServlet {
         // Validate state token to prevent CSRF
         String sessionState = (String) req.getSession().getAttribute("oauth_state");
         req.getSession().removeAttribute("oauth_state");
-        
+
         if (state == null || !state.equals(sessionState)) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid state parameter.");
             return;
         }
-        
+
         if (code == null || code.isEmpty()) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid code parameter.");
             return;
@@ -100,13 +103,14 @@ public class AuthServlet extends HttpServlet {
         try {
             String idToken = GoogleAuthUtil.getIdToken(code);
             GoogleUserDTO googleUser = GoogleAuthUtil.verifyAndExtractUserProfile(idToken);
-            
+
             Optional<User> loginResult = authService.handleLogin(googleUser);
-            
+
             if (loginResult.isPresent()) {
                 User currentUser = loginResult.get();
-                
-                req.getSession().setAttribute("user", currentUser);
+                UserDetailDTO detail = userService.getUserDetail(currentUser.getUserId()).get();
+
+                req.getSession().setAttribute("user", detail);
 
                 //TODO: foward user to home or any
                 String redirectURL = (String) req.getSession().getAttribute("loginRedirect");
@@ -115,25 +119,24 @@ public class AuthServlet extends HttpServlet {
                     resp.sendRedirect(redirectURL);
                 } else {
                     // Mặc định về trang chủ
-                    resp.sendRedirect(req.getContextPath() + "/");
+                    resp.sendRedirect(req.getContextPath() + "/me");
                 }
             } else {
                 req.setAttribute("googleUser", googleUser);
-                req.setAttribute("action", "create");
-                req.getRequestDispatcher("/view/user/form.jsp").forward(req, resp);
+                req.getRequestDispatcher("/view/user/register.jsp").forward(req, resp);
 
-              //  resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Cannot find user in system");
+                //  resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Cannot find user in system");
             }
-            
+
         } catch (GoogleAuthException e) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN, "Google Auth Failed");
-            
+
         } catch (AuthException e) {
             resp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failed: " + e.getMessage());
-            
+
         } catch (IOException e) {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error occurred.");
-            
+
         }
     }
     // </editor-fold>
