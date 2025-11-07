@@ -1,196 +1,251 @@
 package module.core;
 
-import module.core.AbstractCriteria;
+import java.lang.reflect.*;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.*;
+import module.core.annotation.*;
 
 /**
- * AbstractDAO<T>
- * ----------------- DAO tổng quát cho CRUD + query động với Criteria.Tất cả DAO
- * con (UserDAO, ProductDAO, ...) kế thừa lớp này.
+ * AbstractDAO<T, ID>
+ * ------------------- DAO tổng quát cho CRUD, Criteria, và tự động generate
+ * findBy<Field> với @Unique.
  *
- * @param <T>
+ * @param <T> Entity type
+ * @param <ID> ID type
  */
-public abstract class AbstractDAO<T, ID> {
+public abstract class AbstractDAO<T, ID> implements GenericRepository<T, ID> {
 
-    protected Connection connection;
+    protected final Connection connection;
+    protected final Class<T> entityClass;
+    protected final String tableName;
 
-    // --- Constructor ---
-    public AbstractDAO(Connection connection) {
+    protected final Map<String, Field> columns = new LinkedHashMap<>();
+    protected final Map<String, Field> uniqueFields = new HashMap<>();
+    protected Field idField;
+
+    public AbstractDAO(Connection connection, Class<T> entityClass) {
         this.connection = connection;
+        this.entityClass = entityClass;
+        this.tableName = initMetadata(entityClass);
     }
 
-    // --- Abstract methods cần triển khai cho từng entity cụ thể ---
-    protected abstract T mapResultSetToEntity(ResultSet rs) throws SQLException;
-
-    protected abstract ID extractGeneratedKey(ResultSet rs) throws SQLException;
-
-    protected abstract String getTableName();
-
-    protected abstract String getPrimaryKeyColumn();
-
-    protected abstract PreparedStatement prepareInsertStatement(T entity, Connection conn) throws SQLException;
-
-    protected abstract PreparedStatement prepareUpdateStatement(T entity, Connection conn) throws SQLException;
-
-    // ================================================================
-    // ==                     CRUD GENERIC METHODS                   ==
-    // ================================================================
-    /**
-     * Tìm tất cả bản ghi
-     *
-     * @return
-     */
-    public List<T> findAll() {
-        List<T> list = new ArrayList<>();
-        String sql = "SELECT * FROM " + getTableName();
-        try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
-            while (rs.next()) {
-                list.add(mapResultSetToEntity(rs));
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(AbstractDAO.class.getName()).log(Level.SEVERE, null, ex);
+    // ========================== Metadata ==========================
+    private String initMetadata(Class<T> entityClass) {
+        Table table = entityClass.getAnnotation(Table.class);
+        if (table == null) {
+            throw new IllegalStateException("Entity missing @Table annotation: " + entityClass);
         }
-        return list;
+
+        for (Field f : entityClass.getDeclaredFields()) {
+            f.setAccessible(true);
+            Column c = f.getAnnotation(Column.class);
+            PK pk = f.getAnnotation(PK.class);
+            if (c != null) {
+                columns.put(c.name(), f);
+                if (pk != null) {
+                    idField = f;
+                }
+            }
+            if (f.isAnnotationPresent(Unique.class)) {
+                uniqueFields.put("findBy" + capitalize(f.getName()), f);
+            }
+        }
+        if (idField == null) {
+            throw new IllegalStateException("Missing @Column(id=true) in entity " + entityClass);
+        }
+
+        return table.name();
     }
 
-    /**
-     * Tìm theo ID
-     */
-    public Optional<T> findById(ID id) {
-        String sql = "SELECT * FROM " + getTableName() + " WHERE " + getPrimaryKeyColumn() + " = ?";
+    // ========================== CRUD ==========================
+    @Override
+    public Optional<ID> insert(T entity) throws SQLException {
+        StringBuilder cols = new StringBuilder();
+        StringBuilder vals = new StringBuilder();
+        List<Object> params = new ArrayList<>();
+
+        try {
+            for (Map.Entry<String, Field> e : columns.entrySet()) {
+                Column c = e.getValue().getAnnotation(Column.class);
+                PK pk = e.getValue().getAnnotation(PK.class);
+
+                if (pk == null) {
+                    cols.append(c.name()).append(",");
+                    vals.append("?").append(",");
+                    params.add(e.getValue().get(entity));
+                } else if (!pk.auto()) {
+                    cols.append(c.name()).append(",");
+                    vals.append("?").append(",");
+                    params.add(e.getValue().get(entity));
+                }
+            }
+
+            cols.setLength(cols.length() - 1);
+            vals.setLength(vals.length() - 1);
+
+            String idCol = idField.getAnnotation(Column.class).name();
+            String sql = "INSERT INTO " + tableName + " (" + cols + ") "
+                    + "OUTPUT inserted." + idCol + " VALUES (" + vals + ")";
+
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                for (int i = 0; i < params.size(); i++) {
+                    stmt.setObject(i + 1, params.get(i));
+                }
+
+                ResultSet rs = stmt.executeQuery();
+                return rs.next() ? Optional.ofNullable((ID) rs.getObject(1)) : Optional.empty();
+            }
+
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Cannot access entity field value", e);
+        }
+    }
+
+    @Override
+    public Optional<ID> update(T entity) throws SQLException {
+        StringBuilder set = new StringBuilder();
+        List<Object> params = new ArrayList<>();
+
+        try {
+            for (Map.Entry<String, Field> e : columns.entrySet()) {
+                Column c = e.getValue().getAnnotation(Column.class);
+                PK pk = e.getValue().getAnnotation(PK.class);
+                if (pk == null) {
+                    set.append(c.name()).append(" = ?,");
+                    params.add(e.getValue().get(entity));
+                } else if (!pk.auto()) {
+                    set.append(c.name()).append(" = ?,");
+                    params.add(e.getValue().get(entity));
+                }
+            }
+            set.setLength(set.length() - 1);
+
+            String idCol = idField.getAnnotation(Column.class).name();
+            Object idVal = idField.get(entity);
+
+            String sql = "UPDATE " + tableName + " SET " + set
+                    + " OUTPUT inserted." + idCol + " WHERE " + idCol + " = ?";
+
+            try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+                int idx = 1;
+                for (Object p : params) {
+                    stmt.setObject(idx++, p);
+                }
+                stmt.setObject(idx, idVal);
+                ResultSet rs = stmt.executeQuery();
+                return rs.next() ? Optional.ofNullable((ID) rs.getObject(1)) : Optional.empty();
+            }
+
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Cannot access entity field value", e);
+        }
+    }
+
+    @Override
+    public Optional<ID> delete(ID id) throws SQLException {
+        String idCol = idField.getAnnotation(Column.class).name();
+        String sql = "DELETE FROM " + tableName + " OUTPUT deleted." + idCol
+                + " WHERE " + idCol + " = ?";
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setObject(1, id);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return Optional.of(mapResultSetToEntity(rs));
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(AbstractDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return rs.next() ? Optional.ofNullable((ID) rs.getObject(1)) : Optional.empty();
         }
-        return Optional.empty();
     }
 
-    protected Optional<T> findByColumn(String column, Object value) {
-        String sql = "SELECT * FROM " + getTableName() + " WHERE " + column + " = ?";
+    @Override
+    public Optional<T> findById(ID id) throws SQLException {
+        String sql = "SELECT * FROM " + tableName + " WHERE "
+                + idField.getAnnotation(Column.class).name() + " = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setObject(1, value);
+            stmt.setObject(1, id);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return Optional.of(mapResultSetToEntity(rs));
-            }
-        } catch (SQLException e) {
-            Logger.getLogger(AbstractDAO.class.getName()).log(Level.SEVERE, null, e);
-        }
-        return Optional.empty();
-    }
-
-    /**
-     * Thêm mới bản ghi
-     */
-    public Optional<ID> insert(T entity) {
-        try (PreparedStatement stmt = prepareInsertStatement(entity, connection)) {
-            ResultSet rs = stmt.executeQuery();
-            ID generatedId = extractGeneratedKey(rs);
-            return Optional.ofNullable(generatedId);
-        } catch (SQLException ex) {
-            Logger.getLogger(AbstractDAO.class.getName()).log(Level.SEVERE, null, ex);
-            return Optional.empty();
+            return rs.next() ? Optional.of(map(rs)) : Optional.empty();
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException("Entity mapping failed", e);
         }
     }
 
-    /**
-     * Cập nhật bản ghi
-     */
-    public Optional<ID> update(T entity) {
-        try (PreparedStatement stmt = prepareUpdateStatement(entity, connection)) {
-            ResultSet rs = stmt.executeQuery();
-            ID updatedId = extractGeneratedKey(rs);
-            return Optional.ofNullable(updatedId);
-        } catch (SQLException ex) {
-            Logger.getLogger(AbstractDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return Optional.empty();
-    }
-
-    /**
-     * Xóa theo ID
-     */
-    public Optional<ID> delete(Object id) {
-    String sql = "DELETE FROM " + getTableName() + " " +
-                 "OUTPUT deleted." + getPrimaryKeyColumn() + " " +
-                 "WHERE " + getPrimaryKeyColumn() + " = ?";
-    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-        stmt.setObject(1, id);
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
-            ID deletedId = extractGeneratedKey(rs);
-            return Optional.ofNullable(deletedId);
-        }
-    } catch (SQLException ex) {
-        Logger.getLogger(AbstractDAO.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    return Optional.empty();
-}
-
-
-    // ================================================================
-    // ==                     CRITERIA QUERIES                       ==
-    // ================================================================
-    /**
-     * Tìm kiếm động với Criteria (phân trang + sắp xếp + điều kiện WHERE)
-     */
-    public List<T> findByCriteria(AbstractCriteria criteria) {
+    @Override
+    public List<T> findAll() throws SQLException {
         List<T> list = new ArrayList<>();
-        StringBuilder sql = new StringBuilder("SELECT * FROM " + getTableName() + " WHERE 1=1 ");
-        sql.append(criteria.buildWhereClause());
-        sql.append(" ORDER BY ").append(criteria.getSortBy())
-                .append(" ").append(criteria.getSortDirection());
-        sql.append(" OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
-            Object[] params = criteria.getParams();
-            int index = 1;
-            for (Object p : params) {
-                stmt.setObject(index++, p);
-            }
-            stmt.setInt(index++, criteria.getOffset());
-            stmt.setInt(index, criteria.getLimit());
-
-            ResultSet rs = stmt.executeQuery();
+        String sql = "SELECT * FROM " + tableName;
+        try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                list.add(mapResultSetToEntity(rs));
+                list.add(map(rs));
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(AbstractDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException("Entity mapping failed", e);
         }
         return list;
     }
 
-    /**
-     * Đếm tổng số bản ghi theo tiêu chí (cho phân trang)
-     */
-    public int countByCriteria(AbstractCriteria criteria) {
-        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM " + getTableName() + " WHERE 1=1 ");
-        sql.append(criteria.buildWhereClause());
+    @Override
+    public boolean isExist(ID id) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE "
+                + idField.getAnnotation(Column.class).name() + " = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setObject(1, id);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next() && rs.getInt(1) > 0;
+        }
+    }
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
-            Object[] params = criteria.getParams();
-            int index = 1;
+    // ========================== Criteria ==========================
+    @Override
+    public List<T> findByCriteria(AbstractCriteria c) throws SQLException {
+        List<T> list = new ArrayList<>();
+        String sql = "SELECT * FROM " + tableName + " WHERE 1=1 " + c.buildWhereClause()
+                + " ORDER BY " + c.getSortBy() + " " + c.getSortDirection()
+                + " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            Object[] params = c.getParams();
+            int idx = 1;
             for (Object p : params) {
-                stmt.setObject(index++, p);
+                stmt.setObject(idx++, p);
+            }
+            stmt.setInt(idx++, c.getOffset());
+            stmt.setInt(idx, c.getLimit());
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                list.add(map(rs));
+            }
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException("Entity mapping failed", e);
+        }
+        return list;
+    }
+
+    @Override
+    public int countByCriteria(AbstractCriteria c) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM " + tableName + " WHERE 1=1 " + c.buildWhereClause();
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            Object[] params = c.getParams();
+            int idx = 1;
+            for (Object p : params) {
+                stmt.setObject(idx++, p);
             }
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(AbstractDAO.class.getName()).log(Level.SEVERE, null, ex);
+            return rs.next() ? rs.getInt(1) : 0;
         }
-        return 0;
+    }
+
+    // ========================== Helper ==========================
+    protected T map(ResultSet rs) throws ReflectiveOperationException, SQLException {
+        T obj = entityClass.getDeclaredConstructor().newInstance();
+        for (Map.Entry<String, Field> e : columns.entrySet()) {
+            Field f = e.getValue();
+            Object value = rs.getObject(e.getKey());
+            f.setAccessible(true);
+            f.set(obj, value);
+        }
+        return obj;
+    }
+
+    protected String capitalize(String str) {
+        return Character.toUpperCase(str.charAt(0)) + str.substring(1);
     }
 }

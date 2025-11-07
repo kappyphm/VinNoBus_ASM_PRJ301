@@ -7,8 +7,6 @@ public class StationDTO {
     private int stationId;
     private String stationName;
     private String location;
-    private String openTime;
-    private String closeTime;
     private List<String> routeNames;
 
     public int getStationId() {
@@ -33,22 +31,6 @@ public class StationDTO {
 
     public void setLocation(String location) {
         this.location = location;
-    }
-
-    public String getOpenTime() {
-        return openTime;
-    }
-
-    public void setOpenTime(String openTime) {
-        this.openTime = openTime;
-    }
-
-    public String getCloseTime() {
-        return closeTime;
-    }
-
-    public void setCloseTime(String closeTime) {
-        this.closeTime = closeTime;
     }
 
     public List<String> getRouteNames() {

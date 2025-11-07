@@ -1,7 +1,7 @@
 package module.route.model.entity;
 
-import module.station.model.entity.Station;
 import java.util.List;
+import module.station.model.dto.StationOnRouteDTO;
 
 public class Route {
 
@@ -9,7 +9,11 @@ public class Route {
     private String routeName;
     private String type;
     private int frequency;
-    private List<Station> stations;
+
+    // ✅ Danh sách trạm theo thứ tự (DTO đúng chuẩn)
+    private List<StationOnRouteDTO> stations;
+
+    // ✅ Tổng thời gian dự kiến của tuyến (phút)
     private int estimatedTime;
 
     public Route() {
@@ -22,7 +26,8 @@ public class Route {
         this.frequency = frequency;
     }
 
-    public Route(int routeId, String routeName, String type, int frequency, List<Station> stations, int estimatedTime) {
+    public Route(int routeId, String routeName, String type, int frequency,
+            List<StationOnRouteDTO> stations, int estimatedTime) {
         this.routeId = routeId;
         this.routeName = routeName;
         this.type = type;
@@ -31,43 +36,44 @@ public class Route {
         this.estimatedTime = estimatedTime;
     }
 
+    // ===== GETTER / SETTER =====
     public int getRouteId() {
         return routeId;
-    }
-
-    public String getRouteName() {
-        return routeName;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public int getFrequency() {
-        return frequency;
     }
 
     public void setRouteId(int routeId) {
         this.routeId = routeId;
     }
 
+    public String getRouteName() {
+        return routeName;
+    }
+
     public void setRouteName(String routeName) {
         this.routeName = routeName;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public void setType(String type) {
         this.type = type;
     }
 
+    public int getFrequency() {
+        return frequency;
+    }
+
     public void setFrequency(int frequency) {
         this.frequency = frequency;
     }
 
-    public List<Station> getStations() {
+    public List<StationOnRouteDTO> getStations() {
         return stations;
     }
 
-    public void setStations(List<Station> stations) {
+    public void setStations(List<StationOnRouteDTO> stations) {
         this.stations = stations;
     }
 
@@ -78,5 +84,4 @@ public class Route {
     public void setEstimatedTime(int estimatedTime) {
         this.estimatedTime = estimatedTime;
     }
-
 }

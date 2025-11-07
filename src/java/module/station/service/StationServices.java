@@ -49,4 +49,17 @@ public class StationServices {
     public int getTotalStations() {
         return stationDAO.getTotalStations();
     }
+
+    public List<Station> searchStationsByNameFuzzy(String name) {
+        return stationDAO.searchStationsByNameFuzzy(name);
+    }
+
+    public List<Station> getStationsWithLatestRoutes() {
+        return stationDAO.getAllStationsWithRoutes();
+    }
+
+    public List<Station> getStationsByPageWithRoutes(int page, int pageSize) {
+        return stationDAO.getStationsByPageWithRoutes(page, pageSize);
+    }
+
 }

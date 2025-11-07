@@ -23,4 +23,6 @@ public interface iBusDAO {
     public boolean isPlateNumberExists(String plateNumber) throws SQLException;
 
     public List<Bus> searchBusByPlate(String keyword) throws SQLException;
+
+    public int countBySearch(String keyword) throws SQLException;
 }

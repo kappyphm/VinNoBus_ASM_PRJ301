@@ -7,35 +7,33 @@ public class Station {
     private int stationId;
     private String stationName;
     private String location;
-    private String openTime;
-    private String closeTime;
     private List<String> routeNames;
+    private int stationOrder;     // Thứ tự trên tuyến
+    private int estimatedTime;    // Thời gian dự kiến giữa các trạm
 
     public Station() {
     }
 
-    public Station(String stationName, String location, String openTime, String closeTime) {
-        this.stationName = stationName;
-        this.location = location;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
-    }
-
-    public Station(int stationId, String stationName, String location, String openTime, String closeTime) {
+    public Station(int stationId, String stationName, String location) {
         this.stationId = stationId;
         this.stationName = stationName;
         this.location = location;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
     }
 
-    public Station(int stationId, String stationName, String location, String openTime, String closeTime, List<String> routeNames) {
+    public Station(int stationId, String stationName, String location, List<String> routeNames) {
         this.stationId = stationId;
         this.stationName = stationName;
         this.location = location;
-        this.openTime = openTime;
-        this.closeTime = closeTime;
         this.routeNames = routeNames;
+    }
+
+    public Station(int stationId, String stationName, String location,
+            int stationOrder, int estimatedTime) {
+        this.stationId = stationId;
+        this.stationName = stationName;
+        this.location = location;
+        this.stationOrder = stationOrder;
+        this.estimatedTime = estimatedTime;
     }
 
     public int getStationId() {
@@ -62,22 +60,6 @@ public class Station {
         this.location = location;
     }
 
-    public String getOpenTime() {
-        return openTime;
-    }
-
-    public void setOpenTime(String openTime) {
-        this.openTime = openTime;
-    }
-
-    public String getCloseTime() {
-        return closeTime;
-    }
-
-    public void setCloseTime(String closeTime) {
-        this.closeTime = closeTime;
-    }
-
     public List<String> getRouteNames() {
         return routeNames;
     }
@@ -86,4 +68,19 @@ public class Station {
         this.routeNames = routeNames;
     }
 
+    public int getStationOrder() {
+        return stationOrder;
+    }
+
+    public void setStationOrder(int stationOrder) {
+        this.stationOrder = stationOrder;
+    }
+
+    public int getEstimatedTime() {
+        return estimatedTime;
+    }
+
+    public void setEstimatedTime(int estimatedTime) {
+        this.estimatedTime = estimatedTime;
+    }
 }

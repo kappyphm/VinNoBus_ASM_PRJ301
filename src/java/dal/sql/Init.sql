@@ -26,9 +26,6 @@ GO
 -- ==========================================================
 CREATE TABLE dbo.[user] (
     user_id VARCHAR(128) NOT NULL UNIQUE,
-    role VARCHAR(20) NOT NULL 
-        CHECK (role IN ('ADMIN', 'STAFF', 'CUSTOMER')) 
-        DEFAULT 'CUSTOMER',
     is_active BIT NOT NULL DEFAULT 1,
     created_at DATETIME NOT NULL DEFAULT GETDATE(),
     updated_at DATETIME NOT NULL DEFAULT GETDATE(),
@@ -180,10 +177,8 @@ CREATE TABLE BusLog (
 -- ==============================================
 CREATE TABLE Station (
     station_id INT IDENTITY(1,1) PRIMARY KEY,
-    station_name VARCHAR(150) NOT NULL,
-    location VARCHAR(255),       -- TODO: có th? thay b?ng t?a ?? GPS
-    openTime VARCHAR(10),
-    closeTime VARCHAR(10)
+    station_name NVARCHAR(150) NOT NULL,
+    location NVARCHAR(255),       -- TODO: có th? thay b?ng t?a ?? GPS
 );
 
 -- ==============================================
@@ -193,8 +188,8 @@ CREATE TABLE Station (
 -- ==============================================
 CREATE TABLE Route (
     route_id INT IDENTITY(1,1) PRIMARY KEY,
-    route_name VARCHAR(150) NOT NULL,
-	type NVARCHAR(10) CHECK (type in ('ROUND_TRIP', 'CIRCULAR')),
+    route_name NVARCHAR(150) NOT NULL,
+	type VARCHAR(10) CHECK (type in ('ROUND_TRIP', 'CIRCULAR')),
     frequency INT CHECK (frequency >= 0)
 );
 
