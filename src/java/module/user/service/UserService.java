@@ -35,7 +35,7 @@ public class UserService extends BaseService {
     private final StaffDAO staffDao = new StaffDAO(connection);
     private final CustomerDAO customerDao = new CustomerDAO(connection);
 
-    public List<UserDetailDTO> getUsers(String search, String sort, int currentPage) {
+    public List<UserDetailDTO> getUsers(String search) {
 
         List<UserDetailDTO> result = new ArrayList<>();
 
@@ -45,16 +45,8 @@ public class UserService extends BaseService {
         // 2. Thiết lập tìm kiếm
         if (search != null && !search.isEmpty()) {
             criteria.like("name", search)
-                    .like("email", search);
-        }
-
-        // 3. Thiết lập phân trang & sắp xếp
-        criteria.setPage(currentPage);
-        criteria.setPageSize(15);
-
-        if (sort != null && !sort.isEmpty()) {
-            criteria.setSortBy(sort);
-            criteria.setSortDirection("ASC");
+                    .orlike("email", search)
+                    .orlike("phone", search);
         }
 
         try {
@@ -62,41 +54,6 @@ public class UserService extends BaseService {
             List<Profile> profiles = profileDao.findByCriteria(criteria);
 
             for (Profile profile : profiles) {
-//                UserDetailDTO detail = new UserDetailDTO();
-//
-//                // ------------ Set thông tin PROFILE ------------
-//                detail.setUserId(profile.getUserId());
-//                detail.setName(profile.getName());
-//                detail.setEmail(profile.getEmail());
-//                detail.setPhone(profile.getPhone());
-//                detail.setAvatarUrl(profile.getAvatarUrl());
-//                detail.setAddress(profile.getAddress());
-//                detail.setDob(profile.getDob());
-//
-//                String userId = profile.getUserId();
-//
-//                // ------------ Lấy dữ liệu từ User ------------
-//                userDao.findById(userId).ifPresent(u -> {
-//                    detail.setActive(u.isActive());
-//                });
-//
-//                // ------------ Lấy dữ liệu Staff (nếu tồn tại) ------------
-//                staffDao.findById(userId).ifPresent(st -> {
-//                    detail.setStaff(new StaffDTO(
-//                            st.getStaffCode(),
-//                            st.getPosition(),
-//                            st.getDepartment()
-//                    ));
-//                });
-//
-//                // ------------ Lấy dữ liệu Customer (nếu muốn dùng) ------------
-//                customerDao.findById(userId).ifPresent(cus -> {
-//                    detail.setCustomer(new CustomerDTO(
-//                            cus.getMembershipLevel(),
-//                            cus.getLoyaltyPoints()
-//                    ));
-//
-//                });
 
                 UserDetailDTO detail = getUserDetail(profile.getUserId()).get();
                 // Thêm vào danh sách kết quả

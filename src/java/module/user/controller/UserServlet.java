@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.*;
+import java.util.List;
 import module.user.model.dto.UserDetailDTO;
 import module.user.service.UserService;
 
@@ -198,6 +199,13 @@ public class UserServlet extends HttpServlet {
     }
 
     private void listUsers(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        
+        String search = req.getParameter("search");
+        
+        List<UserDetailDTO> users = userService.getUsers(search);
+        req.setAttribute("search", search);
+        req.setAttribute("users", users);
+        req.getRequestDispatcher("/view/user/users.jsp").forward(req, resp);
     }
 
     private void showUserDetail(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
