@@ -267,6 +267,9 @@ public class UserService extends BaseService {
         } catch (SQLException ex) {
             Logger.getLogger(UserService.class.getName()).log(Level.SEVERE, null, ex);
         }
+        if (res.isEmpty()) {
+            throw new RuntimeException("đm đéo có tài xế");
+        }
         return res;
     }
 

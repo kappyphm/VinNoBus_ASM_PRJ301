@@ -121,6 +121,10 @@ public class TripServlet extends HttpServlet {
 
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
+        // Lấy danh sách Operator
+        List<UserDetailDTO> operators = userService.getOperator();
+        request.setAttribute("operators", operators);
         request.getRequestDispatcher("/view/Trip/tripForm.jsp").forward(request, response);
     }
 
@@ -139,9 +143,6 @@ public class TripServlet extends HttpServlet {
 
     private void addTrip(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Lấy danh sách Operator từ service
-        List<UserDetailDTO> operators = userService.getOperator();
-        request.setAttribute("operators", operators);
 
         List<String> errors = new ArrayList<>();
 
@@ -156,7 +157,7 @@ public class TripServlet extends HttpServlet {
         int tripId = 0, routeId = 0, busId = 0;
         LocalDateTime departureTime = null, arrivalTime = null;
 
-        // Validation dữ liệu nhập
+        // Parse Route
         try {
             routeId = Integer.parseInt(routeIdStr);
             if (routeId <= 0) {
@@ -166,6 +167,7 @@ public class TripServlet extends HttpServlet {
             errors.add("Mã tuyến không hợp lệ, vui lòng nhập số.");
         }
 
+        // Parse Bus
         try {
             busId = Integer.parseInt(busIdStr);
             if (busId <= 0) {
@@ -175,25 +177,29 @@ public class TripServlet extends HttpServlet {
             errors.add("Mã xe buýt không hợp lệ, vui lòng nhập số.");
         }
 
-        // Kiểm tra tên tài xế
-        if (driverId == null || driverId.trim().isBlank()) {
+        // Check driver
+        if (driverId == null || driverId.isBlank()) {
             errors.add("Mã tài xế không được để trống.");
         }
-// Kiểm tra tên phụ xe
-        if (conductorId == null || conductorId.trim().isBlank()) {
+
+        // Check conductor
+        if (conductorId == null || conductorId.isBlank()) {
             errors.add("Mã phụ xe không được để trống.");
         }
+
+        // Parse time
         try {
             departureTime = LocalDateTime.parse(departureStr);
             arrivalTime = LocalDateTime.parse(arrivalStr);
+
             if (departureTime.isAfter(arrivalTime)) {
                 errors.add("Giờ khởi hành phải trước giờ kết thúc.");
             }
         } catch (Exception e) {
-            errors.add("Định dạng giờ không hợp lệ (đúng định dạng HH:mm).");
+            errors.add("Định dạng giờ không hợp lệ.");
         }
 
-        // Nếu có lỗi → trả về form cùng dữ liệu cũ
+        // Nếu lỗi
         if (!errors.isEmpty()) {
             request.setAttribute("errors", errors);
             request.setAttribute("tripId", tripIdStr);
@@ -203,10 +209,12 @@ public class TripServlet extends HttpServlet {
             request.setAttribute("conductorId", conductorId);
             request.setAttribute("departureTime", departureStr);
             request.setAttribute("arrivalTime", arrivalStr);
-            request.getRequestDispatcher("tripForm.jsp").forward(request, response);
+
+            request.getRequestDispatcher("/view/Trip/tripForm.jsp").forward(request, response);
             return;
         }
 
+        // Tạo Trip
         Trip trip = new Trip(
                 tripId,
                 routeId,
@@ -225,7 +233,9 @@ public class TripServlet extends HttpServlet {
                 errors.add("❌ Không thể thêm chuyến xe. Có thể trùng dữ liệu.");
                 request.setAttribute("errors", errors);
             }
+
             request.getRequestDispatcher("/view/Trip/tripForm.jsp").forward(request, response);
+
         } catch (SQLException e) {
             errors.add("Lỗi cơ sở dữ liệu: " + e.getMessage());
             request.setAttribute("errors", errors);

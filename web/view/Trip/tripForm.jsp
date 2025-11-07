@@ -47,24 +47,27 @@
                     </div>
 
                     <div>
-                        <label>Tài xế:</label>
-                        <select name="driverId">
-                            <option value="">-- Chọn --</option>
+                        <label class="block text-sm font-medium mb-1">Tài xế</label>
+                        <select name="driverId"
+                                class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                            <option value="">-- Chọn tài xế --</option>
                             <c:forEach var="op" items="${operators}">
-                                <option value="${op.id}">${op.name}</option>
+                                <option value="${op.userId}">${op.name}</option>
                             </c:forEach>
                         </select>
                     </div>
 
                     <div>
-                        <label>Phụ xe:</label>
-                        <select name="conductorId">
-                            <option value="">-- Chọn --</option>
+                        <label class="block text-sm font-medium mb-1">Phụ xe</label>
+                        <select name="conductorId"
+                                class="w-full px-3 py-2 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none">
+                            <option value="">-- Chọn phụ xe --</option>
                             <c:forEach var="op" items="${operators}">
-                                <option value="${op.id}">${op.name}</option>
+                                <option value="${op.userId}">${op.name}</option>
                             </c:forEach>
                         </select>
                     </div>
+
 
                     <div>
                         <label class="block text-sm font-medium mb-1">Giờ khởi hành</label>
