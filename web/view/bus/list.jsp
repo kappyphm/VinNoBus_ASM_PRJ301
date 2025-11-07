@@ -65,13 +65,14 @@
                 <table class="min-w-full text-sm font-normal">
                     <thead class="bg-brand-100 text-left text-slate-700 border-b border-slate-200">
                         <tr>
-                            <th class="py-3 px-4 font-normal">ID</th>
-                            <th class="py-3 px-4 font-normal">Biển số</th>
-                            <th class="py-3 px-4 font-normal">Chỗ ngồi</th>
-                            <th class="py-3 px-4 font-normal">Trạng thái</th>
-                            <th class="py-3 px-4 font-normal">Hành động</th>
+                            <th class="py-3 px-4 font-semibold">ID</th>
+                            <th class="py-3 px-4 font-semibold">Biển số</th>
+                            <th class="py-3 px-4 font-semibold">Chỗ ngồi</th>
+                            <th class="py-3 px-4 font-semibold">Trạng thái</th>
+                            <th class="py-3 px-4 font-semibold">Hành động</th>
                         </tr>
                     </thead>
+
                     <tbody class="divide-y divide-slate-100 font-normal">
                         <c:forEach var="bus" items="${busList}">
                             <tr class="hover:bg-brand-50 transition-all font-normal">

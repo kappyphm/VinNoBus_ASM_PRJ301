@@ -46,7 +46,7 @@
             <!-- Table -->
             <div class="overflow-x-auto bg-white border border-slate-200 rounded-xl shadow-soft">
                 <table class="min-w-full text-sm">
-                    <thead class="bg-slate-100 text-slate-600">
+                    <thead class="bg-brand-100 shadow-soft">
                         <tr>
                             <th class="py-3 px-4 text-left font-medium border-b border-slate-200">ID</th>
                             <th class="py-3 px-4 text-left font-medium border-b border-slate-200">Tên trạm</th>

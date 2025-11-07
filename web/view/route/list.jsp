@@ -42,15 +42,15 @@
             </div>
 
             <!-- Table -->
-            <div class="mt-6 bg-white border border-slate-200 rounded-2xl shadow-soft overflow-x-auto">
-                <table class="min-w-full text-sm">
-                    <thead>
-                        <tr class="text-left text-slate-500 border-b border-slate-200">
-                            <th class="py-2 px-4">ID</th>
-                            <th class="py-2 px-4">Tên tuyến</th>
-                            <th class="py-2 px-4">Loại tuyến</th>
-                            <th class="py-2 px-4">Tần suất (phút)</th>
-                            <th class="py-2 px-4">Hành động</th>
+            <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-soft fade-up">
+                <table class="min-w-full text-sm font-normal">
+                    <thead class="bg-brand-100 text-left text-slate-900 border-b border-slate-200">
+                        <tr class="text-left text-slate-900 border-b border-slate-200">
+                            <th class="py-2 px-4 font-semibold">ID</th>
+                            <th class="py-2 px-4 font-semibold">Tên tuyến</th>
+                            <th class="py-2 px-4 font-semibold">Loại tuyến</th>
+                            <th class="py-2 px-4 font-semibold">Tần suất (phút)</th>
+                            <th class="py-2 px-4 font-semibold">Hành động</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
