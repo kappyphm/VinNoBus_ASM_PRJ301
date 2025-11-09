@@ -1,27 +1,94 @@
+// File: module/trip/controller/TripServlet.java
 package module.trip.controller;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors; // Cần dùng
+
+// === IMPORT SERVICE THẬT ===
 import module.trip.model.entity.Trip;
 import module.trip.service.ITripService;
 import module.trip.service.TripService;
-import java.sql.Timestamp;
+import module.user.model.dto.UserDetailDTO;
+import module.user.service.UserService;
+import module.route.model.entity.Route;
+import module.route.service.RouteServices;
+import module.bus.model.entity.Bus;
+import module.bus.service.BusServices;
+// === KẾT THÚC IMPORT ===
+
 
 @WebServlet("/TripServlet")
 public class TripServlet extends HttpServlet {
 
     private ITripService tripService;
+    
+    // === KHAI BÁO CÁC SERVICE THẬT ===
+    private RouteServices routeService;
+    private BusServices busService;
+    private UserService userService;
+    
 
     @Override
     public void init() throws ServletException {
         tripService = new TripService();
+        
+        // === KHỞI TẠO CÁC SERVICE THẬT ===
+        routeService = new RouteServices();
+        busService = new BusServices();
+        userService = new UserService();
     }
+    
+    /**
+     * Tải danh sách Tuyến (chỉ cho form tạo)
+     */
+    private void loadCreateFormDependencies(HttpServletRequest request) throws ServletException {
+        try {
+            // Lấy 1000 tuyến đầu tiên
+            List<Route> routes = routeService.getAllRoutes(null, null, "route_id", "ASC", 1, 1000); //
+            request.setAttribute("routesList", routes);
+        } catch (Exception e) {
+            throw new ServletException("Không thể tải danh sách tuyến", e);
+        }
+    }
+    
+    /**
+     * Tải TẤT CẢ danh sách cho form Edit (Tuyến, Xe, Tài xế, Phụ xe)
+     */
+    private void loadEditFormDependencies(HttpServletRequest request) throws ServletException {
+         try {
+            List<Route> routes = routeService.getAllRoutes(null, null, "route_id", "ASC", 1, 1000); //
+            List<Bus> buses = busService.getAllBuses(); //
+            List<UserDetailDTO> allStaff = userService.getAllStaffDetails(); // Hàm mới
+
+            // Phân loại Staff
+            List<UserDetailDTO> drivers = allStaff.stream()
+                .filter(s -> s.getStaff() != null && "DRIVER".equalsIgnoreCase(s.getStaff().getPosition()))
+                .collect(Collectors.toList());
+                
+            List<UserDetailDTO> conductors = allStaff.stream()
+                .filter(s -> s.getStaff() != null && "CONDUCTOR".equalsIgnoreCase(s.getStaff().getPosition()))
+                .collect(Collectors.toList());
+
+            request.setAttribute("routesList", routes);
+            request.setAttribute("busesList", buses);
+            request.setAttribute("driversList", drivers);
+            request.setAttribute("conductorsList", conductors);
+            
+        } catch (Exception e) {
+            throw new ServletException("Không thể tải dữ liệu cho form", e);
+        }
+    }
+
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -34,9 +101,9 @@ public class TripServlet extends HttpServlet {
         try {
             switch (action) {
                 case "add" ->
-                    showAddForm(request, response);
+                    showAddForm(request, response); // Bước 1: Mở form tạo
                 case "edit" ->
-                    showEditForm(request, response);
+                    showEditForm(request, response); // Bước 2: Mở form sửa (để gán)
                 case "detail" ->
                     showTripDetail(request, response);
                 case "list" ->
@@ -60,10 +127,10 @@ public class TripServlet extends HttpServlet {
 
         try {
             switch (action) {
-                case "add":
-                    addTrip(request, response);
+                case "createShell": // Bước 1: Xử lý tạo
+                    createShellTrip(request, response);
                     break;
-                case "update":
+                case "update": // Bước 2: Xử lý cập nhật
                     updateTrip(request, response);
                     break;
                 case "delete":
@@ -79,9 +146,11 @@ public class TripServlet extends HttpServlet {
         }
     }
 
-    // ======================  HANDLERS ======================
+    // ======================  HANDLERS (ĐÃ CẬP NHẬT) ======================
+    
     private void listTrips(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // (Giữ nguyên code listTrips của bạn)
         try {
             String search = request.getParameter("search");
             String filter = request.getParameter("filter");
@@ -94,15 +163,13 @@ public class TripServlet extends HttpServlet {
                 if (request.getParameter("page") != null) {
                     page = Integer.parseInt(request.getParameter("page"));
                 }
-            } catch (NumberFormatException ignored) {
-            }
+            } catch (NumberFormatException ignored) {}
 
             List<Trip> trips = tripService.findTrips(search, filter, sortCol, sortDir, page, pageSize);
             int total = tripService.countTrips(search, filter);
 
             request.setAttribute("trips", trips);
             request.setAttribute("total", total);
-
             request.setAttribute("currentPage", page);
             request.setAttribute("pageSize", pageSize);
 
@@ -114,17 +181,29 @@ public class TripServlet extends HttpServlet {
         }
     }
 
+    // (BƯỚC 1) Hiển thị form tạo chuyến (chỉ tải tuyến)
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        loadCreateFormDependencies(request);
         request.getRequestDispatcher("/view/Trip/tripForm.jsp").forward(request, response);
     }
 
+    // (BƯỚC 2) Hiển thị form sửa/cập nhật (tải tất cả)
     private void showEditForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             int tripId = Integer.parseInt(request.getParameter("tripId"));
             Trip trip = tripService.findTripById(tripId);
+            
+            if (trip == null) {
+                request.setAttribute("errorMessage", "❌ Không tìm thấy chuyến xe với ID: " + tripId);
+                listTrips(request, response);
+                return;
+            }
+            
             request.setAttribute("trip", trip);
+            loadEditFormDependencies(request);
+            
             request.getRequestDispatcher("/view/Trip/tripEditForm.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("errorMessage", "❌ Không thể tải thông tin chuyến xe để chỉnh sửa: " + e.getMessage());
@@ -132,157 +211,150 @@ public class TripServlet extends HttpServlet {
         }
     }
 
-    private void addTrip(HttpServletRequest request, HttpServletResponse response)
+    // (BƯỚC 1) Xử lý tạo chuyến "vỏ"
+    private void createShellTrip(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-
-        List<String> errors = new ArrayList<>();
-
+        
         String routeIdStr = request.getParameter("routeId");
-        String busIdStr = request.getParameter("busId");
-        String driverId = request.getParameter("driverId");
-        String conductorId = request.getParameter("conductorId");
-        String departureStr = request.getParameter("departureTime");
-        String arrivalStr = request.getParameter("arrivalTime");
-
-        int tripId = 0, routeId = 0, busId = 0;
-        Timestamp departureTime = null, arrivalTime = null;
+        int routeId = 0;
+        List<String> errors = new ArrayList<>();
 
         try {
             routeId = Integer.parseInt(routeIdStr);
-            if (routeId <= 0) {
-                errors.add("Mã tuyến phải là số dương.");
-            }
         } catch (NumberFormatException e) {
-            errors.add("Mã tuyến không hợp lệ, vui lòng nhập số.");
+            errors.add("Mã tuyến không hợp lệ. Vui lòng chọn từ danh sách.");
         }
-
-        try {
-            busId = Integer.parseInt(busIdStr);
-            if (busId <= 0) {
-                errors.add("Mã xe buýt phải là số dương.");
-            }
-        } catch (NumberFormatException e) {
-            errors.add("Mã xe buýt không hợp lệ, vui lòng nhập số.");
-        }
-        String idRegex = "^[a-zA-Z0-9]+$";
-
-        if (driverId == null || driverId.trim().isBlank()) {
-            errors.add("Mã tài xế không được để trống.");
-        } else if (!driverId.trim().matches(idRegex)) {
-            errors.add("Mã tài xế chỉ được chứa chữ cái và số, không chứa ký tự đặc biệt hoặc dấu cách.");
-        }
-
-        if (conductorId == null || conductorId.trim().isBlank()) {
-            errors.add("Mã phụ xe không được để trống.");
-        } else if (!conductorId.trim().matches(idRegex)) {
-            errors.add("Mã phụ xe chỉ được chứa chữ cái và số, không chứa ký tự đặc biệt hoặc dấu cách.");
-        }
-
-        try {
-            if (departureStr == null || departureStr.isEmpty() || arrivalStr == null || arrivalStr.isEmpty()) {
-                errors.add("Giờ khởi hành và kết thúc không được để trống.");
-            } else {
-                String departureSQL = departureStr.replace("T", " ") + ":00";
-                String arrivalSQL = arrivalStr.replace("T", " ") + ":00";
-                departureTime = Timestamp.valueOf(departureSQL);
-                arrivalTime = Timestamp.valueOf(arrivalSQL);
-                if (departureTime.after(arrivalTime)) {
-                    errors.add("Giờ khởi hành phải trước giờ kết thúc.");
-                }
-            }
-        } catch (IllegalArgumentException e) {
-            errors.add("Định dạng ngày giờ không hợp lệ.");
-        }
+        
         if (!errors.isEmpty()) {
             request.setAttribute("errors", errors);
             request.setAttribute("routeId", routeIdStr);
-            request.setAttribute("busId", busIdStr);
-            request.setAttribute("driverId", driverId);
-            request.setAttribute("conductorId", conductorId);
-            request.setAttribute("departureTime", departureStr);
-            request.setAttribute("arrivalTime", arrivalStr);
+            loadCreateFormDependencies(request); // Tải lại danh sách tuyến
             request.getRequestDispatcher("/view/Trip/tripForm.jsp").forward(request, response);
             return;
         }
-        Trip trip = new Trip(
-                tripId,
-                routeId,
-                busId,
-                driverId.trim(), 
-                conductorId.trim(), 
-                departureTime,
-                arrivalTime,
-                "NOT_STARTED"
-        );
+        
         try {
-            if (tripService.insertTrip(trip)) {
-                request.setAttribute("success", "✅ Thêm chuyến xe thành công!");
-                request.getRequestDispatcher("/view/Trip/tripForm.jsp").forward(request, response);
+            Trip newTrip = tripService.insertShellTrip(routeId);
+            
+            if (newTrip != null) {
+                // CHUYỂN HƯỚNG SANG TRANG EDIT
+                response.sendRedirect("TripServlet?action=edit&tripId=" + newTrip.getTripId());
             } else {
-                errors.add("❌ Không thể thêm chuyến xe. Có thể trùng dữ liệu.");
+                errors.add("❌ Không thể tạo chuyến xe.");
                 request.setAttribute("errors", errors);
                 request.setAttribute("routeId", routeIdStr);
-                request.setAttribute("busId", busIdStr);
-                request.setAttribute("driverId", driverId);
-                request.setAttribute("conductorId", conductorId);
-                request.setAttribute("departureTime", departureStr);
-                request.setAttribute("arrivalTime", arrivalStr);
+                loadCreateFormDependencies(request);
                 request.getRequestDispatcher("/view/Trip/tripForm.jsp").forward(request, response);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             errors.add("Lỗi cơ sở dữ liệu: " + e.getMessage());
             request.setAttribute("errors", errors);
             request.setAttribute("routeId", routeIdStr);
-            request.setAttribute("busId", busIdStr);
-            request.setAttribute("driverId", driverId);
-            request.setAttribute("conductorId", conductorId);
-            request.setAttribute("departureTime", departureStr);
-            request.setAttribute("arrivalTime", arrivalStr);
+            loadCreateFormDependencies(request);
             request.getRequestDispatcher("/view/Trip/tripForm.jsp").forward(request, response);
         }
     }
 
+
+    // (BƯỚC 2) Xử lý cập nhật đầy đủ
     private void updateTrip(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        
         List<String> errors = new ArrayList<>();
+        int tripId = 0;
+        Trip updatedTrip = null; // Dùng để lưu lại dữ liệu nếu có lỗi
+
         try {
-            int tripId = Integer.parseInt(request.getParameter("tripId"));
+            tripId = Integer.parseInt(request.getParameter("tripId"));
             int routeId = Integer.parseInt(request.getParameter("routeId"));
-            int busId = Integer.parseInt(request.getParameter("busId"));
+            
+            // Xử lý các trường có thể rỗng (mới tạo)
+            int busId = 0; // Mặc định là 0
+            if (request.getParameter("busId") != null && !request.getParameter("busId").isBlank()) {
+                try {
+                    busId = Integer.parseInt(request.getParameter("busId"));
+                } catch (NumberFormatException e) {
+                    errors.add("Mã xe buýt không hợp lệ.");
+                }
+            }
+            
             String driverId = request.getParameter("driverId");
             String conductorId = request.getParameter("conductorId");
-            String departureStr = request.getParameter("departureTime").replace("T", " ") + ":00";
-            String arrivalStr = request.getParameter("arrivalTime").replace("T", " ") + ":00";
-            Timestamp departureTime = Timestamp.valueOf(departureStr);
-            Timestamp arrivalTime = Timestamp.valueOf(arrivalStr);
-            String status = request.getParameter("status");
+            
+            // Xử lý thời gian (có thể rỗng)
+            String departureStr = request.getParameter("departureTime");
+            String arrivalStr = request.getParameter("arrivalTime");
+            Timestamp departureTime = null;
+            Timestamp arrivalTime = null;
 
-            Trip updatedTrip = new Trip(
+            try {
+                 if (departureStr != null && !departureStr.isEmpty()) {
+                    departureTime = Timestamp.valueOf(departureStr.replace("T", " ") + ":00");
+                 }
+                 if (arrivalStr != null && !arrivalStr.isEmpty()) {
+                    arrivalTime = Timestamp.valueOf(arrivalStr.replace("T", " ") + ":00");
+                 }
+                 
+                 if (departureTime != null && arrivalTime != null && departureTime.after(arrivalTime)) {
+                     errors.add("Giờ khởi hành phải trước giờ kết thúc.");
+                 }
+            } catch (IllegalArgumentException e) {
+                 errors.add("Định dạng ngày giờ không hợp lệ.");
+            }
+            
+            String status = request.getParameter("status");
+            
+            // Gói dữ liệu lại để gửi về form nếu lỗi
+             updatedTrip = new Trip(
                     tripId, routeId, busId, driverId, conductorId, departureTime, arrivalTime, status
             );
 
+            // Kiểm tra lỗi validation
+             if (!errors.isEmpty()) {
+                 request.setAttribute("errors", errors);
+                 request.setAttribute("trip", updatedTrip);
+                 loadEditFormDependencies(request); // Tải lại danh sách
+                 request.getRequestDispatcher("/view/Trip/tripEditForm.jsp").forward(request, response);
+                 return;
+             }
+             
+            // Mọi thứ OK, tiến hành cập nhật (Service sẽ lo validation)
             boolean success = tripService.updateTrip(updatedTrip);
+            
             if (success) {
                 request.setAttribute("success", "✅ Cập nhật chuyến xe thành công!");
                 request.setAttribute("trip", updatedTrip); 
+                loadEditFormDependencies(request); // Tải lại danh sách
                 request.getRequestDispatcher("/view/Trip/tripEditForm.jsp").forward(request, response);
-                return;
             } else {
-                errors.add("❌ Không thể cập nhật chuyến xe. Kiểm tra lại dữ liệu.");
-                request.setAttribute("errors", errors);
+                 errors.add("❌ Không thể cập nhật. Dữ liệu không hợp lệ (ví dụ: Tài xế, Phụ xe, hoặc Xe buýt đã bị trùng lịch).");
+                 request.setAttribute("errors", errors);
+                 request.setAttribute("trip", updatedTrip);
+                 loadEditFormDependencies(request); // Tải lại danh sách
+                 request.getRequestDispatcher("/view/Trip/tripEditForm.jsp").forward(request, response);
             }
 
         } catch (Exception e) {
-            errors.add("❌ Lỗi khi cập nhật: " + e.getMessage());
+            errors.add("❌ Lỗi nghiêm trọng khi cập nhật: " + e.getMessage());
             request.setAttribute("errors", errors);
+             
+            if (updatedTrip == null && tripId > 0) {
+                 try { request.setAttribute("trip", tripService.findTripById(tripId)); } catch (SQLException ex) {}
+            } else {
+                 request.setAttribute("trip", updatedTrip);
+            }
+            
+            loadEditFormDependencies(request);
+            request.getRequestDispatcher("/view/Trip/tripEditForm.jsp").forward(request, response);
         }
-
-        listTrips(request, response);
     }
-
+    
+    // (Hàm addTrip gốc đã bị xóa, thay bằng createShellTrip)
+    
     private void deleteTrip(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
+        // (Giữ nguyên code deleteTrip của bạn)
+         try {
             int tripId = Integer.parseInt(request.getParameter("tripId"));
             if (tripService.deleteTrip(tripId)) {
                 request.setAttribute("success", "✅ Xóa chuyến xe thành công!");
@@ -298,6 +370,7 @@ public class TripServlet extends HttpServlet {
 
     private void showTripDetail(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        // (Giữ nguyên code showTripDetail của bạn)
         try {
             int tripId = Integer.parseInt(request.getParameter("tripId"));
             Trip trip = tripService.getTripDetail(tripId);
@@ -307,10 +380,5 @@ public class TripServlet extends HttpServlet {
             request.setAttribute("errorMessage", "❌ Không thể tải chi tiết chuyến xe: " + e.getMessage());
             listTrips(request, response);
         }
-    }
-
-    private void searchTrips(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        listTrips(request, response);
     }
 }
