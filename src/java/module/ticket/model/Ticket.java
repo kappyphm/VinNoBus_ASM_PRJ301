@@ -19,7 +19,6 @@ public class Ticket {
     private double price;
     private Date issueDate;
     private Date expiryDate;
-    private String createdBy;
     private Integer invoiceId;
 
     public Ticket() {
@@ -89,12 +88,5 @@ public class Ticket {
         this.invoiceId = invoiceId;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
-    }
-    
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
 
 }

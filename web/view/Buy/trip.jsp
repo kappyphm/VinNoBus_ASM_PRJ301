@@ -65,18 +65,25 @@
 
                 <div>
                     <label class="block text-sm font-medium mb-1">Ngân hàng</label>
-                    <input type="text" name="bank" value="${param.bank}" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                    <input type="text" name="bank" value="MB Bank" readonly
+                           class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-gray-100 text-gray-700 cursor-not-allowed" />
                 </div>
 
                 <div>
                     <label class="block text-sm font-medium mb-1">Số tài khoản</label>
-                    <input type="text" name="stk" value="${param.stk}" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                    <input type="text" name="stk" value="0965047076" readonly
+                           class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-gray-100 text-gray-700 cursor-not-allowed" />
                 </div>
+
 
                 <button type="submit"
                         class="w-full bg-bus-600 hover:bg-bus-700 text-white py-2.5 rounded-xl font-medium transition-all shadow-soft">
                     💰 Tính tiền
                 </button>
+                <a href="${pageContext.request.contextPath}/view/Buy/ticket.jsp"
+                   class="block w-full text-center bg-slate-400 hover:bg-slate-500 text-white py-2.5 rounded-xl font-medium transition-all shadow-soft">
+                    ⬅️ Quay Lại
+                </a>
             </form>
 
             <!-- Hiển thị hóa đơn -->

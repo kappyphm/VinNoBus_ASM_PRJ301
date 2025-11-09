@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 import module.core.annotation.Column;
+import module.core.annotation.PK;
 
 /**
  * AutoCriteria<T>
@@ -33,6 +34,10 @@ public class AutoCriteria<T> extends AbstractCriteria {
             if (f.isAnnotationPresent(Column.class)) {
                 columns.put(f.getName(), f);
             }
+
+            if (f.isAnnotationPresent(PK.class)) {
+                this.sortBy = f.getAnnotation(Column.class).name();
+            }
         }
     }
 
@@ -50,6 +55,15 @@ public class AutoCriteria<T> extends AbstractCriteria {
         if (pattern != null && columns.containsKey(field)) {
             String col = columns.get(field).getAnnotation(Column.class).name();
             conditions.add("AND " + col + " LIKE ?");
+            params.add("%" + pattern + "%");
+        }
+        return this;
+    }
+
+    public AutoCriteria<T> orlike(String field, String pattern) {
+        if (pattern != null && columns.containsKey(field)) {
+            String col = columns.get(field).getAnnotation(Column.class).name();
+            conditions.add("OR " + col + " LIKE ?");
             params.add("%" + pattern + "%");
         }
         return this;

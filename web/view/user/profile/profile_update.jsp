@@ -4,21 +4,21 @@
 <%@ taglib prefix="ui" tagdir="/WEB-INF/tags" %>
 
 <ui:layout>
-    <jsp:attribute name="title">${action == 'create' ? 'Tạo người dùng' : 'Cập nhật người dùng'}</jsp:attribute>
+    <jsp:attribute name="title">Cập nhật thông tin</jsp:attribute>
 
     <jsp:body>
         <main class="max-w-4xl mx-auto px-5 py-8">
 
             <!-- Dynamic Header -->
-            <jsp:include page="/view/user/component/DetailHeader.jsp" />
+            <h1 class="text-2xl font-semibold">Cập nhật thông tin</h1>
 
-            <c:set var="avatarUrl" value="${not empty userDetail.avatarUrl ? userDetail.avatarUrl : googleUser.picture}" />
-            <c:set var="displayName" value="${not empty userDetail.name ? userDetail.name : googleUser.name}" />
-            <c:set var="displayEmail" value="${not empty userDetail.email ? userDetail.email : googleUser.email}" />
-            <c:set var="displayAddress" value="${not empty userDetail.address ? userDetail.address : googleUser.local}" />
-            <c:set var="userIdValue" value="${not empty userDetail.userId ? userDetail.userId : googleUser.sub}" />
+            <c:set var="avatarUrl" value="${userDetail.avatarUrl}" />
+            <c:set var="displayName" value="${userDetail.name}" />
+            <c:set var="displayEmail" value="${userDetail.email}" />
+            <c:set var="displayAddress" value="${userDetail.address}" />
+            <c:set var="userIdValue" value="${  userDetail.userId}" />
 
-            <form action="${ctx}/user/${action}" method="POST"
+            <form action="${ctx}/profile/update?id=${userIdValue}" method="POST"
                   class="mt-6 bg-white border border-slate-200 rounded-2xl shadow-soft p-6 space-y-5">
 
                 <!-- Avatar -->
@@ -28,7 +28,16 @@
                     <div>
                         <div class="text-sm text-slate-500 mb-1">Ảnh đại diện</div>
                         <input type="hidden" name="avatarUrl" value="${avatarUrl}">
+
                         <div class="text-xs text-slate-400">Ảnh được lấy từ hồ sơ hoặc Google.</div>
+                    </div>
+                    <div class="sm:col-span-2 mt-2">
+                        <label class="inline-flex items-center gap-2 text-sm text-slate-500">
+                            <input type="checkbox" name="active" value="true" 
+                                   ${userDetail.active ? 'checked' : ''} 
+                                   class="rounded border-slate-300 text-brand-600 focus:ring-2 focus:ring-brand-500">
+                            Kích hoạt tài khoản
+                        </label>
                     </div>
                 </div>
 
@@ -41,15 +50,6 @@
                                value="${userIdValue}"
                                class="mt-1 w-full border border-slate-200 rounded-xl px-3 py-2 bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
                     </div>
-
-                    <c:if test="${not empty sessionScope.staff}">
-                        <div class="flex items-center gap-2 mt-6 sm:mt-0">
-                            <input type="checkbox" name="active" id="active"
-                                   class="w-4 h-4 text-brand-600 border-slate-300 rounded focus:ring-brand-500"
-                                   ${userDetail.active ? 'checked' : ''}>
-                            <label for="active" class="text-slate-700 text-sm">Kích hoạt tài khoản</label>
-                        </div>
-                    </c:if>
 
                     <div>
                         <label class="text-slate-500">Họ & Tên</label>
@@ -86,15 +86,17 @@
                                class="mt-1 w-full border border-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-500">
                     </div>
 
+
+
                 </div>
 
                 <!-- Actions -->
                 <div class="pt-4 flex gap-3">
                     <button type="submit"
                             class="px-4 py-2 rounded-xl bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 shadow-soft">
-                        Lưu thay đổi
+                        Lưu
                     </button>
-                    <a href="${ctx}/${action=='create'?'/':'/user/detail'}"
+                    <a href="${ctx}/user?id=${userIdValue}" 
                        class="px-4 py-2 rounded-xl border border-brand-200 text-brand-700 text-sm hover:bg-brand-100">
                         Hủy
                     </a>

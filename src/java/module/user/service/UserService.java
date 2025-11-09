@@ -10,6 +10,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import module.core.AutoCriteria;
 import module.core.BaseService;
 import module.user.dao.CustomerDAO;
 import module.user.dao.ProfileDAO;
@@ -33,6 +36,38 @@ public class UserService extends BaseService {
     private final UserDAO userDao = new UserDAO(connection);
     private final StaffDAO staffDao = new StaffDAO(connection);
     private final CustomerDAO customerDao = new CustomerDAO(connection);
+
+    public List<UserDetailDTO> getUsers(String search) {
+
+        List<UserDetailDTO> result = new ArrayList<>();
+
+        // 1. Khởi tạo AutoCriteria
+        AutoCriteria<Profile> criteria = new AutoCriteria<>(Profile.class);
+
+        // 2. Thiết lập tìm kiếm
+        if (search != null && !search.isEmpty()) {
+            criteria.like("name", search)
+                    .orlike("email", search)
+                    .orlike("phone", search);
+        }
+
+        try {
+            // 4. Lấy danh sách Profile theo tiêu chí
+            List<Profile> profiles = profileDao.findByCriteria(criteria);
+
+            for (Profile profile : profiles) {
+
+                UserDetailDTO detail = getUserDetail(profile.getUserId()).get();
+                // Thêm vào danh sách kết quả
+                result.add(detail);
+            }
+
+        } catch (SQLException ex) {
+            throw new DataAccessException("CANNOT FIND PROFILE: " + ex.getMessage());
+        }
+
+        return result;
+    }
 
     public Optional<UserDetailDTO> getUserDetail(String userId) {
         try {
@@ -62,6 +97,8 @@ public class UserService extends BaseService {
                 Staff st = staff.get();
                 StaffDTO staffDto = new StaffDTO(st.getStaffCode(), st.getPosition(), st.getDepartment());
                 userDetail.setStaff(staffDto);
+            } else {
+                userDetail.setStaff(null);
             }
 
             Optional<Customer> customer = customerDao.findById(userId);
@@ -78,31 +115,8 @@ public class UserService extends BaseService {
 
             return Optional.of(userDetail);
         } catch (SQLException e) {
-            throw new DataAccessException("getUserProfile: " + e.getMessage());
+            throw new DataAccessException("getUserProfile: " + e.getLocalizedMessage());
         }
-    }
-
-    public void saveUserDetail(UserDetailDTO userDetail) {
-        try {
-            beginTransaction();
-            Profile profile = new Profile();
-            profile.setAddress(userDetail.getAddress());
-            profile.setAvatarUrl(userDetail.getAvatarUrl());
-            profile.setDob((Date) userDetail.getDob());
-            profile.setEmail(userDetail.getEmail());
-            profile.setName(userDetail.getName());
-            profile.setPhone(userDetail.getPhone());
-            profile.setUserId(userDetail.getUserId());
-
-            profileDao.update(profile);
-
-            commitTransaction();
-
-        } catch (SQLException e) {
-            rollbackTransaction();
-            throw new DataAccessException("SAVE USER ERROR: " + e.getMessage());
-        }
-
     }
 
     public User createUserDetail(UserDetailDTO userDetail) {
@@ -163,5 +177,101 @@ public class UserService extends BaseService {
         }
     }
     
+
+    public void deleteUser(String userId) {
+        try {
+            userDao.delete(userId);
+        } catch (SQLException e) {
+            throw new DataAccessException("CREATE USER ERROR: " + e.getMessage());
+        }
+    }
+
+    public void saveProfile(UserDetailDTO userDetail) {
+        try {
+            beginTransaction();
+            Profile profile = new Profile();
+            profile.setAddress(userDetail.getAddress());
+            profile.setAvatarUrl(userDetail.getAvatarUrl());
+            profile.setDob((Date) userDetail.getDob());
+            profile.setEmail(userDetail.getEmail());
+            profile.setName(userDetail.getName());
+            profile.setPhone(userDetail.getPhone());
+            profile.setUserId(userDetail.getUserId());
+
+            profileDao.update(profile);
+
+            userDao.updateUserActive(userDetail.getUserId(), userDetail.isActive());
+
+            commitTransaction();
+
+        } catch (SQLException e) {
+            rollbackTransaction();
+            throw new DataAccessException("SAVE USER ERROR: " + e.getMessage());
+        }
+
+    }
+
+    public void saveCustomer(String userId, CustomerDTO customer) {
+        try {
+            beginTransaction();
+
+            Customer cus = new Customer(userId, customer.getMembershipLevel(), customer.getLoyaltyPoints());
+            customerDao.update(cus);
+
+            commitTransaction();
+
+        } catch (SQLException e) {
+            rollbackTransaction();
+            throw new DataAccessException("SAVE CUSTOMER ERROR: " + e.getMessage());
+        }
+    }
+
+    public void saveStaff(String userId, StaffDTO staff) {
+        try {
+            beginTransaction();
+
+            Staff st = new Staff(
+                    userId,
+                    staff.getStaffCode(),
+                    staff.getPosition(),
+                    staff.getDepartment()
+            );
+
+            if (!staffDao.isExist(userId)) {
+                staffDao.insert(st);
+            } else {
+                staffDao.update(st);
+            }
+
+            commitTransaction();
+
+        } catch (SQLException e) {
+            rollbackTransaction();
+            throw new DataAccessException("SAVE STAFF ERROR: " + e.getMessage());
+        }
+    }
+
+    public List<UserDetailDTO> getStaffs() {
+        try {
+            List<Staff> staffs = staffDao.findAll();
+
+            return staffs.stream().map(st -> {
+                Optional<UserDetailDTO> detail = getUserDetail(st.getUserId());
+                return detail.get();
+            }).toList();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(UserService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return new ArrayList<>();
+    }
+
+    public void deleteStaff(String userId) {
+        try {
+            staffDao.delete(userId);
+        } catch (SQLException ex) {
+            Logger.getLogger(UserService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
 }
