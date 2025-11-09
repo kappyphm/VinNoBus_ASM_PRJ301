@@ -71,23 +71,23 @@ public class TicketController extends HttpServlet {
         }
         switch (action) {
             case "sell":
-                request.getRequestDispatcher("/view/Ticket/sell.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
                 break;
             case "checkin":
-                request.getRequestDispatcher("/view/Ticket/checkin.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/ticket/checkin.jsp").forward(request, response);
                 break;
             case "main":
                 showMainMenu(request, response, action);
                 break;
             case "validate":
-                request.getRequestDispatcher("/view/Ticket/checkinConductor.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/ticket/checkinConductor.jsp").forward(request, response);
                 break;
             case "trip":
-                request.getRequestDispatcher("/view/Ticket/checkinConductor.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/ticket/checkinConductor.jsp").forward(request, response);
                 break;
             default:
                 request.setAttribute("error", "Action không hợp lệ!");
-                request.getRequestDispatcher("/view/Ticket/sell.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
         }
 
     }
@@ -110,31 +110,35 @@ public class TicketController extends HttpServlet {
         switch (action) {
             case "sell":
                 TicketSell(request, response);
-                request.getRequestDispatcher("/view/Ticket/sell.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
                 break;
             case "checkin":
                 TicketCheckin(request, response);
-                request.getRequestDispatcher("/view/Ticket/checkin.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/ticket/checkin.jsp").forward(request, response);
+                break;
+            case "main":
+                showMainMenu(request, response, action);
+                request.getRequestDispatcher("/view/ticket/main.jsp").forward(request, response);
                 break;
             case "validate":
                 TicketCheckinValidate(request, response);
-                request.getRequestDispatcher("/view/Ticket/checkinConductor.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/ticket/checkinConductor.jsp").forward(request, response);
                 break;
             case "trip":
                 TicketCreateTrip(request, response);
-                request.getRequestDispatcher("/view/Ticket/checkinConductor.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/ticket/checkinConductor.jsp").forward(request, response);
                 break;
 
             default:
                 request.setAttribute("error", "Action không hợp lệ!");
-                request.getRequestDispatcher("/view/Ticket/sell.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
         }
 
     }
 
     private void showMainMenu(HttpServletRequest request, HttpServletResponse response, String jspPath)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/view/Ticket/main.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/ticket/main.jsp").forward(request, response);
     }
 
     private void TicketSell(HttpServletRequest request, HttpServletResponse response)
@@ -212,20 +216,20 @@ public class TicketController extends HttpServlet {
                     request.setAttribute("amount", (int) amount);
                     request.setAttribute("bank", bank);
                     request.setAttribute("stk", stk);
-                    request.getRequestDispatcher("/view/Ticket/sell.jsp").forward(request, response);
+                    request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
                     return;
                 } else {
-                    request.getRequestDispatcher("/view/Ticket/invoice.jsp").forward(request, response);
+                    request.getRequestDispatcher("/view/ticket/invoice.jsp").forward(request, response);
                     return;
                 }
             }
             // Nếu có lỗi không tạo được
             request.setAttribute("error", "Không thể tạo vé!");
-            request.getRequestDispatcher("/view/Ticket/sell.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());
-            request.getRequestDispatcher("/view/Ticket/sell.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
         }
 
     }
@@ -238,7 +242,7 @@ public class TicketController extends HttpServlet {
 
             if (customerIdStr == null || routeIdStr == null || customerIdStr.isEmpty() || routeIdStr.isEmpty()) {
                 request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
-                request.getRequestDispatcher("/view/Ticket/checkin.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/ticket/checkin.jsp").forward(request, response);
                 return;
             }
             int routeId = Integer.parseInt(routeIdStr);
@@ -288,7 +292,7 @@ public class TicketController extends HttpServlet {
         }
 
         // Quay lại trang check-in chính
-        request.getRequestDispatcher("/view/Ticket/checkinConductor.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/ticket/checkinConductor.jsp").forward(request, response);
     }
 
     private void TicketCreateTrip(HttpServletRequest request, HttpServletResponse response)
@@ -303,7 +307,7 @@ public class TicketController extends HttpServlet {
 
             if (tripIdStr == null || tripIdStr.isEmpty()) {
                 request.setAttribute("error", "Vui lòng nhập mã chuyến!");
-                request.getRequestDispatcher("/view/Ticket/trip.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/ticket/trip.jsp").forward(request, response);
                 return;
             }
 
@@ -337,12 +341,12 @@ public class TicketController extends HttpServlet {
             request.setAttribute("total", total);
             request.setAttribute("price", price);
 
-            request.getRequestDispatcher("/view/Ticket/trip.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/ticket/trip.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Lỗi tạo vé: " + e.getMessage());
-            request.getRequestDispatcher("/view/Ticket/trip.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/ticket/trip.jsp").forward(request, response);
         }
     }
 

@@ -80,7 +80,7 @@
                         class="w-full bg-bus-600 hover:bg-bus-700 text-white py-2.5 rounded-xl font-medium transition-all shadow-soft">
                     💰 Tính tiền
                 </button>
-                <a href="${pageContext.request.contextPath}/view/Buy/ticket.jsp"
+                <a href="${pageContext.request.contextPath}/view/buy/ticket.jsp"
                    class="block w-full text-center bg-slate-400 hover:bg-slate-500 text-white py-2.5 rounded-xl font-medium transition-all shadow-soft">
                     ⬅️ Quay Lại
                 </a>
