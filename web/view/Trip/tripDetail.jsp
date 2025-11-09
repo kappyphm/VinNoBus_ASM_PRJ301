@@ -1,14 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%--<%@ include file="/header.jsp" %>--%>
-
 <script src="https://cdn.tailwindcss.com"></script>
-
 <body class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-100 font-['Segoe_UI'] p-6">
 
     <div class="max-w-2xl mx-auto bg-white/90 backdrop-blur-sm rounded-2xl shadow-md p-8 mt-10">
-        
+
         <h2 class="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
             Chi tiết chuyến xe 
         </h2>
@@ -16,12 +13,12 @@
         <div class="overflow-hidden rounded-lg border border-gray-200">
             <table class="min-w-full divide-y divide-gray-200">
                 <tbody class="divide-y divide-gray-100 bg-white">
-                    
+
                     <tr class="hover:bg-indigo-50/50 transition">
                         <td class="px-6 py-4 w-1/3 text-sm font-medium text-gray-800">Mã chuyến</td>
                         <td class="px-6 py-4 text-sm text-gray-700 font-semibold">${trip.tripId}</td>
                     </tr>
-                    
+
                     <tr class="hover:bg-indigo-50/50 transition">
                         <td class="px-6 py-4 w-1/3 text-sm font-medium text-gray-800">Mã tuyến</td>
                         <td class="px-6 py-4 text-sm text-gray-700">${trip.routeId}</td>
@@ -55,7 +52,7 @@
                             <fmt:formatDate value="${trip.arrivalTime}" pattern="HH:mm dd-MM-yyyy"/>
                         </td>
                     </tr>
-                    
+
                     <tr class="hover:bg-indigo-50/50 transition">
                         <td class="px-6 py-4 w-1/3 text-sm font-medium text-gray-800">Trạng thái</td>
                         <td class="px-6 py-4 text-sm font-semibold">
@@ -92,8 +89,7 @@
                 ✏️ Chỉnh sửa chuyến này
             </a>
         </div>
-        
+
     </div>
 
 </body>
-<%--<%@ include file="/footer.jsp" %>--%>
