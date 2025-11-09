@@ -1,4 +1,4 @@
-
+// File: module/trip/dao/ITripDAO.java
 package module.trip.dao;
 
 import module.trip.model.entity.Trip;
@@ -8,11 +8,12 @@ import java.util.List;
 public interface ITripDAO {
 
     //CRUD
-    public boolean insertTrip(Trip trip) throws SQLException;
+    // boolean insertTrip(Trip trip) throws SQLException; // XÓA
+    Trip insertShellTrip(int routeId) throws SQLException; // THÊM
 
-    public boolean updateTrip(Trip trip) throws SQLException;
+    boolean updateTrip(Trip trip) throws SQLException;
 
-    public boolean deleteTrip(int tripId) throws SQLException;
+    boolean deleteTrip(int tripId) throws SQLException;
 
     public Trip findTripById(int tripID) throws SQLException;
 
