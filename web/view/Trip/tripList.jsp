@@ -160,12 +160,15 @@
                                                 </span>
                                             </td>
                                             <td class="px-6 py-4 text-center text-sm font-medium">
-                                                <a href="TripServlet?action=detail&tripId=${t.tripId}" class="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-900 px-2" title="Chi tiết">👁️ Chi tiết</a> |
-                                                <a href="TripServlet?action=edit&tripId=${t.tripId}" class="inline-flex items-center gap-1 text-purple-600 hover:text-purple-900 px-2" title="Sửa">✏️ Sửa</a> |
-                                                <form action="TripServlet" method="post" class="inline" onsubmit="return confirm('Bạn có chắc muốn xóa chuyến ${t.tripId} không?')">
+                                                <a href="TripServlet?action=detail&tripId=${t.tripId}" 
+                                                   class="inline text-indigo-600 hover:text-indigo-900 px-1" title="Chi tiết">👁️ Chi tiết</a> |
+                                                <a href="TripServlet?action=edit&tripId=${t.tripId}" 
+                                                   class="inline text-purple-600 hover:text-purple-900 px-1" title="Sửa">✏️ Sửa</a> |
+                                                <form action="TripServlet" method="post" class="inline" 
+                                                      onsubmit="return confirm('Bạn có chắc muốn xóa chuyến ${t.tripId} không?')">
                                                     <input type="hidden" name="action" value="delete">
                                                         <input type="hidden" name="tripId" value="${t.tripId}">
-                                                            <button type="submit" class="inline-flex items-center gap-1 text-red-600 hover:text-red-900 px-2 bg-transparent border-none p-0 cursor-pointer" title="Xóa">❌ Xóa</button>
+                                                            <button type="submit" class="inline text-red-600 hover:text-red-900 px-1 bg-transparent border-none p-0 cursor-pointer" title="Xóa">❌ Xóa</button>
                                                             </form>
                                                             </td>
                                                             </tr>
