@@ -34,13 +34,13 @@
             <h1 class="text-2xl font-semibold mb-6">Mua vé xe buýt</h1>
 
             <div class="space-y-4">
-                <form action="trip.jsp">
+                <form action="${pageContext.request.contextPath}/view/Buy/trip.jsp">
                     <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 rounded-xl font-medium transition-all shadow-soft">
                         🎟️ Mua vé lượt
                     </button>
                 </form>
 
-                <form action="month.jsp">
+                <form action="${pageContext.request.contextPath}/view/Buy/month.jsp">
                     <button class="w-full bg-brand-600 hover:bg-brand-700 text-white px-4 py-3 rounded-xl font-medium transition-all shadow-soft">
                         🗓️ Mua vé tháng
                     </button>

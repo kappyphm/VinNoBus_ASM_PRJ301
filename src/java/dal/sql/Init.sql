@@ -1,3 +1,9 @@
+CREATE DATABASE VinNoBusMERGE;
+GO
+
+USE VinNoBusMERGE;
+GO
+
 -- ==========================================================
 -- USER MODULE DATABASE SCHEMA (FIXED FOR SQL SERVER)
 -- Author: Kappy (FPT University)
@@ -26,6 +32,9 @@ GO
 -- ==========================================================
 CREATE TABLE dbo.[user] (
     user_id VARCHAR(128) NOT NULL UNIQUE,
+    role VARCHAR(20) NOT NULL 
+        CHECK (role IN ('ADMIN', 'STAFF', 'CUSTOMER')) 
+        DEFAULT 'CUSTOMER',
     is_active BIT NOT NULL DEFAULT 1,
     created_at DATETIME NOT NULL DEFAULT GETDATE(),
     updated_at DATETIME NOT NULL DEFAULT GETDATE(),
@@ -58,8 +67,6 @@ CREATE TABLE dbo.profile (
     email VARCHAR(255) NULL UNIQUE,
     address NVARCHAR(255) NULL,
     avatar_url VARCHAR(255) NULL,
-    created_at DATETIME NOT NULL DEFAULT GETDATE(),
-    updated_at DATETIME NOT NULL DEFAULT GETDATE(),
     CONSTRAINT pk_profile PRIMARY KEY (user_id),
     CONSTRAINT fk_profile_user FOREIGN KEY (user_id)
         REFERENCES dbo.[user](user_id)
@@ -67,18 +74,6 @@ CREATE TABLE dbo.profile (
 );
 GO
 
-CREATE TRIGGER trg_profile_update_timestamp
-ON dbo.profile
-AFTER UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-    UPDATE p
-    SET p.updated_at = GETDATE()
-    FROM dbo.profile p
-    INNER JOIN inserted i ON p.user_id = i.user_id;
-END;
-GO
 
 -- ==========================================================
 -- 3?? CUSTOMER TABLE
@@ -87,26 +82,11 @@ CREATE TABLE dbo.customer (
     user_id VARCHAR(128) NOT NULL UNIQUE,
     membership_level VARCHAR(50) NOT NULL DEFAULT 'STANDARD',
     loyalty_points INT NOT NULL DEFAULT 0,
-    created_at DATETIME NOT NULL DEFAULT GETDATE(),
-    updated_at DATETIME NOT NULL DEFAULT GETDATE(),
     CONSTRAINT pk_customer PRIMARY KEY (user_id),
     CONSTRAINT fk_customer_user FOREIGN KEY (user_id)
         REFERENCES dbo.[user](user_id)
         ON DELETE CASCADE
 );
-GO
-
-CREATE TRIGGER trg_customer_update_timestamp
-ON dbo.customer
-AFTER UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-    UPDATE c
-    SET c.updated_at = GETDATE()
-    FROM dbo.customer c
-    INNER JOIN inserted i ON c.user_id = i.user_id;
-END;
 GO
 
 -- ==========================================================
@@ -118,8 +98,7 @@ CREATE TABLE dbo.staff (
     staff_code VARCHAR(50) NOT NULL UNIQUE,
     position NVARCHAR(100) NULL,
     department NVARCHAR(100) NULL,
-    created_at DATETIME NOT NULL DEFAULT GETDATE(),
-    updated_at DATETIME NOT NULL DEFAULT GETDATE(),
+
     CONSTRAINT pk_staff PRIMARY KEY (user_id),
     CONSTRAINT fk_staff_user FOREIGN KEY (user_id)
         REFERENCES dbo.[user](user_id)
@@ -127,18 +106,6 @@ CREATE TABLE dbo.staff (
 );
 GO
 
-CREATE TRIGGER trg_staff_update_timestamp
-ON dbo.staff
-AFTER UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-    UPDATE s
-    SET s.updated_at = GETDATE()
-    FROM dbo.staff s
-    INNER JOIN inserted i ON s.user_id = i.user_id;
-END;
-GO
 
 
 
@@ -155,21 +122,6 @@ CREATE TABLE Bus (
     current_status VARCHAR(20) CHECK (current_status IN ('AVAILABLE','IN_USE','MAINTENANCE','BROKEN','REPAIRING','RESERVED'))
 );
 
--- ==============================================
--- B?ng L?ch s? xe buýt (BusLog)
--- L?u l?i tr?ng thái thay ??i c?a xe theo th?i gian
--- created_by: ng??i dùng thao tác thay ??i
--- ==============================================
-CREATE TABLE BusLog (
-    log_id INT IDENTITY(1,1) PRIMARY KEY,
-    bus_id INT NOT NULL,
-    status VARCHAR(20) CHECK (status IN ('AVAILABLE','IN_USE','MAINTENANCE','BROKEN','REPAIRING','RESERVED')),
-    note VARCHAR(255),
-    created_by VARCHAR(128) NOT NULL UNIQUE,
-    created_at DATETIME DEFAULT GETDATE(),
-    CONSTRAINT FK_BusLog_Bus FOREIGN KEY (bus_id) REFERENCES Bus(bus_id),
-    CONSTRAINT FK_BusLog_User FOREIGN KEY (created_by) REFERENCES [User](user_id)
-);
 
 -- ==============================================
 -- B?ng Tr?m xe buýt (Station)
@@ -177,8 +129,10 @@ CREATE TABLE BusLog (
 -- ==============================================
 CREATE TABLE Station (
     station_id INT IDENTITY(1,1) PRIMARY KEY,
-    station_name NVARCHAR(150) NOT NULL,
-    location NVARCHAR(255),       -- TODO: có th? thay b?ng t?a ?? GPS
+    station_name VARCHAR(150) NOT NULL,
+    location VARCHAR(255),       -- TODO: có th? thay b?ng t?a ?? GPS
+    openTime VARCHAR(10),
+    closeTime VARCHAR(10)
 );
 
 -- ==============================================
@@ -188,10 +142,9 @@ CREATE TABLE Station (
 -- ==============================================
 CREATE TABLE Route (
     route_id INT IDENTITY(1,1) PRIMARY KEY,
-    route_name NVARCHAR(150) NOT NULL,
-    type VARCHAR(10) CHECK (type in ('ROUND_TRIP', 'CIRCULAR')),
-    frequency INT CHECK (frequency >= 0),
-    CONSTRAINT UQ_Route_RouteName UNIQUE (route_name)
+    route_name VARCHAR(150) NOT NULL,
+	type NVARCHAR(10) CHECK (type in ('ROUND_TRIP', 'CIRCULAR')),
+    frequency INT CHECK (frequency >= 0)
 );
 
 -- ==============================================
@@ -206,7 +159,7 @@ CREATE TABLE Route_Station (
     estimated_time INT DEFAULT 0, -- th?i gian ??c l??ng (phút) t? tr?m này ??n tr?m k? ti?p
     PRIMARY KEY (route_id, station_id),
     CONSTRAINT FK_RS_Route FOREIGN KEY (route_id) REFERENCES Route(route_id),
-    CONSTRAINT FK_RS_Station FOREIGN KEY (station_id) REFERENCES Station(station_id) ON DELETE CASCADE
+    CONSTRAINT FK_RS_Station FOREIGN KEY (station_id) REFERENCES Station(station_id)
 );
 -- ==============================================
 -- B?ng Chuy?n xe (Trip)
@@ -230,28 +183,7 @@ CREATE TABLE Trip (
     CONSTRAINT FK_Trip_Conductor FOREIGN KEY (conductor_id) REFERENCES [User](user_id)
 );
 
--- ==============================================
--- B?ng Nh?t ký công vi?c (WorkLog)
--- L?u l?i check-in/check-out c?a nhân viên trong chuy?n
--- Ch? áp d?ng cho role DRIVER và CONDUCTOR
--- Ràng bu?c: m?i chuy?n ch? có 1 driver + 1 conductor
--- ==============================================
 
-
-CREATE TABLE WorkLog (
-    worklog_id INT IDENTITY(1,1) PRIMARY KEY,
-    trip_id INT NOT NULL,
-    user_id VARCHAR(128) NOT NULL UNIQUE,
-    role VARCHAR(20) NOT NULL,
-    checkin_time DATETIME NULL,
-    checkout_time DATETIME NULL,
-    notes NVARCHAR(255) NULL,
-
-    CONSTRAINT FK_WorkLog_Trip FOREIGN KEY (trip_id) REFERENCES Trip(trip_id),
-    CONSTRAINT FK_WorkLog_User FOREIGN KEY (user_id) REFERENCES [User](user_id),
-    CONSTRAINT CK_WorkLog_Role CHECK (role IN ('DRIVER','CONDUCTOR')),
-    CONSTRAINT UQ_WorkLog_TripRole UNIQUE (trip_id, role)
-);
 
 -- ==============================================
 -- B?ng Hóa ??n (Invoice)
@@ -279,13 +211,12 @@ CREATE TABLE Ticket (
     price DECIMAL(10,2) NOT NULL,
     issue_date DATE NOT NULL,
     expiry_date DATE NULL,
-    created_by VARCHAR(128) NOT NULL UNIQUE,
+
     invoice_id INT NULL,
 
     CONSTRAINT FK_Ticket_Customer FOREIGN KEY (customer_id) REFERENCES [User](user_id),
     CONSTRAINT FK_Ticket_Trip FOREIGN KEY (trip_id) REFERENCES Trip(trip_id),
     CONSTRAINT FK_Ticket_Route FOREIGN KEY (route_id) REFERENCES Route(route_id),
-    CONSTRAINT FK_Ticket_CreatedBy FOREIGN KEY (created_by) REFERENCES [User](user_id),
     CONSTRAINT FK_Ticket_Invoice FOREIGN KEY (invoice_id) REFERENCES Invoice(invoice_id),
 
     -- Logic: Vé l??t thì có trip_id, vé ngày/tháng thì có route_id

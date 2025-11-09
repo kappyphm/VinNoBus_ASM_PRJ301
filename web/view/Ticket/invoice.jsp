@@ -68,7 +68,7 @@
                 </tr>
                 <tr class="border-b border-slate-200">
                     <th class="text-left py-2 pr-2 text-slate-600">Khách Hàng</th>
-                    <td class="py-2 text-slate-800">${customerId}</td>
+                    <td class="py-2 text-slate-800">${ticket.customerId}</td>
                 </tr>
                 <tr class="border-b border-slate-200">
                     <th class="text-left py-2 pr-2 text-slate-600">Loại Vé</th>
@@ -76,15 +76,21 @@
                 </tr>
                 <tr class="border-b border-slate-200">
                     <th class="text-left py-2 pr-2 text-slate-600">Giá Vé</th>
-                    <td class="py-2 text-slate-800"><fmt:formatNumber value="${price}" type="number"/> VNĐ</td>
+                    <td class="py-2 text-slate-800"><fmt:formatNumber value="${ticket.price}" type="number"/> VNĐ</td>
                 </tr>
-                <tr class="border-b border-slate-200">
-                    <th class="text-left py-2 pr-2 text-slate-600">Số Lượng</th>
-                    <td class="py-2 text-slate-800">${quantity}</td>
-                </tr>
+
                 <tr>
                     <th class="text-left py-2 pr-2 text-slate-600">Tổng Tiền</th>
-                    <td class="py-2 text-red-600 font-semibold text-base"><fmt:formatNumber value="${total}" type="number"/> VNĐ</td>
+                    <td class="py-2 text-red-600 font-semibold text-base">
+                        <c:choose>
+                            <c:when test="${not empty total}">
+                                <fmt:formatNumber value="${total}" type="number"/> VNĐ
+                            </c:when>
+                            <c:otherwise>
+                                <fmt:formatNumber value="${ticket.price}" type="number"/> VNĐ
+                            </c:otherwise>
+                        </c:choose>
+                    </td>
                 </tr>
             </table>
 
@@ -97,14 +103,14 @@
             </c:if>
 
             <div class="flex gap-3 mt-8">
-                <a href="${pageContext.request.contextPath}/view/Ticket/TicketSell.jsp" class="w-full">
+                <a href="${pageContext.request.contextPath}/view/Ticket/sell.jsp" class="w-full">
                     <button type="button"
                             class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-xl font-medium transition-all shadow-soft">
                         💰 Tiếp Tục Bán Vé
                     </button>
                 </a>
 
-                <a href="${pageContext.request.contextPath}/view/Ticket/TicketMain.jsp" class="w-full">
+                <a href="${pageContext.request.contextPath}/view/Ticket/main.jsp" class="w-full">
                     <button type="button"
                             class="w-full bg-slate-500 hover:bg-slate-600 text-white py-2.5 rounded-xl font-medium transition-all shadow-soft">
                         ⬅️ Trang Chính

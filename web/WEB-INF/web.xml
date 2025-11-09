@@ -14,10 +14,6 @@
         <servlet-class>module.payment.controller.paymentController</servlet-class>
     </servlet>
 
-    <servlet-mapping>
-        <servlet-name>paymentController</servlet-name>
-        <url-pattern>/payment</url-pattern>
-    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>paymentController</servlet-name>

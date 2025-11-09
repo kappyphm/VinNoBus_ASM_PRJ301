@@ -4,17 +4,14 @@
  */
 package module.ticket.controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.sql.SQLException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
-import java.util.List;
 import module.invoice.model.Invoice;
 import module.ticket.dao.TicketDAO;
 import module.ticket.model.Ticket;
@@ -82,14 +79,12 @@ public class TicketController extends HttpServlet {
             case "main":
                 showMainMenu(request, response, action);
                 break;
-            case "history":
-                try {
-                TicketHistory(request, response);
-            } catch (SQLException e) {
-                request.setAttribute("error", "Không thể tải lịch sử vé: " + e.getMessage());
-            }
-            request.getRequestDispatcher("/view/Ticket/TicketHistory.jsp").forward(request, response);
-            break;
+            case "validate":
+                request.getRequestDispatcher("/view/Ticket/checkinConductor.jsp").forward(request, response);
+                break;
+            case "trip":
+                request.getRequestDispatcher("/view/Ticket/checkinConductor.jsp").forward(request, response);
+                break;
             default:
                 request.setAttribute("error", "Action không hợp lệ!");
                 request.getRequestDispatcher("/view/Ticket/sell.jsp").forward(request, response);
@@ -121,15 +116,15 @@ public class TicketController extends HttpServlet {
                 TicketCheckin(request, response);
                 request.getRequestDispatcher("/view/Ticket/checkin.jsp").forward(request, response);
                 break;
+            case "validate":
+                TicketCheckinValidate(request, response);
+                request.getRequestDispatcher("/view/Ticket/checkinConductor.jsp").forward(request, response);
+                break;
+            case "trip":
+                TicketCreateTrip(request, response);
+                request.getRequestDispatcher("/view/Ticket/checkinConductor.jsp").forward(request, response);
+                break;
 
-            case "history":
-                try {
-                TicketHistory(request, response);
-            } catch (SQLException e) {
-                request.setAttribute("error", "Không thể tải lịch sử vé: " + e.getMessage());
-            }
-            request.getRequestDispatcher("/view/Ticket/TicketHistory.jsp").forward(request, response);
-            break;
             default:
                 request.setAttribute("error", "Action không hợp lệ!");
                 request.getRequestDispatcher("/view/Ticket/sell.jsp").forward(request, response);
@@ -151,11 +146,10 @@ public class TicketController extends HttpServlet {
             String tripIdStr = request.getParameter("tripId");
             String routeIdStr = request.getParameter("routeId");
             String priceStr = request.getParameter("price");
-            String createdBy = request.getParameter("createdBy");
             String paymentMethod = request.getParameter("paymentMethod"); // "CASH" hoặc "ONLINE"
 
-            if (customerId == null || priceStr == null || createdBy == null
-                    || customerId.isEmpty() || priceStr.isEmpty() || createdBy.isEmpty()
+            if (customerId == null || priceStr == null
+                    || customerId.isEmpty() || priceStr.isEmpty()
                     || ticketType == null || paymentMethod == null) {
                 request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
 
@@ -167,7 +161,6 @@ public class TicketController extends HttpServlet {
             Ticket ticket = new Ticket();
             ticket.setCustomerId(customerId);
             ticket.setPrice(price);
-            ticket.setCreatedBy(createdBy);
             ticket.setIssueDate(new Date());
             int quantity = 1;
             try {
@@ -200,12 +193,14 @@ public class TicketController extends HttpServlet {
 
             if (invoice != null) {
                 request.setAttribute("invoice", invoice);
+                request.setAttribute("ticket", ticket);
+                request.setAttribute("ticketType", ticketType);
+                request.setAttribute("total", ticket.getPrice());
                 request.setAttribute("message", "Bán vé và tạo hóa đơn thành công!");
-
                 if ("ONLINE".equalsIgnoreCase(paymentMethod)) {
                     // Lấy thông tin ngân hàng cố định (hoặc cho phép chọn từ form)
-                    String bank = request.getParameter("bank");
-                    String stk = request.getParameter("stk");
+                    String bank = "MB Bank";
+                    String stk = "0965047076";
                     double amount = ticket.getPrice(); // Lấy số tiền thật từ hóa đơn
 
                     // Tạo URL QR VietQR
@@ -219,11 +214,6 @@ public class TicketController extends HttpServlet {
                     request.setAttribute("stk", stk);
                     request.getRequestDispatcher("/view/Ticket/sell.jsp").forward(request, response);
                     return;
-//                } 
-//                else if ("CASH".equalsIgnoreCase(paymentMethod)) {
-//                    request.setAttribute("message", "Thanh toán tiền mặt thành công!");
-//                    request.getRequestDispatcher("/view/Ticket/sell.jsp").forward(request, response);
-//                    return;
                 } else {
                     request.getRequestDispatcher("/view/Ticket/invoice.jsp").forward(request, response);
                     return;
@@ -266,52 +256,94 @@ public class TicketController extends HttpServlet {
             e.printStackTrace();
             request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());
         }
-
     }
 
-    private void TicketHistory(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, SQLException {
+    private void TicketCheckinValidate(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            String ticketIdStr = request.getParameter("ticketId");
+            if (ticketIdStr == null || ticketIdStr.trim().isEmpty()) {
+                request.setAttribute("error", "Vui lòng nhập mã vé!");
+            } else {
+                int ticketId = Integer.parseInt(ticketIdStr);
+                Ticket ticket = ticketService.findTicketById(ticketIdStr);
+                if (ticket == null) {
+                    request.setAttribute("error", "❌ Không tìm thấy vé trong hệ thống!");
+                } else {
+                    // Vé có hạn sử dụng (vé tháng)
+                    if (ticket.getExpiryDate() != null && ticket.getExpiryDate().before(new Date())) {
+                        request.setAttribute("error", "❌ Vé đã hết hạn!");
+
+                    } else {
+                        // Vé lượt: chỉ cần tồn tại là OK
+                        request.setAttribute("checkMessage", "✅ Vé hợp lệ – cho phép hành khách lên xe!");
+                        request.setAttribute("customerId", ticket.getCustomerId());
+                        request.setAttribute("tripId", ticket.getTripId() == 0 ? 1 : ticket.getTripId());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Lỗi kiểm tra vé: " + e.getMessage());
+        }
+
+        // Quay lại trang check-in chính
+        request.getRequestDispatcher("/view/Ticket/checkinConductor.jsp").forward(request, response);
+    }
+
+    private void TicketCreateTrip(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
         try {
-            HttpSession session = request.getSession();
-            String role = (String) session.getAttribute("role");
-            String customerIdParam = request.getParameter("customerId");
-            String sessionCustomerId = (String) session.getAttribute("customerId");
+            String tripIdStr = request.getParameter("tripId");
+            String paymentMethod = request.getParameter("paymentMethod");
+            String bank = "MB Bank";
+            String stk = "0965047076";
+            int quantity = Integer.parseInt(request.getParameter("quantity"));
 
-            TicketDAO dao = new TicketDAO();
-            List<Ticket> tickets;
-
-            // Nếu là customer → bắt buộc dùng session ID
-            if ("customer".equalsIgnoreCase(role)) {
-                if (sessionCustomerId == null) {
-                    request.setAttribute("error", "Bạn chưa đăng nhập!");
-                } else {
-                    tickets = dao.getTicketsByCustomerId(sessionCustomerId);
-                    request.setAttribute("tickets", tickets);
-                }
-
-                // Admin
-            } else if ("admin".equalsIgnoreCase(role)) {
-                // Admin tự chọn customer để xem, nếu không chọn → xem tất cả
-                if (customerIdParam != null && !customerIdParam.isEmpty()) {
-                    tickets = dao.getTicketsByCustomerId(customerIdParam);
-                } else {
-                    tickets = dao.findAll();
-                }
-                request.setAttribute("tickets", tickets);
-
-            } else {
-                request.setAttribute("error", "Không có quyền truy cập");
+            if (tripIdStr == null || tripIdStr.isEmpty()) {
+                request.setAttribute("error", "Vui lòng nhập mã chuyến!");
+                request.getRequestDispatcher("/view/Ticket/trip.jsp").forward(request, response);
+                return;
             }
 
-            request.getRequestDispatcher("/view/Ticket/history.jsp").forward(request, response);
+            int tripId = Integer.parseInt(tripIdStr);
+            double price = 15000;
+            double total = price * quantity;
+
+            for (int i = 0; i < quantity; i++) {
+                Ticket t = new Ticket();
+                t.setTripId(tripId);
+                t.setPrice(price);
+                t.setIssueDate(new Date());
+                t.setExpiryDate(null);
+                t.setInvoiceId(null);
+                ticketService.createTrip(t);
+            }
+
+            if ("QR".equalsIgnoreCase(paymentMethod)) {
+
+                String qrUrl = "https://img.vietqr.io/image/"
+                        + bank + "-" + stk + "-compact2.jpg?amount=" + (int) total;
+                request.setAttribute("qr", qrUrl);
+                request.setAttribute("bank", bank);
+                request.setAttribute("stk", stk);
+            } else {
+                request.setAttribute("successMessage", "💵 Thanh toán tiền mặt thành công cho " + quantity + " vé!");
+            }
+
+            request.setAttribute("tripId", tripId);
+            request.setAttribute("quantity", quantity);
+            request.setAttribute("total", total);
+            request.setAttribute("price", price);
+
+            request.getRequestDispatcher("/view/Ticket/trip.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Lỗi tải lịch sử vé: " + e.getMessage());
-            request.getRequestDispatcher("/view/Ticket/TicketHistory.jsp").forward(request, response);
+            request.setAttribute("error", "Lỗi tạo vé: " + e.getMessage());
+            request.getRequestDispatcher("/view/Ticket/trip.jsp").forward(request, response);
         }
-
     }
 
     /**
