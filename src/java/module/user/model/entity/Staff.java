@@ -26,7 +26,7 @@ public class Staff {
     @Column(name = "staff_code")
     private String staffCode;
 
-    @Column(name = "postion")
+    @Column(name = "position")
     private String position;
 
     @Column(name = "department")

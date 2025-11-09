@@ -30,6 +30,7 @@
                         <th class="p-4 border-b">Email</th>
                         <th class="p-4 border-b">Số điện thoại</th>
                         <th class="p-4 border-b">Trạng thái</th>
+                        <th class="p-4 border-b">Vai trò</th>
                         <th class="p-4 border-b">Hành động</th>
                     </tr>
                 </thead>
@@ -45,6 +46,7 @@
                                     ${user.active ? 'Đang hoạt động' : 'Chờ duyệt'}
                                 </span>
                             </td>
+                            <td class="p-4 border-b text-center">${empty user.staff?'Khách hàng':'Nhân viên'}</td>
                             <td class="p-4 border-b space-x-2 text-center">
                                 <a href="${ctx}/user?id=${user.userId}" class="text-blue-600 hover:underline">Xem</a>
                                 <a href="${ctx}/user/delete?id=${user.userId}" class="text-red-600 hover:underline">Xóa</a>

@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import module.core.AutoCriteria;
 import module.core.BaseService;
 import module.user.dao.CustomerDAO;
@@ -150,6 +152,34 @@ public class UserService extends BaseService {
         }
 
     }
+    public List<UserDetailDTO> getAllStaffDetails() {
+        try {
+            List<Staff> allStaff = staffDao.findAll();
+            
+            List<UserDetailDTO> staffDetailsList = new ArrayList<>();
+
+            for (Staff staff : allStaff) {
+                Optional<Profile> profile = profileDao.findById(staff.getUserId());
+                
+                if (profile.isPresent()) {
+                    UserDetailDTO dto = new UserDetailDTO();
+                    dto.setUserId(staff.getUserId());
+                    dto.setName(profile.get().getName());
+                    
+                    StaffDTO staffDto = new StaffDTO(staff.getStaffCode(), staff.getPosition(), staff.getDepartment());
+                    dto.setStaff(staffDto);
+                    
+                    staffDetailsList.add(dto);
+                }
+            }
+            
+            return staffDetailsList;
+            
+        } catch (SQLException e) {
+            throw new DataAccessException("getAllStaffDetails (An toàn): " + e.getMessage());
+        }
+    }
+    
 
     public void deleteUser(String userId) {
         try {
@@ -172,6 +202,8 @@ public class UserService extends BaseService {
             profile.setUserId(userDetail.getUserId());
 
             profileDao.update(profile);
+
+            userDao.updateUserActive(userDetail.getUserId(), userDetail.isActive());
 
             commitTransaction();
 
@@ -207,13 +239,41 @@ public class UserService extends BaseService {
                     staff.getPosition(),
                     staff.getDepartment()
             );
-            staffDao.update(st);
+
+            if (!staffDao.isExist(userId)) {
+                staffDao.insert(st);
+            } else {
+                staffDao.update(st);
+            }
 
             commitTransaction();
 
         } catch (SQLException e) {
             rollbackTransaction();
-            throw new DataAccessException("SAVE CUSTOMER ERROR: " + e.getMessage());
+            throw new DataAccessException("SAVE STAFF ERROR: " + e.getMessage());
+        }
+    }
+
+    public List<UserDetailDTO> getStaffs() {
+        try {
+            List<Staff> staffs = staffDao.findAll();
+
+            return staffs.stream().map(st -> {
+                Optional<UserDetailDTO> detail = getUserDetail(st.getUserId());
+                return detail.get();
+            }).toList();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(UserService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return new ArrayList<>();
+    }
+
+    public void deleteStaff(String userId) {
+        try {
+            staffDao.delete(userId);
+        } catch (SQLException ex) {
+            Logger.getLogger(UserService.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

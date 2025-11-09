@@ -10,19 +10,34 @@
     <jsp:attribute name="title">Thông tin cá nhân</jsp:attribute>
     <jsp:body>
         <main class="max-w-5xl mx-auto px-5 py-8">
-            <c:set var="avatarUrl" value="${empty userDetail.avatarUrl ? 'https://ui-avatars.com/api/?name=' + userDetail.name : userDetail.avatarUrl}" />
+            <c:set var="avatarUrl"
+                   value="${empty userDetail.avatarUrl
+                            ? 'https://ui-avatars.com/api/?name=' + userDetail.name
+                            : userDetail.avatarUrl}" />
+
             <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-soft flex items-center gap-6">
                 <img src="${avatarUrl}" class="w-28 h-28 rounded-2xl object-cover border border-slate-200"/>
-                <div>
+
+                <div class="flex-1">
                     <div class="text-lg font-semibold">${userDetail.name}</div>
                     <div class="text-sm text-slate-500">${userDetail.email}</div>
+
                     <div class="mt-1 text-xs ${userDetail.active ? 'text-emerald-600' : 'text-slate-500'}">
                         ${userDetail.active ? 'Đang hoạt động' : 'Chờ duyệt'}
                     </div>
+                    <c:if test="${empty userDetail.staff}">
+                        <a href="${ctx}/staff/assign?id=${userDetail.userId}"
+                           class="inline-block mt-3 px-4 py-2 rounded-xl hover:bg-green-600 hover:text-white text-sm  border-solid border-green-600 text-green-600 hover:shadow-soft border-2 font-bold">
+                            Gán nhân viên
+                        </a>
+                    </c:if>
+
                 </div>
+
             </div>
 
-            <%-- Include các phần chi tiết --%>
+
+            <%-- Include các phần chi tiết --%> 
             <jsp:include page="/view/include/profile.jsp"/>
             <jsp:include page="/view/include/staff.jsp"/>
             <jsp:include page="/view/include/customer.jsp"/>

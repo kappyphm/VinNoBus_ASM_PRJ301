@@ -26,7 +26,7 @@
             </div>
         </c:forEach>
     </div>
-    <div class="mt-4">
+    <div class="mt-4 flex gap-4">
         <c:choose>
             <c:when test="${actor eq 'me'}">
                 <a href="${ctx}/me/update"
@@ -38,6 +38,10 @@
                 <a href="${ctx}/profile/update?id=${userDetail.userId}"
                    class="px-3 py-2 rounded-xl bg-brand-600 text-white text-sm hover:bg-brand-700 shadow-soft">
                     Cập nhật
+                </a>
+                <a href="javascript:history.back()"
+                   class="px-3 py-2 rounded-xl text-brand-700 text-sm ">
+                    Quay lại
                 </a>
             </c:otherwise>
         </c:choose>

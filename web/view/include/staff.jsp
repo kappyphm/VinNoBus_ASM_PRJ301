@@ -20,10 +20,10 @@
                 </div>
             </c:forEach>
         </div>
-        <div class="mt-4">
-            <a href="${ctx}/staff/update?id=${userDetail.userId}" class="px-3 py-2 rounded-xl bg-brand-600 text-white text-sm hover:bg-brand-700 shadow-soft">
-                Chỉnh sửa thông tin nhân viên
-            </a>
-        </div>
+        <!--        <div class="mt-4">
+                    <a href="${ctx}/staff/update?id=${userDetail.userId}" class="px-3 py-2 rounded-xl bg-brand-600 text-white text-sm hover:bg-brand-700 shadow-soft">
+                        Chỉnh sửa thông tin nhân viên
+                    </a>
+                </div>-->
     </div>
 </c:if>
