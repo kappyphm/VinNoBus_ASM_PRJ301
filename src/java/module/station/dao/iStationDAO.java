@@ -18,8 +18,6 @@ public interface iStationDAO {
 
     public boolean delete(int stationId);   // DELETE /stations/{id}
 
-    public List<Station> searchStationsByNameFuzzy(String name);
-
     public List<Station> getStationsByPageWithRoutes(int page, int pageSize);
 
     public List<Station> getAllStationsWithRoutes();
@@ -29,4 +27,6 @@ public interface iStationDAO {
     public int getTotalStations();
 
     public List<Station> searchExactByName(String name);
+
+    public int countExactByName(String name);
 }
