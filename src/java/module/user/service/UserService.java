@@ -141,9 +141,7 @@ public class UserService extends BaseService {
     public List<UserDetailDTO> getAllStaffDetails() {
         try {
             List<Staff> allStaff = staffDao.findAll();
-            
             List<UserDetailDTO> staffDetailsList = new ArrayList<>();
-
             for (Staff staff : allStaff) {
                 Optional<Profile> profile = profileDao.findById(staff.getUserId());
                 
@@ -158,7 +156,6 @@ public class UserService extends BaseService {
                     staffDetailsList.add(dto);
                 }
             }
-            
             return staffDetailsList;
             
         } catch (SQLException e) {

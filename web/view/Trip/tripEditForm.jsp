@@ -1,8 +1,6 @@
-<%-- /view/Trip/tripEditForm.jsp --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%--<%@ include file="/header.jsp" %>--%>
 
 <script src="https://cdn.tailwindcss.com"></script>
 
@@ -111,7 +109,6 @@
                 </div>
             </div>
             
-            <%-- Giữ nguyên phần chọn Trạng thái --%>
             <div class="mb-6">
                  <label for="status" class="block mb-2 text-sm font-medium text-gray-900">Trạng thái:</label>
                 <select id="status" name="status"
@@ -134,7 +131,6 @@
             </div>
         </form>
          
-        <%-- Giữ nguyên form Xóa --%>
         <div class="mt-6 border-t pt-6">
              <form action="TripServlet" method="post" 
                    onsubmit="return confirm('Bạn có chắc muốn xóa chuyến xe này không? Hành động này không thể hoàn tác.')">
@@ -150,4 +146,3 @@
     </div>
 
 </body>
-<%--<%@ include file="/footer.jsp" %>--%>

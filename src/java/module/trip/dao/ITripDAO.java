@@ -8,7 +8,6 @@ import java.util.List;
 public interface ITripDAO {
 
     //CRUD
-    // boolean insertTrip(Trip trip) throws SQLException; // XÓA
     Trip insertShellTrip(int routeId) throws SQLException; // THÊM
 
     boolean updateTrip(Trip trip) throws SQLException;

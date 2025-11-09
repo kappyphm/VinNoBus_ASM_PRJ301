@@ -1,7 +1,5 @@
-<%-- /view/Trip/tripForm.jsp --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%--<%@ include file="/header.jsp" %>--%>
 
 <script src="https://cdn.tailwindcss.com"></script>
 
@@ -12,8 +10,6 @@
         <h2 class="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
             Tạo chuyến xe mới (Bước 1/2)
         </h2>
-
-        <%-- Hiển thị lỗi validation (nếu có) --%>
         <c:if test="${not empty errors}">
             <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md mb-6" role="alert">
                 <p class="font-bold">Đã xảy ra lỗi:</p>
@@ -25,7 +21,6 @@
             </div>
         </c:if>
 
-        <%-- Form này sẽ gọi action "createShell" --%>
         <form action="TripServlet?action=createShell" method="post">
             
             <div class="mb-6">
@@ -34,7 +29,6 @@
                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
                        placeholder="Gõ số tuyến hoặc tên để chọn...">
                 
-                <%-- Dữ liệu này phải được tải từ Servlet --%>
                 <datalist id="routesData">
                     <c:forEach var="route" items="${routesList}">
                         <option value="${route.routeId}">${route.routeName}</option>
@@ -55,4 +49,3 @@
     </div>
 
 </body>
-<%--<%@ include file="/footer.jsp" %>--%>
