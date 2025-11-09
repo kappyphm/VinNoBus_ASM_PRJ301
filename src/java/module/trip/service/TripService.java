@@ -12,7 +12,6 @@ public class TripService implements ITripService {
 
     private final ITripDAO tripDAO = new TripDAO();
 
-    // --- CRUD cơ bản ---
     @Override
     public Trip insertShellTrip(int routeId) throws SQLException {
         if (routeId <= 0) {
@@ -20,27 +19,19 @@ public class TripService implements ITripService {
         }
         return tripDAO.insertShellTrip(routeId);
     }
-    
-    // Hàm insertTrip cũ không còn dùng
-    // @Override
-    // public boolean insertTrip(Trip trip) throws SQLException { ... }
-
 
     @Override
     public boolean updateTrip(Trip trip) throws SQLException {
-        // 🧠 Nghiệp vụ: Chỉ kiểm tra (validate) nếu thông tin được cung cấp
         if (trip == null) {
             return false;
         }
-        
-        // Chỉ check giờ nếu cả 2 đều có
+
         if (trip.getDepartureTime() != null && trip.getArrivalTime() != null) {
             if (trip.getDepartureTime().after(trip.getArrivalTime())) {
                 System.out.println("⚠️ Giờ đi sau giờ đến!");
                 return false;
             }
             
-            // Chỉ check trùng lịch nếu có đủ thông tin
             if (trip.getDriverId() != null && !trip.getDriverId().isBlank()) {
                 if (!tripDAO.checkDriver(trip.getDriverId(), trip.getDepartureTime(), trip.getArrivalTime(), trip.getTripId())) {
                     System.out.println("⚠️ Driver trùng lịch!");
@@ -62,8 +53,6 @@ public class TripService implements ITripService {
                 }
             }
         }
-
-        // ✅ Cập nhật thông tin (DAO đã xử lý NULL)
         return tripDAO.updateTrip(trip);
     
     }
