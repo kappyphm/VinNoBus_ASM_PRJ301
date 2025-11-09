@@ -1,3 +1,4 @@
+// File: module/trip/service/ITripService.java
 package module.trip.service;
 
 import module.trip.model.entity.Trip;
@@ -8,7 +9,8 @@ import java.util.List;
 public interface ITripService {
 
     // CRUD cơ bản
-    boolean insertTrip(Trip trip) throws SQLException;
+    // boolean insertTrip(Trip trip) throws SQLException; // XÓA
+    Trip insertShellTrip(int routeId) throws SQLException; // THÊM
 
     boolean updateTrip(Trip trip) throws SQLException;
 
