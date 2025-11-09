@@ -10,12 +10,12 @@
         <script src="https://cdn.tailwindcss.com"></script>
 
         <div class="min-h-screen bg-gray-50 font-sans p-6">
-            <div class="mx-auto"> 
+            <div class="mx-auto max-w-7xl">
                 <h1 class="text-4xl font-bold text-center mb-8 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent py-2">
                     Quản lý chuyến xe
                 </h1>
 
-                <!-- Filter & Create Button -->
+                <!-- Header + Create Button -->
                 <div class="flex flex-col md:flex-row items-center justify-between gap-4 bg-white shadow-md px-6 py-4 rounded-xl mb-6">
                     <h2 class="text-xl font-semibold text-gray-800">Danh sách chuyến</h2>
                     <a href="TripServlet?action=add" 
@@ -27,12 +27,11 @@
                     </a>
                 </div>
 
-                <!-- Search & Filter Form -->
+                <!-- Filter & Search Form -->
                 <form class="bg-white p-6 rounded-xl shadow-md flex flex-wrap items-center justify-start gap-x-6 gap-y-4 mb-8" 
                       action="TripServlet" method="get">
                     <input type="hidden" name="action" value="list">
 
-                        <!-- Filter select -->
                         <div class="flex-grow min-w-[150px]">
                             <label for="filterSelect" class="block text-sm font-medium text-gray-700 mb-1">Lọc theo</label>
                             <select name="filter" id="filterSelect" class="w-full border-gray-300 rounded-lg p-2 shadow-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition duration-150">
@@ -46,14 +45,12 @@
                             </select>
                         </div>
 
-                        <!-- Search input -->
                         <div class="flex-grow min-w-[200px]">
                             <label for="searchInput" class="block text-sm font-medium text-gray-700 mb-1">Tìm kiếm</label>
                             <input type="text" name="search" id="searchInput" value="${param.search}" placeholder="Nhập từ khóa..."
                                    class="w-full border-gray-300 rounded-lg p-2 shadow-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition duration-150"/>
                         </div>
 
-                        <!-- Sort Column -->
                         <div class="flex-grow min-w-[150px]">
                             <label for="sortCol" class="block text-sm font-medium text-gray-700 mb-1">Sắp xếp theo</label>
                             <select name="sortCol" id="sortCol" class="w-full border-gray-300 rounded-lg p-2 shadow-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition duration-150">
@@ -67,7 +64,6 @@
                             </select>
                         </div>
 
-                        <!-- Sort Direction -->
                         <div class="flex-grow min-w-[120px]">
                             <label for="sortDir" class="block text-sm font-medium text-gray-700 mb-1">Thứ tự</label>
                             <select name="sortDir" id="sortDir" class="w-full border-gray-300 rounded-lg p-2 shadow-sm focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition duration-150">
@@ -76,7 +72,6 @@
                             </select>
                         </div>
 
-                        <!-- Submit button -->
                         <div class="self-end">
                             <button type="submit" class="flex items-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-lg shadow-md hover:bg-indigo-700 transition-all duration-200 transform hover:scale-105">
                                 Lọc
@@ -99,7 +94,7 @@
                     </div>
                 </c:if>
 
-                <!-- Table of trips -->
+                <!-- Trips Table -->
                 <c:choose>
                     <c:when test="${empty trips}">
                         <div class="bg-white rounded-xl shadow-md p-10 text-center">
@@ -107,10 +102,107 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <!-- Table code here ... -->
-                    </c:otherwise>
-                </c:choose>
-            </div>
-        </div>
-    </jsp:body>
-</ui:layout>
+                        <div class="overflow-x-auto rounded-xl shadow-lg bg-white divide-y divide-gray-200">
+                            <table class="min-w-full">
+                                <thead class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+                                    <tr>
+                                        <th class="px-6 py-4 text-center text-sm font-semibold uppercase tracking-wider">STT</th>
+                                        <th class="px-6 py-4 text-center text-sm font-semibold uppercase tracking-wider">Mã chuyến</th>
+                                        <th class="px-6 py-4 text-center text-sm font-semibold uppercase tracking-wider">Mã tuyến</th>
+                                        <th class="px-6 py-4 text-center text-sm font-semibold uppercase tracking-wider">Mã xe buýt</th>
+                                        <th class="px-6 py-4 text-center text-sm font-semibold uppercase tracking-wider">Tài xế</th>
+                                        <th class="px-6 py-4 text-center text-sm font-semibold uppercase tracking-wider">Phụ xe</th>
+                                        <th class="px-6 py-4 text-center text-sm font-semibold uppercase tracking-wider">Khởi hành</th>
+                                        <th class="px-6 py-4 text-center text-sm font-semibold uppercase tracking-wider">Kết thúc</th>
+                                        <th class="px-6 py-4 text-center text-sm font-semibold uppercase tracking-wider">Trạng thái</th>
+                                        <th class="px-6 py-4 text-center text-sm font-semibold uppercase tracking-wider">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <c:set var="index" value="1"/>
+                                    <c:forEach var="t" items="${trips}">
+                                        <tr class="hover:bg-gray-50 transition duration-150">
+                                            <td class="px-6 py-4 text-sm text-gray-500 text-center">${(currentPage - 1) * pageSize + index}</td>
+                                            <td class="px-6 py-4 text-sm text-gray-900 font-medium text-center">${t.tripId}</td>
+                                            <td class="px-6 py-4 text-sm text-gray-700 text-center">${t.routeId}</td>
+                                            <td class="px-6 py-4 text-sm text-gray-700 text-center">${t.busId}</td>
+                                            <td class="px-6 py-4 text-sm text-gray-700 text-center">${t.driverId}</td>
+                                            <td class="px-6 py-4 text-sm text-gray-700 text-center">${t.conductorId}</td>
+                                            <td class="px-6 py-4 text-sm text-gray-700 text-center">
+                                                <fmt:formatDate value="${t.departureTime}" pattern="HH:mm dd-MM-yyyy"/>
+                                            </td>
+                                            <td class="px-6 py-4 text-sm text-gray-700 text-center">
+                                                <fmt:formatDate value="${t.arrivalTime}" pattern="HH:mm dd-MM-yyyy"/>
+                                            </td>
+                                            <td class="px-6 py-4 text-center">
+                                                <c:set var="statusClass" value=""/>
+                                                <c:set var="statusText" value=""/>
+                                                <c:choose>
+                                                    <c:when test="${t.status eq 'NOT_STARTED'}">
+                                                        <c:set var="statusClass" value="bg-yellow-100 text-yellow-800"/>
+                                                        <c:set var="statusText" value="Chưa bắt đầu"/>
+                                                    </c:when>
+                                                    <c:when test="${t.status eq 'IN_PROCESS'}">
+                                                        <c:set var="statusClass" value="bg-green-100 text-green-800"/>
+                                                        <c:set var="statusText" value="Đang chạy"/>
+                                                    </c:when>
+                                                    <c:when test="${t.status eq 'FINISHED'}">
+                                                        <c:set var="statusClass" value="bg-blue-100 text-blue-800"/>
+                                                        <c:set var="statusText" value="Hoàn thành"/>
+                                                    </c:when>
+                                                    <c:when test="${t.status eq 'CANCELLED'}">
+                                                        <c:set var="statusClass" value="bg-red-100 text-red-800"/>
+                                                        <c:set var="statusText" value="Đã hủy"/>
+                                                    </c:when>
+                                                </c:choose>
+                                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">
+                                                    ${statusText}
+                                                </span>
+                                            </td>
+                                            <td class="px-6 py-4 text-center text-sm font-medium">
+                                                <a href="TripServlet?action=detail&tripId=${t.tripId}" class="inline-flex items-center gap-1 text-indigo-600 hover:text-indigo-900 px-2" title="Chi tiết">👁️ Chi tiết</a> |
+                                                <a href="TripServlet?action=edit&tripId=${t.tripId}" class="inline-flex items-center gap-1 text-purple-600 hover:text-purple-900 px-2" title="Sửa">✏️ Sửa</a> |
+                                                <form action="TripServlet" method="post" class="inline" onsubmit="return confirm('Bạn có chắc muốn xóa chuyến ${t.tripId} không?')">
+                                                    <input type="hidden" name="action" value="delete">
+                                                        <input type="hidden" name="tripId" value="${t.tripId}">
+                                                            <button type="submit" class="inline-flex items-center gap-1 text-red-600 hover:text-red-900 px-2 bg-transparent border-none p-0 cursor-pointer" title="Xóa">❌ Xóa</button>
+                                                            </form>
+                                                            </td>
+                                                            </tr>
+                                                            <c:set var="index" value="${index + 1}"/>
+                                                        </c:forEach>
+                                                        </tbody>
+                                                        </table>
+                                                        </div>
+
+                                                        <!-- Pagination -->
+                                                        <div class="flex items-center justify-between mt-6">
+                                                            <p class="text-sm font-semibold text-gray-700">Tổng số chuyến: <span class="text-indigo-600 font-bold">${total}</span></p>
+
+                                                            <c:if test="${total > 0}">
+                                                                <c:set var="pageSize" value="10"/>
+                                                                <c:set var="totalPages" value="${(total + pageSize - 1) / pageSize}"/>
+                                                                <c:set var="currentPage" value="${param.page != null ? param.page : 1}"/>
+                                                                <c:set var="paginationParams" value="&action=list&search=${param.search}&filter=${param.filter}&sortCol=${param.sortCol}&sortDir=${param.sortDir}" />
+
+                                                                <nav class="flex justify-center space-x-1">
+                                                                    <c:if test="${currentPage > 1}">
+                                                                        <a href="TripServlet?page=${currentPage - 1}${paginationParams}" class="px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition duration-150">‹</a>
+                                                                    </c:if>
+
+                                                                    <c:forEach var="i" begin="1" end="${totalPages}">
+                                                                        <a href="TripServlet?page=${i}${paginationParams}" class="px-4 py-2 rounded-lg border ${i == currentPage ? 'bg-indigo-600 text-white shadow-md' : 'border-gray-300 text-gray-700 hover:bg-gray-100'} transition duration-150">${i}</a>
+                                                                    </c:forEach>
+
+                                                                    <c:if test="${currentPage < totalPages}">
+                                                                        <a href="TripServlet?page=${currentPage + 1}${paginationParams}" class="px-3 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition duration-150">›</a>
+                                                                    </c:if>
+                                                                </nav>
+                                                            </c:if>
+                                                        </div>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                                </div>
+                                                </div>
+                                            </jsp:body>
+                                        </ui:layout>
