@@ -8,18 +8,44 @@ import java.util.List;
 
 public class TripDAO extends DBContext implements ITripDAO {
 
+//    @Override
+//    public boolean insertTrip(Trip trip) throws SQLException {
+//        String sql = "INSERT INTO Trip (route_id, bus_id, driver_id, conductor_id, departure_time, arrival_time, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+//        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+//            ps.setInt(1, trip.getRouteId());
+//            ps.setInt(2, trip.getBusId());
+//            ps.setString(3, trip.getDriverId());
+//            ps.setString(4, trip.getConductorId());
+//            ps.setTimestamp(5, trip.getDepartureTime());
+//            ps.setTimestamp(6, trip.getArrivalTime());
+//            ps.setString(7, trip.getStatus());
+//            return ps.executeUpdate() > 0;
+//        }
+//    }
     @Override
-    public boolean insertTrip(Trip trip) throws SQLException {
-        String sql = "INSERT INTO Trip (route_id, bus_id, driver_id, conductor_id, departure_time, arrival_time, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, trip.getRouteId());
-            ps.setInt(2, trip.getBusId());
-            ps.setString(3, trip.getDriverId());
-            ps.setString(4, trip.getConductorId());
-            ps.setTimestamp(5, trip.getDepartureTime());
-            ps.setTimestamp(6, trip.getArrivalTime());
-            ps.setString(7, trip.getStatus());
-            return ps.executeUpdate() > 0;
+    public Trip insertShellTrip(int routeId) throws SQLException {
+        String sql = "INSERT INTO Trip (route_id, status) VALUES (?, ?)";
+        // Yêu cầu SQL Server trả về cột ID vừa tạo
+        String generatedColumns[] = { "trip_id" }; 
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql, generatedColumns)) {
+            ps.setInt(1, routeId);
+            ps.setString(2, "NOT_STARTED"); // Mặc định
+            
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows == 0) {
+                 throw new SQLException("Tạo chuyến thất bại, không có dòng nào bị ảnh hưởng.");
+            }
+            
+             try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int newId = rs.getInt(1);
+                    // Lấy lại đầy đủ thông tin chuyến vừa tạo
+                    return this.findTripById(newId); 
+                } else {
+                    throw new SQLException("Tạo chuyến thất bại, không lấy được ID.");
+                }
+            }
         }
     }
 
@@ -46,18 +72,52 @@ public class TripDAO extends DBContext implements ITripDAO {
         }
     }
 
+    /**
+     * HÀM CẬP NHẬT: Sửa updateTrip để chấp nhận giá trị 0/NULL
+     */
     @Override
     public boolean updateTrip(Trip trip) throws SQLException {
         String sql = "UPDATE Trip SET route_id=?, bus_id=?, driver_id=?, conductor_id=?, departure_time=?, arrival_time=?, status=? WHERE trip_id=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, trip.getRouteId());
-            ps.setInt(2, trip.getBusId());
-            ps.setString(3, trip.getDriverId());
-            ps.setString(4, trip.getConductorId());
-            ps.setTimestamp(5, trip.getDepartureTime());
-            ps.setTimestamp(6, trip.getArrivalTime());
+            
+            // Xử lý busId (nếu là 0 thì set NULL)
+            if (trip.getBusId() > 0) {
+                 ps.setInt(2, trip.getBusId());
+            } else {
+                 ps.setNull(2, Types.INTEGER);
+            }
+            
+            // Xử lý driverId (nếu rỗng hoặc null thì set NULL)
+            if (trip.getDriverId() != null && !trip.getDriverId().isBlank()) {
+                ps.setString(3, trip.getDriverId());
+            } else {
+                ps.setNull(3, Types.VARCHAR);
+            }
+            
+            // Xử lý conductorId
+            if (trip.getConductorId() != null && !trip.getConductorId().isBlank()) {
+                ps.setString(4, trip.getConductorId());
+            } else {
+                ps.setNull(4, Types.VARCHAR);
+            }
+            
+            // Xử lý thời gian (nếu rỗng thì set NULL)
+            if (trip.getDepartureTime() != null) {
+                ps.setTimestamp(5, trip.getDepartureTime());
+            } else {
+                 ps.setNull(5, Types.TIMESTAMP);
+            }
+            
+            if (trip.getArrivalTime() != null) {
+                ps.setTimestamp(6, trip.getArrivalTime());
+            } else {
+                 ps.setNull(6, Types.TIMESTAMP);
+            }
+            
             ps.setString(7, trip.getStatus());
             ps.setInt(8, trip.getTripId());
+            
             return ps.executeUpdate() > 0;
         }
     }
