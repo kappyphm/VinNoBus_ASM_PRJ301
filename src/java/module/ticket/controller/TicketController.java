@@ -4,17 +4,14 @@
  */
 package module.ticket.controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.sql.SQLException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Date;
-import java.util.List;
 import module.invoice.model.Invoice;
 import module.ticket.dao.TicketDAO;
 import module.ticket.model.Ticket;
@@ -149,11 +146,10 @@ public class TicketController extends HttpServlet {
             String tripIdStr = request.getParameter("tripId");
             String routeIdStr = request.getParameter("routeId");
             String priceStr = request.getParameter("price");
-            String createdBy = request.getParameter("createdBy");
             String paymentMethod = request.getParameter("paymentMethod"); // "CASH" hoặc "ONLINE"
 
-            if (customerId == null || priceStr == null || createdBy == null
-                    || customerId.isEmpty() || priceStr.isEmpty() || createdBy.isEmpty()
+            if (customerId == null || priceStr == null
+                    || customerId.isEmpty() || priceStr.isEmpty()
                     || ticketType == null || paymentMethod == null) {
                 request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
 
