@@ -144,8 +144,8 @@ public class StationServlet extends HttpServlet {
         int totalStations;
 
         if (search != null && !search.trim().isEmpty()) {
-            stations = stationServices.getStationsByPageWithRoutes(page, pageSize);
-            totalStations = stations.size();
+            stations = stationServices.searchExact(search.trim(), page, pageSize);
+            totalStations = stationServices.countSearchExact(search.trim());
         } else {
             stations = stationServices.getStationsByPageWithRoutes(page, pageSize);
             totalStations = stationServices.getTotalStations();

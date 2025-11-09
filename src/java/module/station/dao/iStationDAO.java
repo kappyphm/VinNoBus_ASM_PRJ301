@@ -27,4 +27,6 @@ public interface iStationDAO {
     public List<Station> getStationsByPage(int page, int pageSize);
 
     public int getTotalStations();
+
+    public List<Station> searchExactByName(String name);
 }
