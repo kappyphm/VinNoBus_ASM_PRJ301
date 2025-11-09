@@ -52,7 +52,7 @@ public class TripServlet extends HttpServlet {
         try {
             List<Route> routes = routeService.getAllRoutes(null, null, "route_id", "ASC", 1, 1000); //
             List<Bus> buses = busService.getAllBuses(); //
-            List<UserDetailDTO> allStaff = userService.getAllStaffDetails(); 
+            List<UserDetailDTO> allStaff = userService.getAllStaffDetails();
 
             List<UserDetailDTO> drivers = allStaff.stream()
                     .filter(s -> s.getStaff() != null && "DRIVER".equalsIgnoreCase(s.getStaff().getPosition()))
@@ -75,6 +75,7 @@ public class TripServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
         String action = request.getParameter("action");
         if (action == null || action.isBlank()) {
             action = "list";
@@ -102,6 +103,7 @@ public class TripServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
         String action = request.getParameter("action");
         if (action == null || action.isBlank()) {
             action = "list";
@@ -109,10 +111,10 @@ public class TripServlet extends HttpServlet {
 
         try {
             switch (action) {
-                case "createShell": 
+                case "createShell":
                     createShellTrip(request, response);
                     break;
-                case "update": 
+                case "update":
                     updateTrip(request, response);
                     break;
                 case "delete":
@@ -205,7 +207,7 @@ public class TripServlet extends HttpServlet {
         if (!errors.isEmpty()) {
             request.setAttribute("errors", errors);
             request.setAttribute("routeId", routeIdStr);
-            loadCreateFormDependencies(request); 
+            loadCreateFormDependencies(request);
             request.getRequestDispatcher("/view/trip/tripForm.jsp").forward(request, response);
             return;
         }
@@ -236,7 +238,7 @@ public class TripServlet extends HttpServlet {
 
         List<String> errors = new ArrayList<>();
         int tripId = 0;
-        Trip updatedTrip = null; 
+        Trip updatedTrip = null;
 
         try {
             tripId = Integer.parseInt(request.getParameter("tripId"));
@@ -294,13 +296,13 @@ public class TripServlet extends HttpServlet {
             if (success) {
                 request.setAttribute("success", "✅ Cập nhật chuyến xe thành công!");
                 request.setAttribute("trip", updatedTrip);
-                loadEditFormDependencies(request); 
+                loadEditFormDependencies(request);
                 request.getRequestDispatcher("/view/trip/tripEditForm.jsp").forward(request, response);
             } else {
                 errors.add("❌ Không thể cập nhật. Dữ liệu không hợp lệ (ví dụ: Tài xế, Phụ xe, hoặc Xe buýt đã bị trùng lịch).");
                 request.setAttribute("errors", errors);
                 request.setAttribute("trip", updatedTrip);
-                loadEditFormDependencies(request); 
+                loadEditFormDependencies(request);
                 request.getRequestDispatcher("/view/trip/tripEditForm.jsp").forward(request, response);
             }
 
