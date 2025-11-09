@@ -3,24 +3,49 @@ package module.trip.dao;
 import dal.DBContext;
 import module.trip.model.entity.Trip;
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TripDAO extends DBContext implements ITripDAO {
 
+//    @Override
+//    public boolean insertTrip(Trip trip) throws SQLException {
+//        String sql = "INSERT INTO Trip (route_id, bus_id, driver_id, conductor_id, departure_time, arrival_time, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+//        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+//            ps.setInt(1, trip.getRouteId());
+//            ps.setInt(2, trip.getBusId());
+//            ps.setString(3, trip.getDriverId());
+//            ps.setString(4, trip.getConductorId());
+//            ps.setTimestamp(5, trip.getDepartureTime());
+//            ps.setTimestamp(6, trip.getArrivalTime());
+//            ps.setString(7, trip.getStatus());
+//            return ps.executeUpdate() > 0;
+//        }
+//    }
     @Override
-    public boolean insertTrip(Trip trip) throws SQLException {
-        String sql = "INSERT INTO Trip (route_id, bus_id, driver_id, conductor_id, departure_time, arrival_time, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, trip.getRouteId());
-            ps.setInt(2, trip.getBusId());
-            ps.setString(3, trip.getDriverId());
-            ps.setString(4, trip.getConductorId());
-            ps.setTimestamp(5, Timestamp.valueOf(trip.getDepartureTime()));
-            ps.setTimestamp(6, Timestamp.valueOf(trip.getArrivalTime()));
-            ps.setString(7, trip.getStatus());
-            return ps.executeUpdate() > 0;
+    public Trip insertShellTrip(int routeId) throws SQLException {
+        String sql = "INSERT INTO Trip (route_id, status) VALUES (?, ?)";
+        // Yêu cầu SQL Server trả về cột ID vừa tạo
+        String generatedColumns[] = { "trip_id" }; 
+        
+        try (PreparedStatement ps = connection.prepareStatement(sql, generatedColumns)) {
+            ps.setInt(1, routeId);
+            ps.setString(2, "NOT_STARTED"); // Mặc định
+            
+            int affectedRows = ps.executeUpdate();
+            if (affectedRows == 0) {
+                 throw new SQLException("Tạo chuyến thất bại, không có dòng nào bị ảnh hưởng.");
+            }
+            
+             try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int newId = rs.getInt(1);
+                    // Lấy lại đầy đủ thông tin chuyến vừa tạo
+                    return this.findTripById(newId); 
+                } else {
+                    throw new SQLException("Tạo chuyến thất bại, không lấy được ID.");
+                }
+            }
         }
     }
 
@@ -47,18 +72,52 @@ public class TripDAO extends DBContext implements ITripDAO {
         }
     }
 
+    /**
+     * HÀM CẬP NHẬT: Sửa updateTrip để chấp nhận giá trị 0/NULL
+     */
     @Override
     public boolean updateTrip(Trip trip) throws SQLException {
         String sql = "UPDATE Trip SET route_id=?, bus_id=?, driver_id=?, conductor_id=?, departure_time=?, arrival_time=?, status=? WHERE trip_id=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, trip.getRouteId());
-            ps.setInt(2, trip.getBusId());
-            ps.setString(3, trip.getDriverId());
-            ps.setString(4, trip.getConductorId());
-            ps.setTimestamp(5, Timestamp.valueOf(trip.getDepartureTime()));
-            ps.setTimestamp(6, Timestamp.valueOf(trip.getArrivalTime()));
+            
+            // Xử lý busId (nếu là 0 thì set NULL)
+            if (trip.getBusId() > 0) {
+                 ps.setInt(2, trip.getBusId());
+            } else {
+                 ps.setNull(2, Types.INTEGER);
+            }
+            
+            // Xử lý driverId (nếu rỗng hoặc null thì set NULL)
+            if (trip.getDriverId() != null && !trip.getDriverId().isBlank()) {
+                ps.setString(3, trip.getDriverId());
+            } else {
+                ps.setNull(3, Types.VARCHAR);
+            }
+            
+            // Xử lý conductorId
+            if (trip.getConductorId() != null && !trip.getConductorId().isBlank()) {
+                ps.setString(4, trip.getConductorId());
+            } else {
+                ps.setNull(4, Types.VARCHAR);
+            }
+            
+            // Xử lý thời gian (nếu rỗng thì set NULL)
+            if (trip.getDepartureTime() != null) {
+                ps.setTimestamp(5, trip.getDepartureTime());
+            } else {
+                 ps.setNull(5, Types.TIMESTAMP);
+            }
+            
+            if (trip.getArrivalTime() != null) {
+                ps.setTimestamp(6, trip.getArrivalTime());
+            } else {
+                 ps.setNull(6, Types.TIMESTAMP);
+            }
+            
             ps.setString(7, trip.getStatus());
             ps.setInt(8, trip.getTripId());
+            
             return ps.executeUpdate() > 0;
         }
     }
@@ -67,7 +126,8 @@ public class TripDAO extends DBContext implements ITripDAO {
     public List<Trip> findAllTrips() throws SQLException {
         List<Trip> list = new ArrayList<>();
         String sql = "SELECT * FROM Trip ORDER BY trip_id ASC";
-        try (PreparedStatement ps = connection.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = connection.prepareStatement(sql); 
+             ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 list.add(extractTrip(rs));
             }
@@ -75,27 +135,111 @@ public class TripDAO extends DBContext implements ITripDAO {
         return list;
     }
 
+    private void addDefaultSearch(StringBuilder sql, List<Object> params, String searchKey) {
+        try {
+            int id = Integer.parseInt(searchKey);
+            sql.append("AND (trip_id = ? OR status LIKE ?) ");
+            params.add(id);
+            params.add("%" + searchKey + "%");
+        } catch (NumberFormatException e) {
+            // === CẬP NHẬT: Sửa logic tìm kiếm status mặc định ===
+            // Dịch Tiếng Việt sang ENUM
+            String dbStatus = searchKey; // Fallback
+            if (searchKey.toLowerCase().contains("chưa")) dbStatus = "NOT_STARTED";
+            else if (searchKey.toLowerCase().contains("đang")) dbStatus = "IN_PROCESS";
+            else if (searchKey.toLowerCase().contains("hoàn")) dbStatus = "FINISHED";
+            else if (searchKey.toLowerCase().contains("hủy")) dbStatus = "CANCELLED";
+            
+            sql.append("AND status = ? ");
+            params.add(dbStatus);
+        }
+    }
+
+    // === CẬP NHẬT: Helper "dịch" status ===
+    private String translateStatusSearch(String searchKey) {
+        String key = searchKey.toLowerCase();
+        if (key.contains("chưa")) return "NOT_STARTED";
+        if (key.contains("đang")) return "IN_PROCESS";
+        if (key.contains("hoàn")) return "FINISHED";
+        if (key.contains("hủy")) return "CANCELLED";
+        // Nếu người dùng gõ thẳng ENUM (ví dụ: "NOT_STARTED")
+        if (key.equals("not_started") || key.equals("in_process") || key.equals("finished") || key.equals("cancelled")) {
+            return searchKey.toUpperCase();
+        }
+        return searchKey; // Trả về chính nó nếu không dịch được
+    }
+
+
     @Override
-    public List<Trip> findTrips(String search, String filter, String sort, int page, int pageSize) throws SQLException {
+    public List<Trip> findAllTrips(String search, String filter, String sortCol, String sortDir, int page, int pageSize) throws SQLException {
         StringBuilder sql = new StringBuilder("SELECT * FROM Trip WHERE 1=1 ");
         List<Object> params = new ArrayList<>();
 
         if (search != null && !search.trim().isEmpty()) {
-            sql.append("AND (status LIKE ? OR CAST(trip_id AS NVARCHAR) LIKE ?) ");
-            params.add("%" + search + "%");
-            params.add("%" + search + "%");
+            String searchKey = search.trim();
+            String columnToSearch = "";
+
+            if (filter != null && !filter.trim().isEmpty()) {
+                switch (filter) {
+                    case "tripId": columnToSearch = "trip_id"; break;
+                    case "busId": columnToSearch = "bus_id"; break;
+                    case "routeId": columnToSearch = "route_id"; break;
+                    case "driverId": columnToSearch = "driver_id"; break;
+                    case "conductorId": columnToSearch = "conductor_id"; break;
+                    case "status": columnToSearch = "status"; break;
+                    default:
+                        addDefaultSearch(sql, params, searchKey);
+                        break;
+                }
+            } else {
+                addDefaultSearch(sql, params, searchKey);
+            }
+
+            // === CẬP NHẬT: Logic tìm kiếm ===
+            
+            // 1. Tìm theo ID (dùng =)
+            if (columnToSearch.equals("trip_id") || columnToSearch.equals("bus_id") || columnToSearch.equals("route_id")) {
+                try {
+                    int id = Integer.parseInt(searchKey);
+                    sql.append("AND ").append(columnToSearch).append(" = ? ");
+                    params.add(id);
+                } catch (NumberFormatException e) {
+                    return new ArrayList<>(); // Nhập chữ, 0 kết quả
+                }
+            // 2. Tìm theo Mã Tài xế / Phụ xe (dùng = / chính xác)
+            } else if (columnToSearch.equals("driver_id") || columnToSearch.equals("conductor_id")) {
+                sql.append("AND ").append(columnToSearch).append(" = ? ");
+                params.add(searchKey);
+            // 3. Tìm theo Trạng thái (dịch TV -> ENUM rồi dùng =)
+            } else if (columnToSearch.equals("status")) {
+                String dbStatus = translateStatusSearch(searchKey);
+                sql.append("AND ").append(columnToSearch).append(" = ? ");
+                params.add(dbStatus);
+            }
         }
 
-        if (filter != null && !filter.trim().isEmpty()) {
-            sql.append("AND status = ? ");
-            params.add(filter);
+        // === CẬP NHẬT: Logic Sắp xếp ===
+        String sortColumn = "trip_id"; 
+        if (sortCol != null && !sortCol.trim().isEmpty()) {
+            switch (sortCol) {
+                // === ĐÃ XÓA "status" KHỎI ĐÂY ===
+                case "departure_time":
+                case "arrival_time":
+                case "bus_id":
+                case "route_id":
+                case "driver_id":
+                case "conductor_id":
+                    sortColumn = sortCol;
+                    break;
+            }
         }
 
-        if (sort == null || sort.isEmpty()) {
-            sort = "trip_id ASC";
+        String sortDirection = "ASC";
+        if (sortDir != null && "desc".equalsIgnoreCase(sortDir.trim())) {
+            sortDirection = "DESC";
         }
-        sql.append("ORDER BY ").append(sort).append(" ");
 
+        sql.append("ORDER BY ").append(sortColumn).append(" ").append(sortDirection).append(" ");
         sql.append("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
         params.add((page - 1) * pageSize);
         params.add(pageSize);
@@ -125,19 +269,53 @@ public class TripDAO extends DBContext implements ITripDAO {
         List<Object> params = new ArrayList<>();
 
         if (search != null && !search.trim().isEmpty()) {
-            sql.append("AND (status LIKE ? OR CAST(trip_id AS NVARCHAR) LIKE ?) ");
-            params.add("%" + search + "%");
-            params.add("%" + search + "%");
-        }
+            String searchKey = search.trim();
+            String columnToSearch = "";
 
-        if (filter != null && !filter.trim().isEmpty()) {
-            sql.append("AND status = ? ");
-            params.add(filter);
+            if (filter != null && !filter.trim().isEmpty()) {
+                switch (filter) {
+                    case "tripId": columnToSearch = "trip_id"; break;
+                    case "busId": columnToSearch = "bus_id"; break;
+                    case "routeId": columnToSearch = "route_id"; break;
+                    case "driverId": columnToSearch = "driver_id"; break;
+                    case "conductorId": columnToSearch = "conductor_id"; break;
+                    case "status": columnToSearch = "status"; break;
+                    default:
+                        addDefaultSearch(sql, params, searchKey);
+                        break;
+                }
+            } else {
+                addDefaultSearch(sql, params, searchKey);
+            }
+
+            // === CẬP NHẬT: Logic tìm kiếm (giống hệt findAllTrips) ===
+            
+            if (columnToSearch.equals("trip_id") || columnToSearch.equals("bus_id") || columnToSearch.equals("route_id")) {
+                try {
+                    int id = Integer.parseInt(searchKey);
+                    sql.append("AND ").append(columnToSearch).append(" = ? ");
+                    params.add(id);
+                } catch (NumberFormatException e) {
+                    return 0; 
+                }
+            } else if (columnToSearch.equals("driver_id") || columnToSearch.equals("conductor_id")) {
+                sql.append("AND ").append(columnToSearch).append(" = ? ");
+                params.add(searchKey);
+            } else if (columnToSearch.equals("status")) {
+                String dbStatus = translateStatusSearch(searchKey);
+                sql.append("AND ").append(columnToSearch).append(" = ? ");
+                params.add(dbStatus);
+            }
         }
 
         try (PreparedStatement ps = connection.prepareStatement(sql.toString())) {
             for (int i = 0; i < params.size(); i++) {
-                ps.setString(i + 1, (String) params.get(i));
+                Object p = params.get(i);
+                if (p instanceof String) {
+                    ps.setString(i + 1, (String) p);
+                } else if (p instanceof Integer) {
+                    ps.setInt(i + 1, (Integer) p);
+                }
             }
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -147,7 +325,6 @@ public class TripDAO extends DBContext implements ITripDAO {
         }
         return 0;
     }
-
     @Override
     public Trip getTripDetail(int tripId) throws SQLException {
         return findTripById(tripId);
@@ -194,11 +371,11 @@ public class TripDAO extends DBContext implements ITripDAO {
     }
 
     @Override
-    public boolean updateTripTime(int tripId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException {
+    public boolean updateTripTime(int tripId, Timestamp departureTime, Timestamp arrivalTime) throws SQLException {
         String sql = "UPDATE Trip SET departure_time=?, arrival_time=? WHERE trip_id=?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setTimestamp(1, Timestamp.valueOf(departureTime));
-            ps.setTimestamp(2, Timestamp.valueOf(arrivalTime));
+            ps.setTimestamp(1, departureTime);
+            ps.setTimestamp(2, arrivalTime);
             ps.setInt(3, tripId);
             return ps.executeUpdate() > 0;
         }
@@ -275,12 +452,12 @@ public class TripDAO extends DBContext implements ITripDAO {
     }
 
     @Override
-    public List<Trip> findTripsByTime(LocalDateTime from, LocalDateTime to) throws SQLException {
+    public List<Trip> findTripsByTime(Timestamp from, Timestamp to) throws SQLException {
         List<Trip> list = new ArrayList<>();
         String sql = "SELECT * FROM Trip WHERE departure_time >= ? AND arrival_time <= ? ORDER BY departure_time ASC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setTimestamp(1, Timestamp.valueOf(from));
-            ps.setTimestamp(2, Timestamp.valueOf(to));
+            ps.setTimestamp(1, from);
+            ps.setTimestamp(2, to);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(extractTrip(rs));
@@ -289,55 +466,27 @@ public class TripDAO extends DBContext implements ITripDAO {
         }
         return list;
     }
-
     @Override
-    public boolean checkDriver(String driverId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException {
+    public boolean checkDriver(String driverId, Timestamp departureTime, Timestamp arrivalTime, int tripId) throws SQLException {
         String sql = """
-        SELECT COUNT(*) AS cnt
-        FROM Trip
-        WHERE driver_id = ?
-          AND (
-              (departure_time BETWEEN ? AND ?)
-              OR (arrival_time BETWEEN ? AND ?)
-              OR (? BETWEEN departure_time AND arrival_time)
-          )
-    """;
+            SELECT COUNT(*) AS cnt
+            FROM Trip
+            WHERE driver_id = ?
+              AND trip_id <> ?
+              AND (
+                  (departure_time BETWEEN ? AND ?)
+                  OR (arrival_time BETWEEN ? AND ?)
+                  OR (? BETWEEN departure_time AND arrival_time)
+              )
+        """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, driverId);
-            ps.setTimestamp(2, Timestamp.valueOf(departureTime));
-            ps.setTimestamp(3, Timestamp.valueOf(arrivalTime));
-            ps.setTimestamp(4, Timestamp.valueOf(departureTime));
-            ps.setTimestamp(5, Timestamp.valueOf(arrivalTime));
-            ps.setTimestamp(6, Timestamp.valueOf(departureTime));
-
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return rs.getInt("cnt") == 0; // true nếu không có trùng thời gian
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public boolean checkBus(int busId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException {
-        String sql = """
-        SELECT COUNT(*) AS cnt
-        FROM Trip
-        WHERE bus_id = ?
-          AND (
-              (departure_time BETWEEN ? AND ?)
-              OR (arrival_time BETWEEN ? AND ?)
-              OR (? BETWEEN departure_time AND arrival_time)
-          )
-    """;
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, busId);
-            ps.setTimestamp(2, Timestamp.valueOf(departureTime));
-            ps.setTimestamp(3, Timestamp.valueOf(arrivalTime));
-            ps.setTimestamp(4, Timestamp.valueOf(departureTime));
-            ps.setTimestamp(5, Timestamp.valueOf(arrivalTime));
-            ps.setTimestamp(6, Timestamp.valueOf(departureTime));
-
+            ps.setInt(2, tripId);
+            ps.setTimestamp(3, departureTime);
+            ps.setTimestamp(4, arrivalTime);
+            ps.setTimestamp(5, departureTime);
+            ps.setTimestamp(6, arrivalTime);
+            ps.setTimestamp(7, departureTime);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt("cnt") == 0;
@@ -346,26 +495,56 @@ public class TripDAO extends DBContext implements ITripDAO {
         return false;
     }
 
-    @Override
-    public boolean checkConductor(String conductorId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException {
+    // ✅ Check bus không bị trùng ca
+    public boolean checkBus(int busId, Timestamp departureTime, Timestamp arrivalTime, int excludeTripId) throws SQLException {
         String sql = """
-        SELECT COUNT(*) AS cnt
-        FROM Trip
-        WHERE conductor_id = ?
-          AND (
-              (departure_time BETWEEN ? AND ?)
-              OR (arrival_time BETWEEN ? AND ?)
-              OR (? BETWEEN departure_time AND arrival_time)
-          )
-    """;
+            SELECT COUNT(*) AS cnt
+            FROM Trip
+            WHERE bus_id = ?
+              AND trip_id <> ?
+              AND (
+                  (departure_time BETWEEN ? AND ?)
+                  OR (arrival_time BETWEEN ? AND ?)
+                  OR (? BETWEEN departure_time AND arrival_time)
+              )
+        """;
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, busId);
+            ps.setInt(2, excludeTripId);
+            ps.setTimestamp(3, departureTime);
+            ps.setTimestamp(4, arrivalTime);
+            ps.setTimestamp(5, departureTime);
+            ps.setTimestamp(6, arrivalTime);
+            ps.setTimestamp(7, departureTime);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("cnt") == 0;
+            }
+        }
+        return false;
+    }
+
+    // ✅ Check conductor không bị trùng ca
+    public boolean checkConductor(String conductorId, Timestamp departureTime, Timestamp arrivalTime, int excludeTripId) throws SQLException {
+        String sql = """
+            SELECT COUNT(*) AS cnt
+            FROM Trip
+            WHERE conductor_id = ?
+              AND trip_id <> ?
+              AND (
+                  (departure_time BETWEEN ? AND ?)
+                  OR (arrival_time BETWEEN ? AND ?)
+                  OR (? BETWEEN departure_time AND arrival_time)
+              )
+        """;
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, conductorId);
-            ps.setTimestamp(2, Timestamp.valueOf(departureTime));
-            ps.setTimestamp(3, Timestamp.valueOf(arrivalTime));
-            ps.setTimestamp(4, Timestamp.valueOf(departureTime));
-            ps.setTimestamp(5, Timestamp.valueOf(arrivalTime));
-            ps.setTimestamp(6, Timestamp.valueOf(departureTime));
-
+            ps.setInt(2, excludeTripId);
+            ps.setTimestamp(3, departureTime);
+            ps.setTimestamp(4, arrivalTime);
+            ps.setTimestamp(5, departureTime);
+            ps.setTimestamp(6, arrivalTime);
+            ps.setTimestamp(7, departureTime);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 return rs.getInt("cnt") == 0;
@@ -375,14 +554,15 @@ public class TripDAO extends DBContext implements ITripDAO {
     }
 
     private Trip extractTrip(ResultSet rs) throws SQLException {
+        
         return new Trip(
                 rs.getInt("trip_id"),
                 rs.getInt("route_id"),
                 rs.getInt("bus_id"),
                 (String) rs.getObject("driver_id"),
                 (String) rs.getObject("conductor_id"),
-                rs.getTimestamp("departure_time").toLocalDateTime(),
-                rs.getTimestamp("arrival_time").toLocalDateTime(),
+                rs.getTimestamp("departure_time"),
+                rs.getTimestamp("arrival_time"),
                 rs.getString("status")
         );
     }
