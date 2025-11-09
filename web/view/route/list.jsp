@@ -27,16 +27,27 @@
 
             <!-- Toolbar -->
             <div class="flex flex-wrap items-center justify-between mt-6 gap-3">
+                <!-- Nút Thêm tuyến -->
                 <a href="RouteServlet?action=add" class="px-4 py-2 rounded-xl bg-brand-600 text-white text-sm font-medium shadow-soft hover:bg-brand-700">
                     + Thêm tuyến
                 </a>
 
+                <!-- Form tìm kiếm bình thường -->
                 <form action="RouteServlet" method="get" class="flex items-center gap-2">
                     <input type="hidden" name="action" value="list"/>
                     <input type="text" name="search" value="${search}" placeholder="Tìm theo tên..."
                            class="px-3 py-2 rounded-xl border border-slate-300 bg-white text-sm focus:ring-2 focus:ring-brand-500 outline-none"/>
                     <button type="submit" class="px-4 py-2 rounded-xl bg-brand-600 text-white text-sm font-medium shadow-soft hover:bg-brand-700">
                         Tìm kiếm
+                    </button>
+                </form>
+
+                <!-- Form Search(Admin) -->
+                <form action="RouteServlet" method="get">
+                    <input type="hidden" name="action" value="search"/>
+                    <button type="submit" 
+                            class="px-4 py-2 rounded-xl bg-gray-700 text-white text-sm font-medium shadow-soft hover:bg-gray-800">
+                        Search(Admin)
                     </button>
                 </form>
             </div>
