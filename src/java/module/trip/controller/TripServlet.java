@@ -173,11 +173,11 @@ public class TripServlet extends HttpServlet {
             request.setAttribute("currentPage", page);
             request.setAttribute("pageSize", pageSize);
 
-            request.getRequestDispatcher("/view/Trip/tripList.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/trip/tripList.jsp").forward(request, response);
 
         } catch (SQLException e) {
             request.setAttribute("errorMessage", "❌ Không thể tải danh sách chuyến xe: " + e.getMessage());
-            request.getRequestDispatcher("/view/Trip/tripList.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/trip/tripList.jsp").forward(request, response);
         }
     }
 
@@ -185,7 +185,7 @@ public class TripServlet extends HttpServlet {
     private void showAddForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         loadCreateFormDependencies(request);
-        request.getRequestDispatcher("/view/Trip/tripForm.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/trip/tripForm.jsp").forward(request, response);
     }
 
     // (BƯỚC 2) Hiển thị form sửa/cập nhật (tải tất cả)
@@ -204,7 +204,7 @@ public class TripServlet extends HttpServlet {
             request.setAttribute("trip", trip);
             loadEditFormDependencies(request);
             
-            request.getRequestDispatcher("/view/Trip/tripEditForm.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/trip/tripEditForm.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("errorMessage", "❌ Không thể tải thông tin chuyến xe để chỉnh sửa: " + e.getMessage());
             listTrips(request, response);
@@ -229,7 +229,7 @@ public class TripServlet extends HttpServlet {
             request.setAttribute("errors", errors);
             request.setAttribute("routeId", routeIdStr);
             loadCreateFormDependencies(request); // Tải lại danh sách tuyến
-            request.getRequestDispatcher("/view/Trip/tripForm.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/trip/tripForm.jsp").forward(request, response);
             return;
         }
         
@@ -244,14 +244,14 @@ public class TripServlet extends HttpServlet {
                 request.setAttribute("errors", errors);
                 request.setAttribute("routeId", routeIdStr);
                 loadCreateFormDependencies(request);
-                request.getRequestDispatcher("/view/Trip/tripForm.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/trip/tripForm.jsp").forward(request, response);
             }
         } catch (Exception e) {
             errors.add("Lỗi cơ sở dữ liệu: " + e.getMessage());
             request.setAttribute("errors", errors);
             request.setAttribute("routeId", routeIdStr);
             loadCreateFormDependencies(request);
-            request.getRequestDispatcher("/view/Trip/tripForm.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/trip/tripForm.jsp").forward(request, response);
         }
     }
 
@@ -314,7 +314,7 @@ public class TripServlet extends HttpServlet {
                  request.setAttribute("errors", errors);
                  request.setAttribute("trip", updatedTrip);
                  loadEditFormDependencies(request); // Tải lại danh sách
-                 request.getRequestDispatcher("/view/Trip/tripEditForm.jsp").forward(request, response);
+                 request.getRequestDispatcher("/view/trip/tripEditForm.jsp").forward(request, response);
                  return;
              }
              
@@ -325,13 +325,13 @@ public class TripServlet extends HttpServlet {
                 request.setAttribute("success", "✅ Cập nhật chuyến xe thành công!");
                 request.setAttribute("trip", updatedTrip); 
                 loadEditFormDependencies(request); // Tải lại danh sách
-                request.getRequestDispatcher("/view/Trip/tripEditForm.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/trip/tripEditForm.jsp").forward(request, response);
             } else {
                  errors.add("❌ Không thể cập nhật. Dữ liệu không hợp lệ (ví dụ: Tài xế, Phụ xe, hoặc Xe buýt đã bị trùng lịch).");
                  request.setAttribute("errors", errors);
                  request.setAttribute("trip", updatedTrip);
                  loadEditFormDependencies(request); // Tải lại danh sách
-                 request.getRequestDispatcher("/view/Trip/tripEditForm.jsp").forward(request, response);
+                 request.getRequestDispatcher("/view/trip/tripEditForm.jsp").forward(request, response);
             }
 
         } catch (Exception e) {
@@ -345,7 +345,7 @@ public class TripServlet extends HttpServlet {
             }
             
             loadEditFormDependencies(request);
-            request.getRequestDispatcher("/view/Trip/tripEditForm.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/trip/tripEditForm.jsp").forward(request, response);
         }
     }
     
@@ -375,7 +375,7 @@ public class TripServlet extends HttpServlet {
             int tripId = Integer.parseInt(request.getParameter("tripId"));
             Trip trip = tripService.getTripDetail(tripId);
             request.setAttribute("trip", trip);
-            request.getRequestDispatcher("/view/Trip/tripDetail.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/trip/tripDetail.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("errorMessage", "❌ Không thể tải chi tiết chuyến xe: " + e.getMessage());
             listTrips(request, response);

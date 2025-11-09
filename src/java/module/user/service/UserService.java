@@ -140,35 +140,28 @@ public class UserService extends BaseService {
     }
     public List<UserDetailDTO> getAllStaffDetails() {
         try {
-            // 1. Lấy tất cả các đối tượng Staff từ DB
             List<Staff> allStaff = staffDao.findAll();
             
             List<UserDetailDTO> staffDetailsList = new ArrayList<>();
 
-            // 2. Vòng lặp
             for (Staff staff : allStaff) {
-                // 3. CHỈ lấy thông tin Profile (tên)
                 Optional<Profile> profile = profileDao.findById(staff.getUserId());
                 
                 if (profile.isPresent()) {
-                    // 4. Tạo một DTO tối thiểu, chỉ chứa thông tin ta cần
                     UserDetailDTO dto = new UserDetailDTO();
                     dto.setUserId(staff.getUserId());
-                    dto.setName(profile.get().getName()); // Lấy tên
+                    dto.setName(profile.get().getName());
                     
-                    // 5. Gán thông tin Staff
                     StaffDTO staffDto = new StaffDTO(staff.getStaffCode(), staff.getPosition(), staff.getDepartment());
                     dto.setStaff(staffDto);
                     
                     staffDetailsList.add(dto);
                 }
-                // KHÔNG gọi getUserDetail() và không đụng đến CustomerDAO
             }
             
             return staffDetailsList;
             
         } catch (SQLException e) {
-            // Giữ chuẩn Exception của file này
             throw new DataAccessException("getAllStaffDetails (An toàn): " + e.getMessage());
         }
     }
