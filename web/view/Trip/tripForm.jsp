@@ -1,7 +1,5 @@
-<%-- /view/Trip/tripForm.jsp --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%--<%@ include file="/header.jsp" %>--%>
 <script src="https://cdn.tailwindcss.com"></script>
 
 <body class="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-100 font-['Segoe_UI'] p-6">
@@ -52,4 +50,3 @@
     </div>
 
 </body>
-<%--<%@ include file="/footer.jsp" %>--%>
