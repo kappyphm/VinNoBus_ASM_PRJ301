@@ -12,11 +12,11 @@ import jakarta.servlet.http.HttpServlet;
  *
  * @author kappyphm
  */
-@WebServlet(name="TicketServlet", urlPatterns={
-    "/ticket/buy",
-    "/ticket/checkin",
-    "/ticket/create",
-})
+//@WebServlet(name="TicketServlet", urlPatterns={
+//    "/ticket/buy",
+//    "/ticket/checkin",
+//    "/ticket/create",
+//})
 public class TicketServlet extends HttpServlet {
    
 

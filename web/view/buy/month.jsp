@@ -88,7 +88,7 @@
                         class="w-full py-3 bg-brand-600 text-white rounded-xl font-semibold hover:bg-brand-700 transition">
                     Tính tiền
                 </button>
-                           <a href="${pageContext.request.contextPath}/view/Buy/ticket.jsp"
+                           <a href="${pageContext.request.contextPath}/view/buy/ticket.jsp"
                    class="block w-full text-center bg-slate-400 hover:bg-slate-500 text-white py-2.5 rounded-xl font-medium transition-all shadow-soft">
                     ⬅️ Quay Lại
                 </a>

@@ -127,7 +127,7 @@
                         💰 Bán Vé
                     </button>
 
-                    <a href="${pageContext.request.contextPath}/view/Ticket/main.jsp"
+                    <a href="${pageContext.request.contextPath}/view/ticket/main.jsp"
                    class="block w-full text-center bg-slate-400 hover:bg-slate-500 text-white py-2.5 rounded-xl font-medium transition-all shadow-soft">
                     ⬅️ Quay Lại
                 </a>

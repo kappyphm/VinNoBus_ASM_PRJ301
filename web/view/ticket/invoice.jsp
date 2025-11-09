@@ -103,14 +103,14 @@
             </c:if>
 
             <div class="flex gap-3 mt-8">
-                <a href="${pageContext.request.contextPath}/view/Ticket/sell.jsp" class="w-full">
+                <a href="${pageContext.request.contextPath}/view/ticket/sell.jsp" class="w-full">
                     <button type="button"
                             class="w-full bg-brand-600 hover:bg-brand-700 text-white py-2.5 rounded-xl font-medium transition-all shadow-soft">
                         💰 Tiếp Tục Bán Vé
                     </button>
                 </a>
 
-                <a href="${pageContext.request.contextPath}/view/Ticket/main.jsp" class="w-full">
+                <a href="${pageContext.request.contextPath}/view/ticket/main.jsp" class="w-full">
                     <button type="button"
                             class="w-full bg-slate-500 hover:bg-slate-600 text-white py-2.5 rounded-xl font-medium transition-all shadow-soft">
                         ⬅️ Trang Chính

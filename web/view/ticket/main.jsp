@@ -40,14 +40,14 @@
 
             <h1 class="text-2xl font-bold text-brand-700 mb-8">VinNoBus Ticket Management</h1>
 
-            <form action="${pageContext.request.contextPath}/view/Ticket/sell.jsp" method="get" class="mb-4">
+            <form action="${pageContext.request.contextPath}/view/ticket/sell.jsp" method="get" class="mb-4">
                 <button type="submit"
                         class="w-full bg-brand-600 hover:bg-brand-700 text-white py-3 rounded-xl font-semibold text-base transition-all shadow-soft">
                     🎟️ Bán Vé Lượt
                 </button>
             </form>
 
-            <form action="${pageContext.request.contextPath}/view/Ticket/checkin.jsp" method="get" class="mb-4">
+            <form action="${pageContext.request.contextPath}/view/ticket/checkin.jsp" method="get" class="mb-4">
                 <button type="submit"
                         class="w-full bg-brand-600 hover:bg-brand-700 text-white py-3 rounded-xl font-semibold text-base transition-all shadow-soft">
                     🧾 Check-in Vé Tháng

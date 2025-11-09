@@ -97,7 +97,7 @@
             </c:if>
 
             <div class="mt-6">
-                <a href="${pageContext.request.contextPath}/view/Ticket/checkinConductor.jsp"
+                <a href="${pageContext.request.contextPath}/view/ticket/checkinConductor.jsp"
                    class="block text-center bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 rounded-lg">
                     🔙 Quay Lại Check-in
                 </a>

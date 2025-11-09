@@ -56,7 +56,7 @@
           ✅ Check-in
         </button>
 
-        <a href="${pageContext.request.contextPath}/view/Ticket/main.jsp"
+        <a href="${pageContext.request.contextPath}/view/ticket/main.jsp"
            class="w-full">
           <button type="button"
                   class="w-full bg-slate-500 hover:bg-slate-600 text-white py-2.5 rounded-xl font-medium transition-all shadow-soft">

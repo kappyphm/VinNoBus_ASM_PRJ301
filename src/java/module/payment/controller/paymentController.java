@@ -69,24 +69,24 @@ public class paymentController extends HttpServlet {
         switch (action) {
 
             case "buyTrip":
-                request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/buy/trip.jsp").forward(request, response);
                 break;
             case "calcTrip":
-                request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/buy/trip.jsp").forward(request, response);
                 break;
 
             case "buyMonth":
                 buyMonth(request, response);
-                request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/buy/month.jsp").forward(request, response);
                 break;
             case "calcMonth":
                 calcMonth(request, response);
-                request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/buy/month.jsp").forward(request, response);
                 break;
 
             default:
                 request.setAttribute("error", "Action không hợp lệ!");
-                request.getRequestDispatcher("/view/Ticket/sell.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
         }
     }
 
@@ -109,25 +109,25 @@ public class paymentController extends HttpServlet {
 
             case "buyTrip":
                 buyTrip(request, response);
-                request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/buy/trip.jsp").forward(request, response);
                 break;
             case "calcTrip":
                 calcTrip(request, response);
-                request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/buy/trip.jsp").forward(request, response);
                 break;
 
             case "buyMonth":
                 buyMonth(request, response);
-                request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/buy/month.jsp").forward(request, response);
                 break;
             case "calcMonth":
                 calcMonth(request, response);
-                request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/buy/month.jsp").forward(request, response);
                 break;
 
             default:
                 request.setAttribute("error", "Action không hợp lệ!");
-                request.getRequestDispatcher("/view/Ticket/sell.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
         }
 
     }
@@ -153,12 +153,12 @@ public class paymentController extends HttpServlet {
             }
 
             request.setAttribute("message", "Mua vé thành công");
-            request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/buy/trip.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Lỗi mua vé: " + e.getMessage());
-            request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/buy/trip.jsp").forward(request, response);
         }
     }
 
@@ -189,12 +189,12 @@ public class paymentController extends HttpServlet {
             request.setAttribute("qr", qrUrl);
             request.setAttribute("bank", bank);
             request.setAttribute("stk", stk);
-            request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/buy/trip.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Lỗi tính tiền: " + e.getMessage());
-            request.getRequestDispatcher("/view/Buy/trip.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/buy/trip.jsp").forward(request, response);
         }
     }
 
@@ -227,12 +227,12 @@ public class paymentController extends HttpServlet {
                 request.setAttribute("error", "Không thể lưu vé, vui lòng thử lại!");
             }
 
-            request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/buy/month.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Lỗi khi mua vé tháng: " + e.getMessage());
-            request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/buy/month.jsp").forward(request, response);
         }
 
     }
@@ -265,12 +265,12 @@ public class paymentController extends HttpServlet {
             request.setAttribute("stk", stk);
             request.setAttribute("qr", qrUrl);
 
-            request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/buy/month.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Lỗi tính tiền: " + e.getMessage());
-            request.getRequestDispatcher("/view/Buy/month.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/buy/month.jsp").forward(request, response);
         }
     }
 
