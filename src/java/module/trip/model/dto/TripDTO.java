@@ -1,15 +1,15 @@
 
 package module.trip.model.dto;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 public class TripDTO {
     private int tripId;
     private int routeId;
     private int busId;
     private String driverId;
     private String conductorId;
-    private LocalDateTime departuretime;
-    private LocalDateTime arrivaltime;
+    private Timestamp departuretime;
+    private Timestamp arrivaltime;
     private String status;
 
     public int getTripId() {
@@ -32,11 +32,11 @@ public class TripDTO {
         return conductorId;
     }
 
-    public LocalDateTime getDeparturetime() {
+    public Timestamp getDeparturetime() {
         return departuretime;
     }
 
-    public LocalDateTime getArrivaltime() {
+    public Timestamp getArrivaltime() {
         return arrivaltime;
     }
 

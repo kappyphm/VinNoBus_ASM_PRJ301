@@ -152,6 +152,34 @@ public class UserService extends BaseService {
         }
 
     }
+    public List<UserDetailDTO> getAllStaffDetails() {
+        try {
+            List<Staff> allStaff = staffDao.findAll();
+            
+            List<UserDetailDTO> staffDetailsList = new ArrayList<>();
+
+            for (Staff staff : allStaff) {
+                Optional<Profile> profile = profileDao.findById(staff.getUserId());
+                
+                if (profile.isPresent()) {
+                    UserDetailDTO dto = new UserDetailDTO();
+                    dto.setUserId(staff.getUserId());
+                    dto.setName(profile.get().getName());
+                    
+                    StaffDTO staffDto = new StaffDTO(staff.getStaffCode(), staff.getPosition(), staff.getDepartment());
+                    dto.setStaff(staffDto);
+                    
+                    staffDetailsList.add(dto);
+                }
+            }
+            
+            return staffDetailsList;
+            
+        } catch (SQLException e) {
+            throw new DataAccessException("getAllStaffDetails (An toàn): " + e.getMessage());
+        }
+    }
+    
 
     public void deleteUser(String userId) {
         try {

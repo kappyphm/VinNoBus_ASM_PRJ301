@@ -170,11 +170,11 @@ CREATE TABLE Route_Station (
 CREATE TABLE Trip (
     trip_id INT IDENTITY(1,1) PRIMARY KEY,
     route_id INT NOT NULL,
-    bus_id INT NOT NULL,
-    driver_id VARCHAR(128) NOT NULL UNIQUE,
-    conductor_id VARCHAR(128) NOT NULL UNIQUE,
-    departure_time TIME NOT NULL,
-    arrival_time TIME NOT NULL,
+    bus_id INT NULL,
+    driver_id VARCHAR(128) NULL ,
+    conductor_id VARCHAR(128) NULL ,
+    departure_time DATETIME NULL,
+    arrival_time DATETIME NULL,
     status VARCHAR(20) DEFAULT 'NOT_STARTED' CHECK (status IN ('NOT_STARTED','IN_PROCESS','FINISHED','CANCELLED')),
 
     CONSTRAINT FK_Trip_Route FOREIGN KEY (route_id) REFERENCES Route(route_id),
@@ -211,7 +211,6 @@ CREATE TABLE Ticket (
     price DECIMAL(10,2) NOT NULL,
     issue_date DATE NOT NULL,
     expiry_date DATE NULL,
-
     invoice_id INT NULL,
 
     CONSTRAINT FK_Ticket_Customer FOREIGN KEY (customer_id) REFERENCES [User](user_id),

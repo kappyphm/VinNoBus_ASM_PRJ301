@@ -1,10 +1,11 @@
+// File: module/trip/service/TripService.java
 package module.trip.service;
 
 import module.trip.dao.ITripDAO;
 import module.trip.dao.TripDAO;
 import module.trip.model.entity.Trip;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 import java.util.List;
 
 public class TripService implements ITripService {
@@ -13,50 +14,58 @@ public class TripService implements ITripService {
 
     // --- CRUD cơ bản ---
     @Override
-    public boolean insertTrip(Trip trip) throws SQLException {
-        // 🧠 Nghiệp vụ: kiểm tra hợp lệ trước khi thêm
-        if (trip == null) {
-            return false;
+    public Trip insertShellTrip(int routeId) throws SQLException {
+        if (routeId <= 0) {
+            return null;
         }
-        if (trip.getDepartureTime().isAfter(trip.getArrivalTime())) {
-            return false;
-        }
-
-        // Kiểm tra trùng lịch
-        if (!tripDAO.checkDriver(trip.getDriverId(), trip.getDepartureTime(), trip.getArrivalTime())) {
-            return false;
-        }
-        if (!tripDAO.checkBus(trip.getBusId(), trip.getDepartureTime(), trip.getArrivalTime())) {
-            return false;
-        }
-        if (!tripDAO.checkConductor(trip.getConductorId(), trip.getDepartureTime(), trip.getArrivalTime())) {
-            return false;
-        }
-
-        return tripDAO.insertTrip(trip);
+        return tripDAO.insertShellTrip(routeId);
     }
+    
+    // Hàm insertTrip cũ không còn dùng
+    // @Override
+    // public boolean insertTrip(Trip trip) throws SQLException { ... }
+
 
     @Override
     public boolean updateTrip(Trip trip) throws SQLException {
-        // 🧠 Nghiệp vụ: đảm bảo giờ hợp lệ và không trùng chuyến khác
+        // 🧠 Nghiệp vụ: Chỉ kiểm tra (validate) nếu thông tin được cung cấp
         if (trip == null) {
             return false;
         }
-        if (trip.getDepartureTime().isAfter(trip.getArrivalTime())) {
-            return false;
+        
+        // Chỉ check giờ nếu cả 2 đều có
+        if (trip.getDepartureTime() != null && trip.getArrivalTime() != null) {
+            if (trip.getDepartureTime().after(trip.getArrivalTime())) {
+                System.out.println("⚠️ Giờ đi sau giờ đến!");
+                return false;
+            }
+            
+            // Chỉ check trùng lịch nếu có đủ thông tin
+            if (trip.getDriverId() != null && !trip.getDriverId().isBlank()) {
+                if (!tripDAO.checkDriver(trip.getDriverId(), trip.getDepartureTime(), trip.getArrivalTime(), trip.getTripId())) {
+                    System.out.println("⚠️ Driver trùng lịch!");
+                    return false;
+                }
+            }
+            
+            if (trip.getBusId() > 0) {
+                 if (!tripDAO.checkBus(trip.getBusId(), trip.getDepartureTime(), trip.getArrivalTime(), trip.getTripId())) {
+                    System.out.println("⚠️ Bus trùng lịch!");
+                    return false;
+                }
+            }
+            
+            if (trip.getConductorId() != null && !trip.getConductorId().isBlank()) {
+                if (!tripDAO.checkConductor(trip.getConductorId(), trip.getDepartureTime(), trip.getArrivalTime(), trip.getTripId())) {
+                    System.out.println("⚠️ Conductor trùng lịch!");
+                    return false;
+                }
+            }
         }
 
-        if (!tripDAO.checkDriver(trip.getDriverId(), trip.getDepartureTime(), trip.getArrivalTime())) {
-            return false;
-        }
-        if (!tripDAO.checkBus(trip.getBusId(), trip.getDepartureTime(), trip.getArrivalTime())) {
-            return false;
-        }
-        if (!tripDAO.checkConductor(trip.getConductorId(), trip.getDepartureTime(), trip.getArrivalTime())) {
-            return false;
-        }
-
+        // ✅ Cập nhật thông tin (DAO đã xử lý NULL)
         return tripDAO.updateTrip(trip);
+    
     }
 
     @Override
@@ -71,13 +80,13 @@ public class TripService implements ITripService {
 
     // --- Danh sách & tìm kiếm ---
     @Override
-    public List<Trip> findAllTrips() throws SQLException {
+    public List<Trip> findTrips() throws SQLException {
         return tripDAO.findAllTrips();
     }
 
     @Override
-    public List<Trip> findTrips(String search, String filter, String sort, int page, int pageSize) throws SQLException {
-        return tripDAO.findTrips(search, filter, sort, page, pageSize);
+    public List<Trip> findTrips(String search, String filter, String sortCol, String sortDir, int page, int pageSize) throws SQLException {
+        return tripDAO.findAllTrips(search, filter, sortCol, sortDir, page, pageSize);
     }
 
     @Override
@@ -114,8 +123,8 @@ public class TripService implements ITripService {
 
     // --- Thời gian & trạng thái ---
     @Override
-    public boolean updateTripTime(int tripId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException {
-        if (departureTime.isAfter(arrivalTime)) {
+    public boolean updateTripTime(int tripId, Timestamp departureTime, Timestamp arrivalTime) throws SQLException {
+        if (departureTime.after(arrivalTime)) {
             return false;
         }
         return tripDAO.updateTripTime(tripId, departureTime, arrivalTime);
@@ -151,23 +160,23 @@ public class TripService implements ITripService {
     }
 
     @Override
-    public List<Trip> findTripsByTime(LocalDateTime from, LocalDateTime to) throws SQLException {
+    public List<Trip> findTripsByTime(Timestamp from, Timestamp to) throws SQLException {
         return tripDAO.findTripsByTime(from, to);
     }
 
     // --- Validation ---
     @Override
-    public boolean checkDriver(String driverId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException {
-        return tripDAO.checkDriver(driverId, departureTime, arrivalTime);
+    public boolean checkDriver(String driverId, Timestamp departureTime, Timestamp arrivalTime, int tripId) throws SQLException {
+        return tripDAO.checkDriver(driverId, departureTime, arrivalTime,tripId);
     }
 
     @Override
-    public boolean checkBus(int busId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException {
-        return tripDAO.checkBus(busId, departureTime, arrivalTime);
+    public boolean checkBus(int busId, Timestamp departureTime, Timestamp arrivalTime, int tripId) throws SQLException {
+        return tripDAO.checkBus(busId, departureTime, arrivalTime, tripId);
     }
 
     @Override
-    public boolean checkConductor(String conductorId, LocalDateTime departureTime, LocalDateTime arrivalTime) throws SQLException {
-        return tripDAO.checkConductor(conductorId, departureTime, arrivalTime);
+    public boolean checkConductor(String conductorId, Timestamp departureTime, Timestamp arrivalTime, int tripId) throws SQLException {
+        return tripDAO.checkConductor(conductorId, departureTime, arrivalTime, tripId);
     }
 }
