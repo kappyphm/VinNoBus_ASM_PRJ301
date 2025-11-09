@@ -49,6 +49,11 @@ public class RoleFilter implements Filter {
         routeRoles.put("/staff/delete", Arrays.asList("MANAGER"));
         routeRoles.put("/ticket/checkin", Arrays.asList("OPERATOR"));
         routeRoles.put("/ticket/create", Arrays.asList("OPERATOR", "SALE"));
+        routeRoles.put("/StationServlet", Arrays.asList("MANAGER"));
+        routeRoles.put("/RouteServlet", Arrays.asList("MANAGER"));
+        routeRoles.put("/BusServlet", Arrays.asList("MANAGER", "OPERATOR"));
+        routeRoles.put("/TripServlet", Arrays.asList("MANAGER"));
+        routeRoles.put("/TicketServlet", Arrays.asList("MANAGER", "OPERATOR"));
     }
 
     @Override
@@ -64,17 +69,22 @@ public class RoleFilter implements Filter {
         HttpSession session = req.getSession(false);
 
         String path = req.getServletPath(); // lấy route
-
-        // Nếu route có trong danh sách
-        if (routeRoles.containsKey(path)) {
-            if (session != null) {
-                UserDetailDTO user = (UserDetailDTO) session.getAttribute("user");
-                String role = user.getStaff().getDepartment();
-                if (role != null && routeRoles.get(path).contains(role)) {
-                    chain.doFilter(request, response); // hợp lệ
-                    return;
+        try {
+            // Nếu route có trong danh sách
+            if (routeRoles.containsKey(path)) {
+                if (session != null) {
+                    UserDetailDTO user = (UserDetailDTO) session.getAttribute("user");
+                    String role = user.getStaff().getDepartment();
+                    if (role != null && routeRoles.get(path).contains(role)) {
+                        chain.doFilter(request, response); // hợp lệ
+                        return;
+                    }
                 }
+                // nếu không hợp lệ
+                res.sendRedirect(req.getContextPath() + "/accessDenied.jsp");
+                return;
             }
+        } catch (NullPointerException e) {
             // nếu không hợp lệ
             res.sendRedirect(req.getContextPath() + "/accessDenied.jsp");
             return;
