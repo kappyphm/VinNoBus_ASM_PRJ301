@@ -16,12 +16,12 @@
             <!-- Messages -->
             <c:if test="${not empty message}">
                 <div class="mb-4 p-4 rounded-2xl bg-green-50 border border-green-200 text-green-700 shadow-soft fade-up">
-                    ✅ ${message}
+                    ${message}
                 </div>
             </c:if>
             <c:if test="${not empty error}">
                 <div class="mb-4 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 shadow-soft fade-up">
-                    ⚠️ ${error}
+                    ${error}
                 </div>
             </c:if>
 
@@ -111,8 +111,7 @@
                         </c:otherwise>
                     </c:choose>
                 </c:forEach>
-            </div>
-
+            </div>           
         </main>
     </jsp:body>
 </ui:layout>

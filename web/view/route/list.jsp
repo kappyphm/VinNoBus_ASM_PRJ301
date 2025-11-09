@@ -13,14 +13,14 @@
             <!-- Alerts -->
             <c:if test="${not empty sessionScope.message}">
                 <div class="mt-4 p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 shadow-soft">
-                    ✅ ${sessionScope.message}
+                    ${sessionScope.message}
                 </div>
                 <c:remove var="message" scope="session"/>
             </c:if>
 
             <c:if test="${not empty errorMessage}">
                 <div class="mt-4 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 shadow-soft">
-                    ⚠️ ${errorMessage}
+                    ️${errorMessage}
                 </div>
                 <c:remove var="errorMessage" scope="session"/>
             </c:if>
