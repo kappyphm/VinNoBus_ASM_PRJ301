@@ -4,25 +4,6 @@ GO
 USE VinNoBusMERGE;
 GO
 
--- ==========================================================
--- USER MODULE DATABASE SCHEMA (FIXED FOR SQL SERVER)
--- Author: Kappy (FPT University)
--- ==========================================================
-
--- Xóa b?ng theo ?úng th? t? quan h?
-IF OBJECT_ID('dbo.staff', 'U') IS NOT NULL DROP TABLE dbo.staff;
-IF OBJECT_ID('dbo.customer', 'U'	) IS NOT NULL DROP TABLE dbo.customer;
-IF OBJECT_ID('dbo.profile', 'U') IS NOT NULL DROP TABLE dbo.profile;
-IF OBJECT_ID('dbo.[user]', 'U') IS NOT NULL DROP TABLE dbo.[user];
-IF OBJECT_ID('dbo.WorkLog', 'U') IS NOT NULL DROP TABLE dbo.WorkLog;
-IF OBJECT_ID('dbo.Ticket', 'U') IS NOT NULL DROP TABLE dbo.Ticket;
-IF OBJECT_ID('dbo.Invoice', 'U') IS NOT NULL DROP TABLE dbo.Invoice;
-IF OBJECT_ID('dbo.Trip', 'U') IS NOT NULL DROP TABLE dbo.Trip;
-IF OBJECT_ID('dbo.Route_Station', 'U') IS NOT NULL DROP TABLE dbo.Route
-IF OBJECT_ID('dbo.Route', 'U') IS NOT NULL DROP TABLE dbo.Route;
-IF OBJECT_ID('dbo.Station', 'U') IS NOT NULL DROP TABLE dbo.Station;
-IF OBJECT_ID('dbo.BusLog', 'U') IS NOT NULL DROP TABLE dbo.BusLog;
-IF OBJECT_ID('dbo.Bus', 'U') IS NOT NULL DROP TABLE dbo.Bus;
 
 
 GO
