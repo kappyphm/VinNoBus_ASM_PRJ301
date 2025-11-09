@@ -9,7 +9,7 @@
     <jsp:body>
         <main class="max-w-3xl mx-auto px-5 py-8">
             <h1 class="text-2xl font-semibold">Gán quyền/ nhiệm vụ</h1>
-            <form action="${ctx}/staff/assign" method="post" class="mt-6 space-y-4">
+            <form action="${ctx}${action=='adminReg'?'/adminReg':'/staff/assign'}" method="post" class="mt-6 space-y-4">
                 <input type="hidden" name="userId" value="${userId}" readonly/>
                 <div>
                     <label class="block text-slate-500 text-sm">Chức vụ</label>
