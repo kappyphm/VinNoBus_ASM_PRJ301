@@ -44,11 +44,6 @@
                 <input type="hidden" name="action" value="calcTrip">
 
                 <div>
-                    <label class="block text-sm font-medium mb-1">ID khách hàng</label>
-                    <input type="text" name="customerId" value="${customerId}" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
-                </div>
-
-                <div>
                     <label class="block text-sm font-medium mb-1">ID chuyến</label>
                     <input type="number" name="tripId" value="${tripId}" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
                 </div>
@@ -60,7 +55,7 @@
 
                 <div>
                     <label class="block text-sm font-medium mb-1">Giá vé (VND)</label>
-                    <input type="number" step="0.01" name="price" value="${price}" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
+                    <input type="number" step="0.01" name="price" value="15000" required class="w-full border border-slate-300 rounded-lg px-3 py-2">
                 </div>
 
                 <div>
@@ -92,7 +87,6 @@
                     <h2 class="font-semibold text-bus-700 text-lg mb-3">🧾 Hóa đơn thanh toán</h2>
 
                     <div class="text-sm space-y-1">
-                        <p><b>Khách hàng:</b> ${customerId}</p>
                         <p><b>Trip:</b> ${tripId}</p>
                         <p><b>Số lượng:</b> ${qty}</p>
                         <p><b>Giá mỗi vé:</b> ${price} VND</p>
@@ -103,7 +97,6 @@
 
                     <form action="${pageContext.request.contextPath}/buy" method="post" class="mt-5">
                         <input type="hidden" name="action" value="buyTrip">
-                        <input type="hidden" name="customerId" value="${customerId}">
                         <input type="hidden" name="tripId" value="${tripId}">
                         <input type="hidden" name="quantity" value="${qty}">
                         <input type="hidden" name="price" value="${price}">

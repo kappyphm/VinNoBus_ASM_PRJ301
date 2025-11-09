@@ -59,11 +59,11 @@
 
                 <div id="bankFields" class="space-y-2" style="display: none;">
                     <label class="block font-semibold">Ngân hàng:</label>
-                    <input type="text" id="bank" name="bank" placeholder="VCB, MBB, TCB..."
+                    <input type="text" id="bank" name="bank" value="MB Bank" readonly
                            class="border border-gray-300 rounded-lg px-4 py-2 w-full">
 
                     <label class="block font-semibold">Số tài khoản:</label>
-                    <input type="text" id="stk" name="stk" placeholder="0123456789"
+                    <input type="text" id="stk" name="stk" value="0965047076" readonly
                            class="border border-gray-300 rounded-lg px-4 py-2 w-full">
                 </div>
 
