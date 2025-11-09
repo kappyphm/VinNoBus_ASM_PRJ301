@@ -9,8 +9,7 @@ import java.util.List;
 public interface ITripService {
 
     // CRUD cơ bản
-    // boolean insertTrip(Trip trip) throws SQLException; // XÓA
-    Trip insertShellTrip(int routeId) throws SQLException; // THÊM
+    Trip insertShellTrip(int routeId) throws SQLException; 
 
     boolean updateTrip(Trip trip) throws SQLException;
 

@@ -25,7 +25,6 @@ public class TripDAO extends DBContext implements ITripDAO {
     @Override
     public Trip insertShellTrip(int routeId) throws SQLException {
         String sql = "INSERT INTO Trip (route_id, status) VALUES (?, ?)";
-        // Yêu cầu SQL Server trả về cột ID vừa tạo
         String generatedColumns[] = { "trip_id" }; 
         
         try (PreparedStatement ps = connection.prepareStatement(sql, generatedColumns)) {
@@ -40,7 +39,6 @@ public class TripDAO extends DBContext implements ITripDAO {
              try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     int newId = rs.getInt(1);
-                    // Lấy lại đầy đủ thông tin chuyến vừa tạo
                     return this.findTripById(newId); 
                 } else {
                     throw new SQLException("Tạo chuyến thất bại, không lấy được ID.");
@@ -72,9 +70,7 @@ public class TripDAO extends DBContext implements ITripDAO {
         }
     }
 
-    /**
-     * HÀM CẬP NHẬT: Sửa updateTrip để chấp nhận giá trị 0/NULL
-     */
+
     @Override
     public boolean updateTrip(Trip trip) throws SQLException {
         String sql = "UPDATE Trip SET route_id=?, bus_id=?, driver_id=?, conductor_id=?, departure_time=?, arrival_time=?, status=? WHERE trip_id=?";
@@ -142,9 +138,7 @@ public class TripDAO extends DBContext implements ITripDAO {
             params.add(id);
             params.add("%" + searchKey + "%");
         } catch (NumberFormatException e) {
-            // === CẬP NHẬT: Sửa logic tìm kiếm status mặc định ===
-            // Dịch Tiếng Việt sang ENUM
-            String dbStatus = searchKey; // Fallback
+            String dbStatus = searchKey; 
             if (searchKey.toLowerCase().contains("chưa")) dbStatus = "NOT_STARTED";
             else if (searchKey.toLowerCase().contains("đang")) dbStatus = "IN_PROCESS";
             else if (searchKey.toLowerCase().contains("hoàn")) dbStatus = "FINISHED";
@@ -155,7 +149,6 @@ public class TripDAO extends DBContext implements ITripDAO {
         }
     }
 
-    // === CẬP NHẬT: Helper "dịch" status ===
     private String translateStatusSearch(String searchKey) {
         String key = searchKey.toLowerCase();
         if (key.contains("chưa")) return "NOT_STARTED";
@@ -166,7 +159,7 @@ public class TripDAO extends DBContext implements ITripDAO {
         if (key.equals("not_started") || key.equals("in_process") || key.equals("finished") || key.equals("cancelled")) {
             return searchKey.toUpperCase();
         }
-        return searchKey; // Trả về chính nó nếu không dịch được
+        return searchKey; 
     }
 
 
@@ -195,8 +188,6 @@ public class TripDAO extends DBContext implements ITripDAO {
                 addDefaultSearch(sql, params, searchKey);
             }
 
-            // === CẬP NHẬT: Logic tìm kiếm ===
-            
             // 1. Tìm theo ID (dùng =)
             if (columnToSearch.equals("trip_id") || columnToSearch.equals("bus_id") || columnToSearch.equals("route_id")) {
                 try {
@@ -206,11 +197,11 @@ public class TripDAO extends DBContext implements ITripDAO {
                 } catch (NumberFormatException e) {
                     return new ArrayList<>(); // Nhập chữ, 0 kết quả
                 }
-            // 2. Tìm theo Mã Tài xế / Phụ xe (dùng = / chính xác)
+            // 2. Tìm theo Mã Tài xế / Phụ xe 
             } else if (columnToSearch.equals("driver_id") || columnToSearch.equals("conductor_id")) {
                 sql.append("AND ").append(columnToSearch).append(" = ? ");
                 params.add(searchKey);
-            // 3. Tìm theo Trạng thái (dịch TV -> ENUM rồi dùng =)
+            // 3. Tìm theo Trạng thái 
             } else if (columnToSearch.equals("status")) {
                 String dbStatus = translateStatusSearch(searchKey);
                 sql.append("AND ").append(columnToSearch).append(" = ? ");
@@ -218,7 +209,7 @@ public class TripDAO extends DBContext implements ITripDAO {
             }
         }
 
-        // === CẬP NHẬT: Logic Sắp xếp ===
+        // === Logic Sắp xếp ===
         String sortColumn = "trip_id"; 
         if (sortCol != null && !sortCol.trim().isEmpty()) {
             switch (sortCol) {
@@ -287,8 +278,6 @@ public class TripDAO extends DBContext implements ITripDAO {
             } else {
                 addDefaultSearch(sql, params, searchKey);
             }
-
-            // === CẬP NHẬT: Logic tìm kiếm (giống hệt findAllTrips) ===
             
             if (columnToSearch.equals("trip_id") || columnToSearch.equals("bus_id") || columnToSearch.equals("route_id")) {
                 try {

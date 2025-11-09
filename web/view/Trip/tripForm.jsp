@@ -25,7 +25,6 @@
             </div>
         </c:if>
 
-        <%-- Form này sẽ gọi action "createShell" --%>
         <form action="TripServlet?action=createShell" method="post">
             
             <div class="mb-6">
@@ -34,7 +33,6 @@
                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
                        placeholder="Gõ số tuyến hoặc tên để chọn...">
                 
-                <%-- Dữ liệu này phải được tải từ Servlet --%>
                 <datalist id="routesData">
                     <c:forEach var="route" items="${routesList}">
                         <option value="${route.routeId}">${route.routeName}</option>
