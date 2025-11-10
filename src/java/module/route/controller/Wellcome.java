@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import module.route.dao.RouteDAO;
 import module.route.model.entity.Route;
+import module.route.service.RouteServices;
 import module.station.dao.StationDAO;
 import module.station.model.entity.Station;
 
@@ -26,15 +27,26 @@ import module.station.model.entity.Station;
 @WebServlet(name = "Wellcome", urlPatterns = {"/search"})
 public class Wellcome extends HttpServlet {
 
+    private RouteServices routeServices = new RouteServices();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        
         try {
-            searchRoutesByStations(req, resp);
+            String action = req.getParameter("action");
+            if (action == null) {
+                searchRoutesByStations(req, resp);
+            }
+            switch (action) {
+
+                case "details" ->
+                    showDetails(req, resp);
+
+                default ->
+                    searchRoutesByStations(req, resp);
+            }
         } catch (SQLException ex) {
             Logger.getLogger(Wellcome.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
 
     }
 
@@ -83,4 +95,24 @@ public class Wellcome extends HttpServlet {
         request.getRequestDispatcher("/view/route/search.jsp").forward(request, response);
     }
 
+    private void showDetails(HttpServletRequest request, HttpServletResponse response)
+            throws SQLException, ServletException, IOException {
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+
+            // Lấy tuyến kèm trạm
+            Route route = routeServices.getRouteWithStations(id);
+
+            if (route == null) {
+                request.setAttribute("errorMessage", "⚠️ Không tìm thấy thông tin tuyến xe có ID: " + id);
+            } else {
+                request.setAttribute("route", route);
+                // Nếu muốn, có thể gửi danh sách trạm sang JSP
+                request.setAttribute("stations", route.getStations());
+            }
+        } catch (NumberFormatException e) {
+            request.setAttribute("errorMessage", "⚠️ ID tuyến xe không hợp lệ!");
+        }
+        request.getRequestDispatcher("/view/route/detail.jsp").forward(request, response);
+    }
 }

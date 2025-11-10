@@ -78,21 +78,25 @@
 
             <!-- Nút hành động -->
             <div class="flex justify-center gap-4 mt-8">
-                <a href="RouteServlet?action=list"
+                <a href="javascript:history.back()"
                    class="px-5 py-2 rounded-xl border border-slate-300 bg-white text-sm hover:bg-slate-100 transition">
                     ← Quay lại
                 </a>
 
-                <a href="RouteServlet?action=edit&id=${route.routeId}"
-                   class="px-5 py-2 rounded-xl bg-yellow-600 text-white text-sm font-medium shadow-soft hover:bg-yellow-700 transition">
-                    ✏️ Sửa
-                </a>
 
-                <a href="RouteServlet?action=delete&id=${route.routeId}"
-                   onclick="return confirm('Bạn có chắc muốn xóa tuyến đường này không?');"
-                   class="px-5 py-2 rounded-xl bg-red-600 text-white text-sm font-medium shadow-soft hover:bg-red-700 transition">
-                    🗑 Xóa
-                </a>
+                <c:if test="${not empty sessionScope.user.staff}">
+                    <a href="RouteServlet?action=edit&id=${route.routeId}"
+                       class="px-5 py-2 rounded-xl bg-yellow-600 text-white text-sm font-medium shadow-soft hover:bg-yellow-700 transition">
+                        ✏️ Sửa
+                    </a>
+
+                    <a href="RouteServlet?action=delete&id=${route.routeId}"
+                       onclick="return confirm('Bạn có chắc muốn xóa tuyến đường này không?');"
+                       class="px-5 py-2 rounded-xl bg-red-600 text-white text-sm font-medium shadow-soft hover:bg-red-700 transition">
+                        🗑 Xóa
+                    </a>
+                </c:if>
+
             </div>
 
         </div>

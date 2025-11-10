@@ -26,7 +26,7 @@
 
             <!-- Form tìm tuyến -->
             <form class="mt-6 grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto] items-end gap-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-soft"
-                  action="${pageContext.request.contextPath}/RouteServlet" method="get">
+                  action="${pageContext.request.contextPath}/search" method="get">
                 <input type="hidden" name="action" value="search">
 
                 <!-- Trạm A -->
@@ -86,7 +86,7 @@
                                                 <td class="py-2 pr-4">${r.routeName}</td>
                                                 <td class="py-2 pr-4">${r.type}</td>
                                                 <td class="py-2 pr-4">
-                                                    <a href="${pageContext.request.contextPath}/RouteServlet?action=details&id=${r.routeId}"
+                                                    <a href="${pageContext.request.contextPath}/search?action=details&id=${r.routeId}"
                                                        class="px-3 py-1 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors">
                                                         Xem chi tiết
                                                     </a>
