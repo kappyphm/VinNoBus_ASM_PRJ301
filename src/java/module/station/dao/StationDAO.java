@@ -199,50 +199,6 @@ public class StationDAO extends DBContext implements iStationDAO {
     }
 
     @Override
-    public List<Station> searchStationsByNameFuzzy(String name) {
-        List<Station> list = new ArrayList<>();
-        if (name == null || name.trim().isEmpty()) {
-            return list;
-        }
-        StringBuilder fuzzy = new StringBuilder("%");
-        for (char c : name.trim().toCharArray()) {
-            fuzzy.append(c).append("%");
-        }
-
-        String sql = """
-   SELECT s.station_id, s.station_name, s.location,
-          STRING_AGG(r.route_name, ', ') AS route_names
-   FROM Station s
-   LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
-   LEFT JOIN Route r ON r.route_id = rs.route_id
-   WHERE s.station_name LIKE ?
-   GROUP BY s.station_id, s.station_name, s.location
-   ORDER BY s.station_id ASC
-""";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setString(1, fuzzy.toString());
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    Station s = new Station();
-                    s.setStationId(rs.getInt("station_id"));
-                    s.setStationName(rs.getString("station_name"));
-                    s.setLocation(rs.getString("location"));
-
-                    String routes = rs.getString("route_names");
-                    if (routes != null && !routes.isEmpty()) {
-                        s.setRouteNames(Arrays.asList(routes.split(",\\s*")));
-                    }
-                    list.add(s);
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Lỗi khi tìm trạm theo tên fuzzy: " + e.getMessage());
-        }
-
-        return list;
-    }
-
-    @Override
     public List<Station> getAllStationsWithRoutes() {
         List<Station> list = new ArrayList<>();
         String sql = """
@@ -330,4 +286,55 @@ public class StationDAO extends DBContext implements iStationDAO {
         return false;
     }
 
+    @Override
+    public List<Station> searchExactByName(String name) {
+        List<Station> list = new ArrayList<>();
+
+        String sql = """
+        SELECT s.station_id, s.station_name, s.location,
+               STRING_AGG(r.route_name, ', ') AS route_names
+        FROM Station s
+        LEFT JOIN Route_Station rs ON s.station_id = rs.station_id
+        LEFT JOIN Route r ON r.route_id = rs.route_id
+        WHERE s.station_name = ?
+        GROUP BY s.station_id, s.station_name, s.location
+        ORDER BY s.station_id ASC
+    """;
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, name.trim());
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Station s = new Station();
+                    s.setStationId(rs.getInt("station_id"));
+                    s.setStationName(rs.getString("station_name"));
+                    s.setLocation(rs.getString("location"));
+
+                    String routes = rs.getString("route_names");
+                    if (routes != null && !routes.isEmpty()) {
+                        s.setRouteNames(Arrays.asList(routes.split(",\\s*")));
+                    }
+                    list.add(s);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi exact search trạm theo tên: " + e.getMessage());
+        }
+        return list;
+    }
+
+    @Override
+    public int countExactByName(String name) {
+        String sql = "SELECT COUNT(*) FROM Station WHERE station_name = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, name.trim());
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi đếm exact search: " + e.getMessage());
+        }
+        return 0;
+    }
 }

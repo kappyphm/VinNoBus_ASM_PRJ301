@@ -50,10 +50,6 @@ public class StationServices {
         return stationDAO.getTotalStations();
     }
 
-    public List<Station> searchStationsByNameFuzzy(String name) {
-        return stationDAO.searchStationsByNameFuzzy(name);
-    }
-
     public List<Station> getStationsWithLatestRoutes() {
         return stationDAO.getAllStationsWithRoutes();
     }
@@ -64,6 +60,14 @@ public class StationServices {
 
     public boolean existsByName(String name) {
         return stationDAO.existsByName(name);
+    }
+
+    public List<Station> searchExact(String name, int page, int pageSize) {
+        return stationDAO.searchExactByName(name); // hoặc thêm phân trang nếu cần
+    }
+
+    public int countSearchExact(String name) {
+        return stationDAO.countExactByName(name);
     }
 
 }
