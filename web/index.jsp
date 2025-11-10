@@ -101,15 +101,15 @@
             <div class="mt-6 space-y-6">
                 <div class="flex gap-4 items-start">
                     <div class="w-2 h-2 mt-2 rounded-full bg-brand-600"></div>
-                    <div><div class="font-medium">2022 — Khởi động</div><p class="text-sm text-slate-600">Ra mắt những tuyến đầu tiên ở miền Nam, hệ thống đặt vé trực tuyến phiên bản 1.0.</p></div>
+                    <div><div class="font-medium">2022 — Khởi động dự án</div><p class="text-sm text-slate-600">Ra mắt những tuyến đầu tiên ở miền Nam, hệ thống đặt vé trực tuyến phiên bản 1.0.</p></div>
                 </div>
                 <div class="flex gap-4 items-start">
                     <div class="w-2 h-2 mt-2 rounded-full bg-brand-600"></div>
-                    <div><div class="font-medium">2023 — Mở rộng</div><p class="text-sm text-slate-600">Thêm tuyến liên tỉnh, đưa vào vận hành trung tâm điều hành thông minh.</p></div>
+                    <div><div class="font-medium">2023 — Bành trướng lãnh địa</div><p class="text-sm text-slate-600">Thêm tuyến liên tỉnh, đưa vào vận hành trung tâm điều hành thông minh.</p></div>
                 </div>
                 <div class="flex gap-4 items-start">
                     <div class="w-2 h-2 mt-2 rounded-full bg-brand-600"></div>
-                    <div><div class="font-medium">2024 — Nâng chuẩn</div><p class="text-sm text-slate-600">Chuẩn hoá tiêu chuẩn dịch vụ, tích hợp ví điện tử, số hoá quy trình hoàn tiền.</p></div>
+                    <div><div class="font-medium">2024 — Nâng tầm cuộc chơi</div><p class="text-sm text-slate-600">Chuẩn hoá tiêu chuẩn dịch vụ, tích hợp ví điện tử, số hoá quy trình hoàn tiền.</p></div>
                 </div>
             </div>
         </section>
