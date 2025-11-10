@@ -136,7 +136,6 @@ public class paymentController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            String customerId = request.getParameter("customerId");
             int tripId = Integer.parseInt(request.getParameter("tripId"));
             int qty = Integer.parseInt(request.getParameter("quantity"));
             double price = Double.parseDouble(request.getParameter("price"));
@@ -145,7 +144,6 @@ public class paymentController extends HttpServlet {
             // Insert tickets
             for (int i = 0; i < qty; i++) {
                 Ticket ticket = new Ticket();
-                ticket.setCustomerId(customerId);
                 ticket.setTripId(tripId);
                 ticket.setPrice(price);
                 ticket.setIssueDate(new Date());
@@ -166,7 +164,6 @@ public class paymentController extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            String customerId = request.getParameter("customerId");
             int tripId = Integer.parseInt(request.getParameter("tripId"));
             int qty = Integer.parseInt(request.getParameter("quantity"));
 
@@ -181,7 +178,6 @@ public class paymentController extends HttpServlet {
                     + bank + "-" + stk + "-compact2.jpg?amount=" + (int) total;
 
             // Truyền dữ liệu sang hóa đơn JSP
-            request.setAttribute("customerId", customerId);
             request.setAttribute("tripId", tripId);
             request.setAttribute("qty", qty);
             request.setAttribute("price", price);
