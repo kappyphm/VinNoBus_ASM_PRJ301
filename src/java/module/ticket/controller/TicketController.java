@@ -67,7 +67,7 @@ public class TicketController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) {
-            action = "list"; // default
+            action = "main"; // default
         }
         switch (action) {
             case "sell":
@@ -105,7 +105,7 @@ public class TicketController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) {
-            action = "list"; // default
+            action = "main"; // default
         }
         switch (action) {
             case "sell":
@@ -148,11 +148,12 @@ public class TicketController extends HttpServlet {
             String priceStr = request.getParameter("price");
             String paymentMethod = request.getParameter("paymentMethod"); // "CASH" hoặc "ONLINE"
 
+            // 🧩 Kiểm tra dữ liệu cơ bản
             if (customerId == null || priceStr == null
                     || customerId.isEmpty() || priceStr.isEmpty()
                     || ticketType == null || paymentMethod == null) {
-                request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin!");
-
+                request.setAttribute("error", " Vui lòng nhập đầy đủ thông tin!");
+                request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
                 return;
             }
 
@@ -169,11 +170,12 @@ public class TicketController extends HttpServlet {
                 quantity = 1;
 
             }
-            if (ticketType.equals("TRIP")) {
-                if (tripIdStr == null || tripIdStr.isEmpty()) {
-                    request.setAttribute("error", "Vui lòng nhập ID chuyến cho vé lượt!");
-                    return;
-                }
+           if ("TRIP".equalsIgnoreCase(ticketType)) {
+            if (tripIdStr == null || tripIdStr.isEmpty()) {
+                request.setAttribute("error", "Vui lòng nhập ID chuyến cho vé lượt!");
+                request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
+                return;
+            }
                 ticket.setTripId(Integer.parseInt(tripIdStr));
                 ticket.setRouteId(0); // TRIP thì không cần route
                 ticket.setExpiryDate(null);
