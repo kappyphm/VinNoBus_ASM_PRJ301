@@ -67,11 +67,11 @@ public class TicketController extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         if (action == null) {
-            action = "main"; // default
+            action = "sell"; // default
         }
         switch (action) {
             case "sell":
-                request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/ticket/trip.jsp").forward(request, response);
                 break;
             case "checkin":
                 request.getRequestDispatcher("/view/ticket/checkin.jsp").forward(request, response);

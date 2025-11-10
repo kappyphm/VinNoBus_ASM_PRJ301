@@ -59,7 +59,7 @@
 
                 <div id="bankFields" class="space-y-2" style="display: none;">
                     <label class="block font-semibold">Ngân hàng:</label>
-                    <input type="text" id="bank" name="bank" value="MB Bank" readonly
+                    <input type="text" id="bank" name="bank" value="MBBank" readonly
                            class="border border-gray-300 rounded-lg px-4 py-2 w-full">
 
                     <label class="block font-semibold">Số tài khoản:</label>
