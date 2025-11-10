@@ -14,7 +14,6 @@ GO
 CREATE TABLE dbo.[user] (
     user_id VARCHAR(128) NOT NULL UNIQUE,
     is_active BIT NOT NULL DEFAULT 1,
-
     CONSTRAINT pk_user PRIMARY KEY (user_id)
 );
 GO

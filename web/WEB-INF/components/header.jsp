@@ -1,3 +1,4 @@
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
 
 <div class="bg-white shadow-soft border-b border-slate-200">
@@ -10,15 +11,18 @@
         </a>
 
         <!-- Menu -->
-        <nav class="flex items-center gap-4 text-slate-700 font-medium">
-            <a href="BusServlet?action=list" class="px-3 py-1 rounded-xl hover:bg-brand-50 hover:text-brand-600 transition">Bus</a>
-            <a href="RouteServlet?action=list" class="px-3 py-1 rounded-xl hover:bg-brand-50 hover:text-brand-600 transition">Route</a>
-            <a href="TripServlet?action=list" class="px-3 py-1 rounded-xl hover:bg-brand-50 hover:text-brand-600 transition">Trip</a>
-            <a href="TicketServlet?action=main" class="px-3 py-1 rounded-xl hover:bg-brand-50 hover:text-brand-600 transition">Ticket</a>
-            <a href="StationServlet?action=list" class="px-3 py-1 rounded-xl hover:bg-brand-50 hover:text-brand-600 transition">Station</a>
-            <a href="${ctx}/users" class="px-3 py-1 rounded-xl hover:bg-brand-50 hover:text-brand-600 transition">Users</a>
-            <a href="${ctx}/staffs" class="px-3 py-1 rounded-xl hover:bg-brand-50 hover:text-brand-600 transition">Staffs</a>
-        </nav>
+        <c:if test="${not empty sessionScope.user.staff}" >
+            <nav class="flex items-center gap-4 text-slate-700 font-medium">
+                <a href="BusServlet?action=list" class="px-3 py-1 rounded-xl hover:bg-brand-50 hover:text-brand-600 transition">Bus</a>
+                <a href="RouteServlet?action=list" class="px-3 py-1 rounded-xl hover:bg-brand-50 hover:text-brand-600 transition">Route</a>
+                <a href="TripServlet?action=list" class="px-3 py-1 rounded-xl hover:bg-brand-50 hover:text-brand-600 transition">Trip</a>
+                <a href="TicketServlet?action=main" class="px-3 py-1 rounded-xl hover:bg-brand-50 hover:text-brand-600 transition">Ticket</a>
+                <a href="StationServlet?action=list" class="px-3 py-1 rounded-xl hover:bg-brand-50 hover:text-brand-600 transition">Station</a>
+                <a href="${ctx}/users" class="px-3 py-1 rounded-xl hover:bg-brand-50 hover:text-brand-600 transition">Users</a>
+                <a href="${ctx}/staffs" class="px-3 py-1 rounded-xl hover:bg-brand-50 hover:text-brand-600 transition">Staffs</a>
+            </nav>
+        </c:if>
+
 
         <!-- Login Button -->
         <div>
