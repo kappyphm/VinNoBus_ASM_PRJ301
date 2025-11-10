@@ -27,7 +27,7 @@
             <!-- Form tìm tuyến -->
             <form class="mt-6 grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto] items-end gap-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-soft"
                   action="${pageContext.request.contextPath}/search" method="get">
-                <input type="hidden" name="action" value="search">
+              
 
                 <!-- Trạm A -->
                 <div>

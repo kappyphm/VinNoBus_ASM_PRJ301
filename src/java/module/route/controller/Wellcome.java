@@ -35,17 +35,13 @@ public class Wellcome extends HttpServlet {
             String action = req.getParameter("action");
             if (action == null) {
                 searchRoutesByStations(req, resp);
+            } else {
+                showDetails(req, resp);
             }
-            switch (action) {
 
-                case "details" ->
-                    showDetails(req, resp);
-
-                default ->
-                    searchRoutesByStations(req, resp);
-            }
         } catch (SQLException ex) {
             Logger.getLogger(Wellcome.class.getName()).log(Level.SEVERE, null, ex);
+            throw new RuntimeException("vcl" + ex.getMessage());
         }
 
     }
