@@ -1,73 +1,35 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="ui" tagdir="/WEB-INF/tags" %>
 
-<!DOCTYPE html>
-<html lang="vi">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<ui:layout>
+    <jsp:attribute name="title">Tìm tuyến xe • VinNoBus</jsp:attribute>
 
-        <title>Tìm tuyến xe • VinNoBus</title>
-
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script>
-            // Cấu hình Tailwind để thêm các lớp tùy chỉnh (brand, shadow-soft) đã được sử dụng
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            brand: {
-                                600: '#1A56DB', // Màu xanh dương (ví dụ)
-                                700: '#1E429F'  // Màu xanh dương đậm hơn
-                            }
-                        },
-                        boxShadow: {
-                            // Mô phỏng lại shadow-soft
-                            'soft': '0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05)'
-                        }
-                    }
-                }
-            }
-        </script>
-    </head>
-    <body class="bg-slate-50"> 
-        <header class="border-b border-slate-200">
-            <div class="max-w-6xl mx-auto px-5 py-4 flex items-center justify-between">
-                <a href="/VinNoBus" class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-xl bg-brand-600 text-white grid place-items-center font-semibold">V</div>
-                    <span class="font-semibold">VinNoBus</span>
-                </a>
-                <nav class="hidden sm:flex items-center gap-6 text-sm text-slate-600">
-                    <a href="#cau-chuyen" class="hover:text-brand-700">Câu chuyện</a>
-                    <a href="#gia-tri" class="hover:text-brand-700">Giá trị</a>
-                    <a href="#hanh-trinh" class="hover:text-brand-700">Hành trình</a>
-                    <a href="#lien-he" class="hover:text-brand-700">Liên hệ</a>
-                </nav>
-                <jsp:include page="/WEB-INF/components/LoginButton.jsp" />
-            </div>
-
-        </header>
+    <jsp:body>
         <main class="max-w-6xl mx-auto px-5 py-8">
-
             <h1 class="text-2xl font-semibold">Tìm tuyến xe đi qua 2 trạm</h1>
             <p class="text-sm text-slate-600 mt-1">Chọn hai trạm, hệ thống sẽ trả về các tuyến đi qua cả hai trạm đó.</p>
 
+            <!-- Lỗi -->
             <c:if test="${not empty param.errorMessage}">
                 <div class="mt-4 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 shadow-soft">
                     ⚠️ <c:out value="${param.errorMessage}" />
                 </div>
             </c:if>
 
+            <!-- Mock stations nếu chưa có -->
             <c:if test="${empty stations}">
                 <c:set var="stationsCsv" value="ST01|Bến xe Miền Đông;ST02|Bến xe Miền Tây;ST03|Suối Tiên;ST04|Vũng Tàu;ST05|Đà Lạt" />
                 <c:set var="stations" value="${fn:split(stationsCsv,';')}" />
             </c:if>
 
+            <!-- Form tìm tuyến -->
             <form class="mt-6 grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto] items-end gap-3 bg-white border border-slate-200 rounded-2xl p-4 shadow-soft"
                   action="${pageContext.request.contextPath}/RouteServlet" method="get">
                 <input type="hidden" name="action" value="search">
 
+                <!-- Trạm A -->
                 <div>
                     <label class="block text-sm mb-1">Trạm A</label>
                     <select name="a" required class="w-full rounded-xl border border-slate-200 px-3 py-2 bg-white">
@@ -80,6 +42,7 @@
 
                 <div class="hidden md:block text-center pb-3"> </div>
 
+                <!-- Trạm B -->
                 <div>
                     <label class="block text-sm mb-1">Trạm B</label>
                     <select name="b" required class="w-full rounded-xl border border-slate-200 px-3 py-2 bg-white">
@@ -97,6 +60,7 @@
                 </div>
             </form>
 
+            <!-- Kết quả -->
             <section class="mt-6">
                 <c:choose>
                     <c:when test="${not empty routes and fn:length(routes) > 0}">
@@ -142,6 +106,6 @@
                 </c:choose>
             </section>
         </main>
-
-    </body>
-</html>
+    </jsp:body>
+</ui:layout>
+z
