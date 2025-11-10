@@ -18,28 +18,23 @@ import module.route.dao.RouteDAO;
 import module.route.model.entity.Route;
 import module.station.dao.StationDAO;
 import module.station.model.entity.Station;
-import module.user.model.dto.UserDetailDTO;
 
 /**
  *
  * @author kappyphm
  */
-@WebServlet(name = "Wellcome", urlPatterns = {"/"})
+@WebServlet(name = "Wellcome", urlPatterns = {"/search"})
 public class Wellcome extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        UserDetailDTO user = (UserDetailDTO) req.getSession().getAttribute("user");
-
-        if (user == null || user.getStaff() == null) {
-            try {
-                searchRoutesByStations(req, resp);
-            } catch (SQLException ex) {
-                Logger.getLogger(Wellcome.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            req.getRequestDispatcher("/index.jsp").forward(req, resp);
+        
+        try {
+            searchRoutesByStations(req, resp);
+        } catch (SQLException ex) {
+            Logger.getLogger(Wellcome.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
 
     }
 

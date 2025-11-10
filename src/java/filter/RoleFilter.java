@@ -29,7 +29,13 @@ import module.user.model.dto.UserDetailDTO;
     "/staff/assign", //MANAGER
     "/staff/delete", //MANAGER
     "/ticket/checkin",//OPERATOR
-    "/ticket/create"//OPERATOR,SALE
+    "/ticket/create",//OPERATOR,SALE
+    "/TripServlet",
+    "/BusServlet",
+    "/RouteServlet",
+    "/StationServlet",
+    "/TicketServlet"
+
 }) // áp dụng cho tất cả request
 public class RoleFilter implements Filter {
 
