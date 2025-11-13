@@ -5,23 +5,21 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors; // Cần dùng
-
+import java.util.stream.Collectors;
+import module.bus.model.entity.Bus;
+import module.bus.service.BusServices;
+import module.route.model.entity.Route;
+import module.route.service.RouteServices;
 import module.trip.model.entity.Trip;
 import module.trip.service.ITripService;
 import module.trip.service.TripService;
 import module.user.model.dto.UserDetailDTO;
 import module.user.service.UserService;
-import module.route.model.entity.Route;
-import module.route.service.RouteServices;
-import module.bus.model.entity.Bus;
-import module.bus.service.BusServices;
 
 @WebServlet("/TripServlet")
 public class TripServlet extends HttpServlet {
@@ -54,18 +52,15 @@ public class TripServlet extends HttpServlet {
             List<Bus> buses = busService.getAllBuses(); //
             List<UserDetailDTO> allStaff = userService.getAllStaffDetails();
 
-            List<UserDetailDTO> drivers = allStaff.stream()
-                    .filter(s -> s.getStaff() != null && "DRIVER".equalsIgnoreCase(s.getStaff().getPosition()))
+            List<UserDetailDTO> operator = allStaff.stream()
+                    .filter(s -> s.getStaff() != null && "OPERATOR".equalsIgnoreCase(s.getStaff().getDepartment()))
                     .collect(Collectors.toList());
 
-            List<UserDetailDTO> conductors = allStaff.stream()
-                    .filter(s -> s.getStaff() != null && "CONDUCTOR".equalsIgnoreCase(s.getStaff().getPosition()))
-                    .collect(Collectors.toList());
 
             request.setAttribute("routesList", routes);
             request.setAttribute("busesList", buses);
-            request.setAttribute("driversList", drivers);
-            request.setAttribute("conductorsList", conductors);
+            request.setAttribute("driversList", operator);
+            request.setAttribute("conductorsList", operator);
 
         } catch (Exception e) {
             throw new ServletException("Không thể tải dữ liệu cho form", e);
