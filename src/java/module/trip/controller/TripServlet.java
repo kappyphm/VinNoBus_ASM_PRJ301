@@ -52,15 +52,22 @@ public class TripServlet extends HttpServlet {
             List<Bus> buses = busService.getAllBuses(); //
             List<UserDetailDTO> allStaff = userService.getAllStaffDetails();
 
-            List<UserDetailDTO> operator = allStaff.stream()
-                    .filter(s -> s.getStaff() != null && "OPERATOR".equalsIgnoreCase(s.getStaff().getDepartment()))
+            List<UserDetailDTO> driversList = allStaff.stream()
+                    .filter(s -> s.getStaff() != null &&
+                                 "OPERATOR".equalsIgnoreCase(s.getStaff().getDepartment()) &&
+                                 "DRIVER".equalsIgnoreCase(s.getStaff().getPosition())) 
                     .collect(Collectors.toList());
 
+            List<UserDetailDTO> conductorsList = allStaff.stream()
+                    .filter(s -> s.getStaff() != null &&
+                                 "OPERATOR".equalsIgnoreCase(s.getStaff().getDepartment()) &&
+                                 "CONDUCTOR".equalsIgnoreCase(s.getStaff().getPosition())) 
+                    .collect(Collectors.toList());
 
             request.setAttribute("routesList", routes);
             request.setAttribute("busesList", buses);
-            request.setAttribute("driversList", operator);
-            request.setAttribute("conductorsList", operator);
+            request.setAttribute("driversList", driversList);      
+            request.setAttribute("conductorsList", conductorsList);
 
         } catch (Exception e) {
             throw new ServletException("Không thể tải dữ liệu cho form", e);
