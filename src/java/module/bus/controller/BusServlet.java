@@ -99,7 +99,7 @@ public class BusServlet extends HttpServlet {
         } catch (SQLException e) {
             throw new ServletException("Lỗi khi xử lý yêu cầu: " + e.getMessage(), e);
         }
-
+  
     }
 
     /**

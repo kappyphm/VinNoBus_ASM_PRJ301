@@ -137,14 +137,46 @@ public class StationDAO extends DBContext implements iStationDAO {
 
     @Override
     public boolean delete(int id) {
-        String sql = "DELETE FROM Station WHERE station_id=?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            int rows = ps.executeUpdate();
-            return rows > 0;
+        String sqlDeleteRouteStation = "DELETE FROM Route_Station WHERE station_id=?";
+        String sqlDeleteStation = "DELETE FROM Station WHERE station_id=?";
+
+        try {
+            // Bắt đầu transaction
+            connection.setAutoCommit(false);
+
+            // Xóa các liên kết trong Route_Station
+            try (PreparedStatement ps1 = connection.prepareStatement(sqlDeleteRouteStation)) {
+                ps1.setInt(1, id);
+                ps1.executeUpdate();
+            }
+
+            // Xóa trạm trong Station
+            int rowsDeleted;
+            try (PreparedStatement ps2 = connection.prepareStatement(sqlDeleteStation)) {
+                ps2.setInt(1, id);
+                rowsDeleted = ps2.executeUpdate();
+            }
+
+            // Commit transaction
+            connection.commit();
+            return rowsDeleted > 0;
+
         } catch (SQLException e) {
+            // Rollback nếu có lỗi
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             System.out.println("Lỗi khi xóa trạm: " + e.getMessage());
             return false;
+        } finally {
+            // Reset auto-commit
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
