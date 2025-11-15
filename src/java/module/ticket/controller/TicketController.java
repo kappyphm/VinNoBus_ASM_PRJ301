@@ -113,19 +113,15 @@ public class TicketController extends HttpServlet {
         switch (action) {
             case "sell":
                 TicketSell(request, response);
-                request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
                 break;
             case "checkin":
                 TicketCheckin(request, response);
-                request.getRequestDispatcher("/view/ticket/checkin.jsp").forward(request, response);
                 break;
             case "validate":
                 TicketCheckinValidate(request, response);
-                request.getRequestDispatcher("/view/ticket/checkinConductor.jsp").forward(request, response);
                 break;
             case "trip":
                 TicketCreateTrip(request, response);
-                request.getRequestDispatcher("/view/ticket/checkinConductor.jsp").forward(request, response);
                 break;
 
             default:
@@ -142,62 +138,73 @@ public class TicketController extends HttpServlet {
 
     private void TicketSell(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       String customerId = request.getParameter("customerId");
+
+        String customerId = request.getParameter("customerId");
         String ticketType = request.getParameter("ticketType");
-        String tripId = request.getParameter("tripId");
-        String routeId = request.getParameter("routeId");
         String paymentMethod = request.getParameter("paymentMethod");
+        String routeIdRaw = request.getParameter("routeId");
+        String tripIdRaw = request.getParameter("tripId");
+        String priceRaw = request.getParameter("price");
         String bank = request.getParameter("bank");
         String stk = request.getParameter("stk");
-        String priceStr = request.getParameter("price");
 
-        // Kiểm tra và parse giá vé
-        int price = 0;
-        if (priceStr != null && !priceStr.trim().isEmpty()) {
-            try {
-                price = Integer.parseInt(priceStr.trim());
-            } catch (NumberFormatException e) {
-                request.setAttribute("error", "Giá vé không hợp lệ!");
+// ---- Kiểm tra dữ liệu ----
+// 1. Check khách hàng
+        if (customerId == null || customerId.trim().isEmpty()) {
+            request.setAttribute("error", "ID khách hàng không hợp lệ!");
+            request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
+            return;
+        }
+
+// 2. Check theo loại vé
+        if ("TRIP".equals(ticketType)) {
+            if (tripIdRaw == null || tripIdRaw.isEmpty()) {
+                request.setAttribute("error", "Chưa nhập ID chuyến!");
                 request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
                 return;
             }
-        } else {
-            request.setAttribute("error", "Thiếu thông tin giá vé!");
+
+            int tripId = Integer.parseInt(tripIdRaw);
+            if (tripId <= 0) {
+                request.setAttribute("error", "ID chuyến phải là số dương!");
+                request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
+                return;
+            }
+        }
+
+        if ("ROUTE".equals(ticketType)) {
+            if (routeIdRaw == null || routeIdRaw.isEmpty()) {
+                request.setAttribute("error", "Chưa nhập tuyến!");
+                request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
+                return;
+            }
+        }
+
+        int price = Integer.parseInt(priceRaw);
+        if (price <= 0) {
+            request.setAttribute("error", "Giá vé không hợp lệ!");
             request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
             return;
         }
 
-        // Nếu là vé lượt thì cần tripId, còn vé ngày/tháng thì cần routeId
-        if ("TRIP".equals(ticketType) && (tripId == null || tripId.isEmpty())) {
-            request.setAttribute("error", "Vui lòng nhập ID chuyến cho vé lượt!");
-            request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
-            return;
-        }
-
-        if (!"TRIP".equals(ticketType) && (routeId == null || routeId.isEmpty())) {
-            request.setAttribute("error", "Vui lòng chọn tuyến cho vé ngày / vé tháng!");
-            request.getRequestDispatcher("/view/ticket/sell.jsp").forward(request, response);
-            return;
-        }
-
+        // Set ngân hàng nếu chọn ONLINE
         if ("ONLINE".equals(paymentMethod)) {
-            bank = "mbbank";        
-            stk = "0965047076";     
+            bank = "mbbank";
+            stk = "0965047076";
         }
-        // Gửi dữ liệu sang hóa đơn
+
+        // ========== GỬI DỮ LIỆU SANG HOÁ ĐƠN ==========
         request.setAttribute("customerId", customerId);
         request.setAttribute("ticketType", ticketType);
-        request.setAttribute("tripId", tripId);
-        request.setAttribute("routeId", routeId);
-        request.setAttribute("price", price);
+        request.setAttribute("tripId", tripIdRaw);
+        request.setAttribute("routeId", routeIdRaw);
+        request.setAttribute("price", priceRaw);
         request.setAttribute("paymentMethod", paymentMethod);
         request.setAttribute("bank", bank);
         request.setAttribute("stk", stk);
 
-        // Forward sang trang hóa đơn
         request.getRequestDispatcher("/view/ticket/invoice.jsp").forward(request, response);
     }
-
 
     private void TicketCheckin(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
