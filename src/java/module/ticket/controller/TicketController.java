@@ -116,12 +116,15 @@ public class TicketController extends HttpServlet {
                 break;
             case "checkin":
                 TicketCheckin(request, response);
+                request.getRequestDispatcher("/view/ticket/checkin.jsp").forward(request, response);
                 break;
             case "validate":
                 TicketCheckinValidate(request, response);
+                request.getRequestDispatcher("/view/ticket/checkinConductor.jsp").forward(request, response);
                 break;
             case "trip":
                 TicketCreateTrip(request, response);
+                request.getRequestDispatcher("/view/ticket/checkinConductor.jsp").forward(request, response);
                 break;
 
             default:
